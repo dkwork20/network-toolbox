@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AllowedIPs CIDR Masking Calculator</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>WireGuard AllowedIPs Masking Calculator</h1>
+
+    <div class="row">
+      <label for="excludeInput">Excluded CIDR(s) — 每行一个 (例如：<code>192.168.0.0/24</code>)</label>
+      <textarea id="excludeInput" placeholder="192.168.0.0/24&#10;10.0.0.0/8">192.168.0.0/24</textarea>
+    </div>
+
+    <div class="row">
+      <button id="calcBtn">Calculate AllowedIPs</button>
+      <button id="clearBtn">Clear</button>
+    </div>
+
+    <h2>Result (可复制到 AllowedIPs)</h2>
+    <textarea id="output" readonly></textarea>
+
+    <details>
+      <summary>说明 / 注意事项</summary>
+      <ul>
+        <li>支持多行输入，自动合并重叠或相邻的排除区间。</li>
+        <li>算法使用 BigInt，安全处理所有 32-bit 范围。</li>
+        <li>输出为最小化的 CIDR 列表，严格不包含你排除的区间。</li>
+      </ul>
+    </details>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
