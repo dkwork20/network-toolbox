@@ -38,13 +38,35 @@
 <nav
   class="p-4 flex justify-between items-center border-b border-surface-500/30 bg-surface-50-900 shadow-md sticky top-0 z-50 backdrop-blur-sm"
 >
-  <div class="flex items-center gap-3">
-    <!-- Logo or Icon could go here -->
-    <span
-      class="font-bold text-xl tracking-tight bg-linear-to-br from-primary-500 to-secondary-500 bg-clip-text text-transparent"
+  <div class="flex items-center gap-6">
+    <a
+      href="/"
+      class="font-bold text-xl tracking-tight bg-linear-to-br from-primary-500 to-secondary-500 bg-clip-text text-transparent decoration-none"
     >
       WireGuard Helper
-    </span>
+    </a>
+
+    <div class="hidden md:flex items-center gap-4 text-sm font-medium">
+      <a href="/" class="hover:text-primary-500 transition-colors">Calculator</a
+      >
+      <a href="/tools/subnet" class="hover:text-primary-500 transition-colors"
+        >Subnet</a
+      >
+      <a
+        href="/tools/sanitizer"
+        class="hover:text-primary-500 transition-colors">Sanitizer</a
+      >
+      <a
+        href="/tools/diagnostics"
+        class="hover:text-primary-500 transition-colors">Diagnostics</a
+      >
+      <a href="/tools/jwt" class="hover:text-primary-500 transition-colors"
+        >JWT</a
+      >
+      <a href="/tools/cert" class="hover:text-primary-500 transition-colors"
+        >Cert</a
+      >
+    </div>
   </div>
 
   <div class="flex items-center gap-4">

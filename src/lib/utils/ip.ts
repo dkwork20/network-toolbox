@@ -41,119 +41,47 @@ export function isIpv6(ip: string): boolean {
 }
 
 /**
- * Expand IPv6 abbreviations (::)
- */
-function expandIpv6(ip: string): string {
-    // Handle "::"
-    if (ip.includes('::')) {
-        const parts = ip.split('::');
-        const start = parts[0] ? parts[0].split(':') : [];
-        const end = parts[1] ? parts[1].split(':') : [];
-        const missing = 8 - (start.length + end.length);
-        const middle = new Array(missing).fill('0');
-        return [...start, ...middle, ...end].join(':');
-    }
-    return ip;
-}
-
-/**
- * Converts IPv6 string to BigInt
+ * Converts IPv6 string to BigInt with robust expansion logic
  */
 export function ipv6ToBigInt(ip: string): bigint {
-    const parts = expandIpv6(ip).split(':');
-    if (parts.length !== 8) throw new Error(`Invalid IPv6 address: ${ip}`);
-    
-    let result = 0n;
-    for (const part of parts) {
-        const num = parseInt(part || '0', 16); // Handle empty strings if any, though expand handled it.
-        // Actually expandIpv6 logic above: if "::" is at start/end, split gives empty string?
-        // "::1" -> ["", "1"] -> start=[""], end=["1"] -> mistreatment.
-        // Better parsing needed.
-        if (isNaN(num) || num < 0 || num > 0xffff) throw new Error(`Invalid IPv6 segment: ${part}`);
-        result = (result << 16n) + BigInt(num);
-    }
-    return result;
-}
-
-/** 
- * Robust IPv6 Expansion logic 
- */
-function parseIpv6(ip: string): bigint {
      if (!ip) throw new Error('Empty IP');
      
-     // Handle standard IPv6
-     // 1. Split by ::
-     const parts = ip.split('::');
-     if (parts.length > 2) throw new Error('Invalid IPv6: multiple ::');
+     // Handle standard IPv6 expansion
+     let parts: string[] = [];
      
-     let head: string[] = [];
-     let tail: string[] = [];
-     
-     if (parts[0]) head = parts[0].split(':');
-     if (parts[1]) tail = parts[1].split(':');
-     
-     // Count segments
-     const total = head.length + tail.length;
-     if (total > 8) throw new Error(`Invalid IPv6: too many segments (${total})`);
-     
-     const missing = 8 - total;
-     if (parts.length === 2 && missing < 0) throw new Error('Invalid IPv6: :: used but too many segments');
-     // If :: is present, we must have <= 8 segments total (implied zeros fill the rest)
-     // If no ::, must be exactly 8 
-     if (parts.length === 1 && total !== 8) throw new Error('Invalid IPv6: incomplete without ::');
-     
-     const segments = [...head, ...new Array(missing).fill('0'), ...tail];
-     
-     let result = 0n;
-     for (const seg of segments) {
-         if (seg === '') { 
-              // Can happen if ip is "::" -> head=[], tail=[], missing=8. segments=['0'x8]. OK.
-              // But "::1" -> head=[], tail=['1'].
-              // "1::" -> head=['1'], tail=[].
-         }
-         // parse hex
-         // Note: split('::') -> "2001::" -> parts=["2001", ""]? No. "2001", "". 
-         // "::" -> "", "".
-         // If "::" is at start, parts[0] is empty string.
-         // My manual split above: if parts[0] is "", head=['']? No, string split.
-         // "::1".split('::') -> ["", "1"].
-         // "".split(':') -> [""] (length 1).
-         // So if parts[0] is empty string, we should treat it as empty array?
-         // Yes.
-     }
-     
-     // Revised Expand Logic
-     let fullParts: string[] = [];
      if (ip === '::') {
-         fullParts = new Array(8).fill('0');
+         parts = new Array(8).fill('0');
      } else if (ip.startsWith('::')) {
           // ::1 -> "", "1". 
           const rest = ip.substring(2).split(':');
-          fullParts = [...new Array(8 - rest.length).fill('0'), ...rest];
+          parts = [...new Array(8 - rest.length).fill('0'), ...rest];
      } else if (ip.endsWith('::')) {
           // 1:: -> "1", "".
           const rest = ip.substring(0, ip.length - 2).split(':');
-          fullParts = [...rest, ...new Array(8 - rest.length).fill('0')];
+          parts = [...rest, ...new Array(8 - rest.length).fill('0')];
      } else if (ip.includes('::')) {
-          const [pre, post] = ip.split('::');
+          const splits = ip.split('::');
+          if (splits.length > 2) throw new Error('Invalid IPv6: multiple ::');
+          const [pre, post] = splits;
           const preParts = pre.split(':');
           const postParts = post.split(':');
           const missing = 8 - (preParts.length + postParts.length);
-          fullParts = [...preParts, ...new Array(missing).fill('0'), ...postParts];
+          if (missing < 0) throw new Error(`Invalid IPv6: too many segments`);
+          parts = [...preParts, ...new Array(missing).fill('0'), ...postParts];
      } else {
-          fullParts = ip.split(':');
+          parts = ip.split(':');
      }
      
+    if (parts.length !== 8) throw new Error(`Invalid IPv6: expected 8 segments, got ${parts.length}`);
+
     let num = 0n;
     for ( let i = 0; i < 8; i++) {
-        const hex = fullParts[i];
-        if (!/^[0-9a-fA-F]{1,4}$/.test(hex) && hex !== '0') { // 0 is valid.
-             if (hex === '' && fullParts.length === 8) { /* Valid if 0? No, empty string means parsing error usually unless 0 */ }
-             // '0' is fine. '' is not fine usually?
-             // with :: expansion, we might fill '0'.
+        const hex = parts[i];
+        if (!/^[0-9a-fA-F]{1,4}$/.test(hex) && hex !== '0' && hex !== '') { 
+            throw new Error(`Invalid IPv6 segment: "${hex}"`);
         }
         const val = parseInt(hex || '0', 16);
-        if (isNaN(val)) throw new Error(`Invalid segment: ${hex}`);
+        if (isNaN(val)) throw new Error(`Invalid segment value: ${hex}`);
         num = (num << 16n) + BigInt(val);
     }
     return num;
@@ -168,9 +96,38 @@ export function bigIntToIpv6(num: bigint): string {
         parts.unshift(segment.toString(16));
         num = num >> 16n;
     }
-    // Simple compression: remove longest sequence of 0s?
-    // MVP: return full string, maybe simplify later.
-    // Normalized format often preferred for config.
+
+    // Find longest sequence of '0' segments
+    let longestStart = -1;
+    let longestLen = 0;
+    let currentStart = -1;
+    let currentLen = 0;
+
+    for (let i = 0; i < 8; i++) {
+        if (parts[i] === '0') {
+            if (currentStart === -1) currentStart = i;
+            currentLen++;
+        } else {
+            if (currentLen > longestLen) {
+                longestLen = currentLen;
+                longestStart = currentStart;
+            }
+            currentStart = -1;
+            currentLen = 0;
+        }
+    }
+    // Check end
+    if (currentLen > longestLen) {
+        longestLen = currentLen;
+        longestStart = currentStart;
+    }
+
+    if (longestLen > 1) {
+        const head = parts.slice(0, longestStart).join(':');
+        const tail = parts.slice(longestStart + longestLen).join(':');
+        return `${head}::${tail}`;
+    }
+
     return parts.join(':');
 }
 
@@ -199,7 +156,7 @@ export function parseCidr(cidr: string) {
     
     if (isNaN(prefix) || prefix < 0 || prefix > Number(totalBits)) throw new Error(`Invalid prefix length: ${maskStr}`);
     
-    const ipVal = isV6 ? parseIpv6(ipStr) : ipToBigInt(ipStr);
+    const ipVal = isV6 ? ipv6ToBigInt(ipStr) : ipToBigInt(ipStr);
     
     const hostBits = totalBits - BigInt(prefix);
     const start = (ipVal >> hostBits) << hostBits;

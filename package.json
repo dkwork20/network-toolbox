@@ -27,6 +27,7 @@
 	},
 	"dependencies": {
 		"@lucide/svelte": "^0.563.1",
+		"@peculiar/x509": "^1.14.3",
 		"bits-ui": "^2.15.4",
 		"clsx": "^2.1.1",
 		"tailwind-merge": "^3.4.0"

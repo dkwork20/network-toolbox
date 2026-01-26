@@ -51,7 +51,7 @@
     isCalculating = true;
     startTime = performance.now();
     const excludes = excludedInput.split("\n").filter((l) => l.trim() !== "");
-    worker.postMessage({ excludes, fullRange: "0.0.0.0/0" });
+    worker.postMessage({ excludes, fullRanges: ["0.0.0.0/0", "::/0"] });
   }
 
   function copyToClipboard() {
@@ -145,7 +145,7 @@ AllowedIPs = ${allowedOutput}
         <textarea
           class="textarea flex-1 p-4 font-mono text-sm bg-surface-100-800-token"
           bind:value={excludedInput}
-          placeholder="192.168.0.0/24&#10;10.0.0.0/8"
+          placeholder="192.168.0.0/24&#10;2001:db8::/32"
         ></textarea>
       </label>
 
@@ -205,7 +205,7 @@ AllowedIPs = ${allowedOutput}
   <div class="mt-8 p-4 bg-surface-100-800-token rounded-container-token">
     <h3 class="h3 font-bold mb-4">Routing Advice Helper</h3>
     <p class="mb-4 text-sm opacity-70">
-      If you prefer to set <code>AllowedIPs = 0.0.0.0/0</code> and handle exclusions
+      If you prefer to set <code>AllowedIPs = 0.0.0.0/0, ::/0</code> and handle exclusions
       via OS routing table:
     </p>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
