@@ -4,6 +4,7 @@
   import { Toast } from "@skeletonlabs/skeleton-svelte";
   import { toaster } from "$lib/toaster.svelte";
   import Navbar from "$lib/components/Navbar.svelte";
+  import Footer from "$lib/components/Footer.svelte";
 
   let { children } = $props();
 </script>
@@ -23,11 +24,15 @@
   </script>
 </svelte:head>
 
-<Navbar />
+<div class="min-h-screen flex flex-col">
+  <Navbar />
 
-<main class="h-full overflow-hidden flex flex-col pt-4">
-  {@render children()}
-</main>
+  <main class="flex-1 container mx-auto pt-4 flex flex-col">
+    {@render children()}
+  </main>
+
+  <Footer />
+</div>
 
 <Toast.Group {toaster}>
   {#snippet children(toast)}

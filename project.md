@@ -8,8 +8,10 @@ A tool to help users generate minimized AllowedIPs CIDR lists for WireGuard, sup
 
 - **Framework**: SvelteKit
 - **UI Component Library**: Skeleton
+  - **Documentation**: [LLMS Guide](https://www.skeleton.dev/llms.txt)
 - **Styling**: Tailwind CSS
 - **Headless UI**: Bits-UI
+  - **Documentation**: [LLMS Guide](https://bits-ui.com/llms.txt)
 - **Language**: TypeScript
 
 ## Core Features (MVP)

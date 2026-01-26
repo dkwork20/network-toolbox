@@ -18,6 +18,7 @@
 		"@sveltejs/kit": "^2.49.1",
 		"@sveltejs/vite-plugin-svelte": "^6.2.1",
 		"@tailwindcss/vite": "^4.1.18",
+		"@types/js-yaml": "^4.0.9",
 		"svelte": "^5.45.6",
 		"svelte-check": "^4.3.4",
 		"tailwindcss": "^4.1.18",
@@ -26,10 +27,15 @@
 		"vitest": "^4.0.18"
 	},
 	"dependencies": {
+		"@dnd-kit-svelte/svelte": "^0.1.5",
 		"@lucide/svelte": "^0.563.1",
 		"@peculiar/x509": "^1.14.3",
 		"bits-ui": "^2.15.4",
 		"clsx": "^2.1.1",
-		"tailwind-merge": "^3.4.0"
+		"cron-parser": "^5.5.0",
+		"cronstrue": "^3.9.0",
+		"js-yaml": "^4.1.1",
+		"tailwind-merge": "^3.4.0",
+		"toml": "^3.0.0"
 	}
 }

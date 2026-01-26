@@ -1,12 +1,15 @@
 <script lang="ts">
-  import { Moon, Sun } from "@lucide/svelte";
+  import { Moon, Sun, Menu, X, ChevronDown } from "@lucide/svelte";
   import { onMount } from "svelte";
+  import { Dialog, DropdownMenu } from "bits-ui";
+  import { page } from "$app/stores";
 
   // Simple logic for dark mode toggling using tailwind 'dark' class on html
   // SvelteKit usually runs on server, so we need to handle hydration.
   // For MVP, we toggle class on documentElement.
 
   let isDark = $state(true); // Default to dark? Check app.html or user system.
+  let isMobileMenuOpen = $state(false);
 
   function toggleTheme() {
     isDark = !isDark;
@@ -33,62 +36,310 @@
       }
     }
   });
+
+  // Close menu on navigation
+  $effect(() => {
+    // React to page navigation to close menu
+    const _ = $page.url.pathname;
+    isMobileMenuOpen = false;
+  });
 </script>
 
 <nav
-  class="p-4 flex justify-between items-center border-b border-surface-500/30 bg-surface-50-900 shadow-md sticky top-0 z-50 backdrop-blur-sm"
+  class="border-b border-surface-500/10 bg-surface-50/90 dark:bg-surface-900/90 shadow-sm sticky top-0 z-50 backdrop-blur-md transition-all duration-200"
 >
-  <div class="flex items-center gap-6">
-    <a
-      href="/"
-      class="font-bold text-xl tracking-tight bg-linear-to-br from-primary-500 to-secondary-500 bg-clip-text text-transparent decoration-none"
-    >
-      WireGuard Helper
-    </a>
+  <div
+    class="container mx-auto max-w-6xl px-4 h-16 flex justify-between items-center"
+  >
+    <div class="flex items-center gap-8">
+      <a
+        href="/"
+        class="font-bold text-xl tracking-tight bg-linear-to-br from-primary-500 to-secondary-500 bg-clip-text text-transparent decoration-none hover:opacity-80 transition-opacity"
+      >
+        NetOps Solutions
+      </a>
 
-    <div class="hidden md:flex items-center gap-4 text-sm font-medium">
-      <a href="/" class="hover:text-primary-500 transition-colors">Calculator</a
+      <!-- Desktop Menu -->
+      <div
+        class="hidden lg:flex items-center gap-1 text-sm font-medium text-surface-600 dark:text-surface-300"
       >
-      <a href="/tools/subnet" class="hover:text-primary-500 transition-colors"
-        >Subnet</a
-      >
-      <a
-        href="/tools/sanitizer"
-        class="hover:text-primary-500 transition-colors">Sanitizer</a
-      >
-      <a
-        href="/tools/diagnostics"
-        class="hover:text-primary-500 transition-colors">Diagnostics</a
-      >
-      <a href="/tools/jwt" class="hover:text-primary-500 transition-colors"
-        >JWT</a
-      >
-      <a href="/tools/cert" class="hover:text-primary-500 transition-colors"
-        >Cert</a
-      >
+        <!-- Network Tools Dropdown -->
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger
+            class="btn-sm variant-ghost-surface hover:variant-soft-primary transition-colors rounded-md py-2 px-3 flex items-center gap-1 group"
+          >
+            Network Tools
+            <ChevronDown
+              class="size-3 opacity-50 group-hover:opacity-100 transition-opacity"
+            />
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Portal>
+            <DropdownMenu.Content
+              class="z-50 min-w-[200px] bg-surface-100 dark:bg-surface-900 rounded-lg shadow-xl border border-surface-500/10 p-2 outline-none animate-in fade-in zoom-in-95 duration-100"
+            >
+              <DropdownMenu.Item
+                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
+              >
+                <a
+                  href="/tools/ip"
+                  class="flex items-center px-3 py-2 w-full h-full text-sm"
+                  >IP Calculator</a
+                >
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
+              >
+                <a
+                  href="/tools/subnet"
+                  class="flex items-center px-3 py-2 w-full h-full text-sm"
+                  >Subnet Visualizer</a
+                >
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
+              >
+                <a
+                  href="/tools/dns"
+                  class="flex items-center px-3 py-2 w-full h-full text-sm"
+                  >DNS Lookup</a
+                >
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
+              >
+                <a
+                  href="/tools/diagnostics"
+                  class="flex items-center px-3 py-2 w-full h-full text-sm"
+                  >Diagnostics</a
+                >
+              </DropdownMenu.Item>
+            </DropdownMenu.Content>
+          </DropdownMenu.Portal>
+        </DropdownMenu.Root>
+
+        <div class="h-4 w-px bg-surface-500/20 mx-1"></div>
+
+        <a
+          href="/tools/sanitizer"
+          class="btn-sm variant-ghost-surface hover:variant-soft-primary transition-colors rounded-md py-2 px-3"
+          >Log Sanitizer</a
+        >
+
+        <div class="h-4 w-px bg-surface-500/20 mx-1"></div>
+
+        <!-- Dev Tools Dropdown -->
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger
+            class="btn-sm variant-ghost-surface hover:variant-soft-primary transition-colors rounded-md py-2 px-3 flex items-center gap-1 group"
+          >
+            Dev Tools
+            <ChevronDown
+              class="size-3 opacity-50 group-hover:opacity-100 transition-opacity"
+            />
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Portal>
+            <DropdownMenu.Content
+              class="z-50 min-w-[200px] bg-surface-100 dark:bg-surface-900 rounded-lg shadow-xl border border-surface-500/10 p-2 outline-none animate-in fade-in zoom-in-95 duration-100"
+            >
+              <DropdownMenu.Item
+                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
+              >
+                <a
+                  href="/tools/jwt"
+                  class="flex items-center px-3 py-2 w-full h-full text-sm"
+                  >JWT Debugger</a
+                >
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
+              >
+                <a
+                  href="/tools/cert"
+                  class="flex items-center px-3 py-2 w-full h-full text-sm"
+                  >Cert Decoder</a
+                >
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
+              >
+                <a
+                  href="/tools/converter"
+                  class="flex items-center px-3 py-2 w-full h-full text-sm"
+                  >Converter</a
+                >
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
+              >
+                <a
+                  href="/tools/timestamp"
+                  class="flex items-center px-3 py-2 w-full h-full text-sm"
+                  >Timestamp</a
+                >
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
+              >
+                <a
+                  href="/tools/cron"
+                  class="flex items-center px-3 py-2 w-full h-full text-sm"
+                  >Cron Generator</a
+                >
+              </DropdownMenu.Item>
+            </DropdownMenu.Content>
+          </DropdownMenu.Portal>
+        </DropdownMenu.Root>
+      </div>
     </div>
-  </div>
 
-  <div class="flex items-center gap-4">
-    <a
-      href="https://github.com/skeletonlabs/skeleton"
-      target="_blank"
-      rel="noreferrer"
-      class="text-sm font-medium hover:text-primary-500 transition-colors"
-    >
-      GitHub
-    </a>
+    <div class="flex items-center gap-3">
+      <!-- Desktop About/Github -->
+      <div class="hidden md:flex items-center gap-3">
+        <a
+          href="/changelog"
+          class="text-sm font-medium text-surface-500 hover:text-primary-500 transition-colors"
+          >About</a
+        >
+        <a
+          href="https://github.com/skeletonlabs/skeleton"
+          target="_blank"
+          rel="noreferrer"
+          class="text-sm font-medium text-surface-500 hover:text-primary-500 transition-colors"
+        >
+          GitHub
+        </a>
+        <div class="h-4 w-px bg-surface-500/20"></div>
+      </div>
 
-    <button
-      class="btn-icon btn-icon-sm variant-ghost-surface"
-      onclick={toggleTheme}
-      aria-label="Toggle Dark Mode"
-    >
-      {#if isDark}
-        <Moon class="size-5" />
-      {:else}
-        <Sun class="size-5" />
-      {/if}
-    </button>
+      <button
+        class="btn-icon btn-icon-sm variant-ringed-surface hover:variant-soft-primary transition-all"
+        onclick={toggleTheme}
+        aria-label="Toggle Dark Mode"
+      >
+        {#if isDark}
+          <Moon class="size-4" />
+        {:else}
+          <Sun class="size-4" />
+        {/if}
+      </button>
+
+      <!-- Mobile Menu Trigger -->
+      <div class="lg:hidden ml-2">
+        <Dialog.Root bind:open={isMobileMenuOpen}>
+          <Dialog.Trigger class="btn-icon btn-icon-sm variant-filled-surface">
+            <Menu class="size-5" />
+          </Dialog.Trigger>
+          <Dialog.Portal>
+            <Dialog.Overlay
+              class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm transition-opacity"
+            />
+            <Dialog.Content
+              class="fixed right-0 top-0 bottom-0 z-50 w-[85%] max-w-[300px] bg-surface-100 dark:bg-surface-900 border-l border-surface-500/10 shadow-2xl flex flex-col outline-none"
+            >
+              <!-- Mobile Header -->
+              <div
+                class="h-16 px-6 flex items-center justify-between border-b border-surface-500/10"
+              >
+                <span class="font-bold text-lg tracking-tight">Menu</span>
+                <Dialog.Close
+                  class="btn-icon btn-icon-sm variant-ghost-surface"
+                >
+                  <X class="size-5" />
+                </Dialog.Close>
+              </div>
+
+              <!-- Mobile Content -->
+              <div class="flex-1 overflow-y-auto p-6 flex flex-col gap-6">
+                <div class="flex flex-col gap-1">
+                  <span
+                    class="text-xs font-bold uppercase text-surface-500 tracking-wider mb-2"
+                    >Network Tools</span
+                  >
+                  <a
+                    href="/tools/ip"
+                    class="btn variant-ghost-surface justify-start"
+                    >IP Calculator</a
+                  >
+                  <a
+                    href="/tools/subnet"
+                    class="btn variant-ghost-surface justify-start"
+                    >Subnet Visualizer</a
+                  >
+                  <a
+                    href="/tools/dns"
+                    class="btn variant-ghost-surface justify-start"
+                    >DNS Lookup</a
+                  >
+                  <a
+                    href="/tools/diagnostics"
+                    class="btn variant-ghost-surface justify-start"
+                    >Diagnostics</a
+                  >
+                </div>
+
+                <div class="flex flex-col gap-1">
+                  <span
+                    class="text-xs font-bold uppercase text-surface-500 tracking-wider mb-2"
+                    >Utilities</span
+                  >
+                  <a
+                    href="/tools/sanitizer"
+                    class="btn variant-ghost-surface justify-start"
+                    >Log Sanitizer</a
+                  >
+                </div>
+
+                <div class="flex flex-col gap-1">
+                  <span
+                    class="text-xs font-bold uppercase text-surface-500 tracking-wider mb-2"
+                    >Developer</span
+                  >
+                  <a
+                    href="/tools/jwt"
+                    class="btn variant-ghost-surface justify-start"
+                    >JWT Debugger</a
+                  >
+                  <a
+                    href="/tools/cert"
+                    class="btn variant-ghost-surface justify-start"
+                    >Cert Decoder</a
+                  >
+                  <a
+                    href="/tools/converter"
+                    class="btn variant-ghost-surface justify-start">Converter</a
+                  >
+                  <a
+                    href="/tools/timestamp"
+                    class="btn variant-ghost-surface justify-start">Timestamp</a
+                  >
+                  <a
+                    href="/tools/cron"
+                    class="btn variant-ghost-surface justify-start"
+                    >Cron Generator</a
+                  >
+                </div>
+
+                <hr class="border-surface-500/10" />
+
+                <div class="flex flex-col gap-2">
+                  <a
+                    href="/changelog"
+                    class="btn variant-ghost-surface justify-start text-surface-500"
+                    >Changelog</a
+                  >
+                  <a
+                    href="https://github.com/skeletonlabs/skeleton"
+                    target="_blank"
+                    rel="noreferrer"
+                    class="btn variant-ghost-surface justify-start text-surface-500"
+                    >GitHub</a
+                  >
+                </div>
+              </div>
+            </Dialog.Content>
+          </Dialog.Portal>
+        </Dialog.Root>
+      </div>
+    </div>
   </div>
 </nav>

@@ -1,268 +1,347 @@
 <script lang="ts">
-  import { onMount, tick } from "svelte";
-  import CalculatorWorker from "$lib/workers/calculator.worker?worker";
-  import { bigIntToIp, isIpv6 } from "$lib/utils/ip";
-  import {
-    generateWindowsScript,
-    generateLinuxScript,
-    generateMacScript,
-    downloadFile,
-  } from "$lib/utils/scripts";
-  import Simulator from "$lib/components/Simulator.svelte";
+  import { onMount } from "svelte";
   import { toaster } from "$lib/toaster.svelte";
+  import {
+    Calculator,
+    Network,
+    ShieldCheck,
+    Activity,
+    FileJson,
+    Key,
+    FileCode,
+    Clock,
+    CalendarClock,
+    Search,
+    ExternalLink,
+    Plus,
+    Edit3,
+    X,
+  } from "@lucide/svelte";
+  import { DragDropProvider } from "@dnd-kit-svelte/svelte";
+  import SortableQuickLink from "$lib/components/SortableQuickLink.svelte";
 
-  let excludedInput = $state("192.168.0.0/24\n10.0.0.0/8");
-  let allowedOutput = $state("");
-  let isCalculating = $state(false);
-  let calculationTime = $state(0);
-  let resultCount = $state(0);
-  let worker: Worker | undefined;
+  function arrayMove(array: any[], from: number, to: number) {
+    const newArray = array.slice();
+    newArray.splice(
+      to < 0 ? newArray.length + to : to,
+      0,
+      newArray.splice(from, 1)[0],
+    );
+    return newArray;
+  }
 
-  // Routing Advice State
-  let gateway = $state("");
-  let iface = $state("");
-  let selectedOs = $state("windows");
+  // --- Tool Data ---
+  const tools = [
+    {
+      id: "ip",
+      title: "IP Calculator",
+      desc: "CIDR calculation & exclusion",
+      icon: Calculator,
+      href: "/tools/ip",
+      cat: "network",
+    },
+    {
+      id: "subnet",
+      title: "Subnet Visualizer",
+      desc: "Visual subnet planning",
+      icon: Network,
+      href: "/tools/subnet",
+      cat: "network",
+    },
+    {
+      id: "dns",
+      title: "DNS Lookup",
+      desc: "DoH Record Query",
+      icon: Search,
+      href: "/tools/dns",
+      cat: "network",
+    },
+    {
+      id: "diag",
+      title: "Diagnostics",
+      desc: "WebRTC & Conductivity",
+      icon: Activity,
+      href: "/tools/diagnostics",
+      cat: "network",
+    },
 
+    {
+      id: "sanitizer",
+      title: "Log Sanitizer",
+      desc: "Redact sensitive data",
+      icon: ShieldCheck,
+      href: "/tools/sanitizer",
+      cat: "utility",
+    },
+
+    {
+      id: "jwt",
+      title: "JWT Debugger",
+      desc: "Decode JWT Tokens",
+      icon: Key,
+      href: "/tools/jwt",
+      cat: "dev",
+    },
+    {
+      id: "cert",
+      title: "Cert Decoder",
+      desc: "X.509 Certificate Info",
+      icon: FileCode,
+      href: "/tools/cert",
+      cat: "dev",
+    },
+    {
+      id: "convert",
+      title: "Converter",
+      desc: "JSON <> YAML <> TOML",
+      icon: FileJson,
+      href: "/tools/converter",
+      cat: "dev",
+    },
+    {
+      id: "time",
+      title: "Timestamp",
+      desc: "Unix Time & Duration",
+      icon: Clock,
+      href: "/tools/timestamp",
+      cat: "dev",
+    },
+    {
+      id: "cron",
+      title: "Cron Generator",
+      desc: "Schedule Expressions",
+      icon: CalendarClock,
+      href: "/tools/cron",
+      cat: "dev",
+    },
+  ];
+
+  const categories = [
+    { id: "network", label: "Network Tools" },
+    { id: "utility", label: "Utilities" },
+    { id: "dev", label: "Developer" },
+  ];
+
+  // --- Quick Links (Draggable) ---
+  let quickLinks = $state([
+    {
+      id: "1",
+      title: "Google",
+      url: "https://google.com",
+      desc: "Search Engine",
+    },
+    {
+      id: "2",
+      title: "WireGuard",
+      url: "https://wireguard.com",
+      desc: "Official Site",
+    },
+  ]);
+
+  let isEditing = $state(false);
+  let showAddModal = $state(false);
+  let newLink = $state({ title: "", url: "", desc: "" });
+
+  // Load from LS
   onMount(() => {
-    worker = new CalculatorWorker();
-    worker.onmessage = (e) => {
-      const { result, error } = e.data;
-      isCalculating = false;
-      if (error) {
-        allowedOutput = `Error: ${error}`;
-      } else {
-        allowedOutput = result.join(", "); // Default format
-        // Store raw result for formatting options if needed
-        resultCount = result.length;
-        const endTime = performance.now();
-        calculationTime = endTime - startTime;
+    const saved = localStorage.getItem("quickLinks");
+    if (saved) {
+      try {
+        quickLinks = JSON.parse(saved);
+      } catch (e) {
+        console.error("Failed to load quick links", e);
       }
-    };
-
-    return () => {
-      worker?.terminate();
-    };
+    }
   });
 
-  let startTime = 0;
+  // Save to LS
+  $effect(() => {
+    if (quickLinks.length > 0) {
+      localStorage.setItem("quickLinks", JSON.stringify(quickLinks));
+    }
+  });
 
-  function handleCalculate() {
-    if (!worker) return;
-    isCalculating = true;
-    startTime = performance.now();
-    const excludes = excludedInput.split("\n").filter((l) => l.trim() !== "");
-    worker.postMessage({ excludes, fullRanges: ["0.0.0.0/0", "::/0"] });
+  function handleDragEnd(event: any) {
+    const { active, over } = event;
+    if (active && over && active.id !== over.id) {
+      const oldIndex = quickLinks.findIndex((item) => item.id === active.id);
+      const newIndex = quickLinks.findIndex((item) => item.id === over.id);
+      quickLinks = arrayMove(quickLinks, oldIndex, newIndex);
+    }
   }
 
-  function copyToClipboard() {
-    navigator.clipboard.writeText(allowedOutput);
-    toaster.success({
-      title: "Copied",
-      description: "AllowedIPs list copied to clipboard",
-    });
+  function deleteLink(id: string) {
+    quickLinks = quickLinks.filter((l) => l.id !== id);
   }
 
-  function generatePeerConfig() {
-    const config = `[Peer]
-AllowedIPs = ${allowedOutput}
-# ... other settings`;
-    navigator.clipboard.writeText(config);
-    toaster.success({
-      title: "Config Copied",
-      description: "Peer configuration copied to clipboard",
-    });
-  }
-
-  function handleDownloadScript() {
-    const cidrs = excludedInput.split("\n").filter(Boolean);
-    if (!cidrs.length)
-      return toaster.error({
+  function addLink() {
+    if (!newLink.title || !newLink.url) {
+      toaster.error({
         title: "Error",
-        description: "No ranges to export",
+        description: "Title and URL are required",
       });
-
-    let content = "";
-    let filename = "routes";
-    const gw = gateway || "192.168.1.1";
-
-    if (selectedOs === "windows") {
-      content = generateWindowsScript(cidrs, gateway);
-      filename += ".bat";
-    } else if (selectedOs === "linux") {
-      content = generateLinuxScript(cidrs, gateway, iface);
-      filename += ".sh";
-    } else {
-      content = generateMacScript(cidrs, gateway);
-      filename += ".sh";
+      return;
     }
-
-    downloadFile(filename, content);
-  }
-
-  // Routing Commands Generation
-  function getExampleCommand(cidr: string) {
-    if (!cidr.includes("/")) return "";
-    const gw = gateway || "<GW>";
-    const dev = iface || "<DEV>";
-    const isV6 = isIpv6(cidr.split("/")[0]);
-
-    if (selectedOs === "windows") {
-      if (isV6) {
-        return `route add ${cidr} ${gw}`;
-      }
-      try {
-        const prefix = parseInt(cidr.split("/")[1], 10);
-        const maskLong = (0xffffffffn << (32n - BigInt(prefix))) & 0xffffffffn;
-        const netmask = bigIntToIp(maskLong);
-        const network = cidr.split("/")[0];
-        return `route add ${network} mask ${netmask} ${gw} -p`;
-      } catch {
-        return `route add ${cidr} ${gw} -p (invalid CIDR)`;
-      }
-    } else if (selectedOs === "linux") {
-      const cmd = isV6 ? "ip -6 route add" : "ip route add";
-      return `${cmd} ${cidr} via ${gw} dev ${dev}`;
-    } else {
-      if (isV6) {
-        return `route -n add -inet6 ${cidr} ${gw}`;
-      }
-      return `route -n add -net ${cidr} ${gw}`;
-    }
+    quickLinks = [...quickLinks, { id: crypto.randomUUID(), ...newLink }];
+    newLink = { title: "", url: "", desc: "" };
+    showAddModal = false;
+    toaster.success({ title: "Success", description: "Link added" });
   }
 </script>
 
-<div
-  class="container mx-auto p-4 max-w-6xl h-full flex flex-col overflow-y-auto pb-20"
->
-  <!-- Header moved to Navbar, keeping subtle title or removing -->
-  <!-- <header class="mb-8"> ... </header> -->
-
-  <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-8 min-h-0">
-    <!-- Left: Input -->
-    <div class="flex flex-col gap-4">
-      <label class="label flex flex-col flex-1">
-        <span class="font-bold text-lg">Excluded Ranges (CIDR)</span>
-        <textarea
-          class="textarea flex-1 p-4 font-mono text-sm bg-surface-100-800-token"
-          bind:value={excludedInput}
-          placeholder="192.168.0.0/24&#10;2001:db8::/32"
-        ></textarea>
-      </label>
-
-      <div class="flex gap-4">
-        <button
-          class="btn variant-filled-primary flex-1 py-3 font-bold"
-          onclick={handleCalculate}
-          disabled={isCalculating}
-        >
-          {isCalculating ? "Calculating..." : "Calculate AllowedIPs"}
-        </button>
-        <button
-          class="btn variant-ghost-surface"
-          onclick={() => (excludedInput = "")}>Clear</button
-        >
-      </div>
-    </div>
-
-    <!-- Right: Output -->
-    <div class="flex flex-col gap-4">
-      <div class="flex justify-between items-center">
-        <span class="font-bold text-lg">AllowedIPs Result</span>
-        <span class="text-sm text-surface-500">
-          {#if resultCount > 0}
-            {resultCount} ranges found ({calculationTime.toFixed(1)}ms)
-          {/if}
-        </span>
-      </div>
-
-      <textarea
-        class="textarea flex-1 p-4 font-mono text-sm bg-surface-100-800-token"
-        readonly
-        value={allowedOutput}
-        placeholder="Result will appear here..."
-      ></textarea>
-
-      <div class="flex gap-4 flex-wrap">
-        <button
-          class="btn variant-filled-secondary"
-          onclick={copyToClipboard}
-          disabled={!allowedOutput}
-        >
-          Copy List
-        </button>
-        <button
-          class="btn variant-filled-tertiary"
-          onclick={generatePeerConfig}
-          disabled={!allowedOutput}
-        >
-          Copy [Peer] Config
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Routing Advice (Bottom, Collapsible/Simple) -->
-  <div class="mt-8 p-4 bg-surface-100-800-token rounded-container-token">
-    <h3 class="h3 font-bold mb-4">Routing Advice Helper</h3>
-    <p class="mb-4 text-sm opacity-70">
-      If you prefer to set <code>AllowedIPs = 0.0.0.0/0, ::/0</code> and handle exclusions
-      via OS routing table:
-    </p>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <label class="label">
-        <span>Gateway IP</span>
-        <input
-          class="input"
-          type="text"
-          bind:value={gateway}
-          placeholder="192.168.1.1"
-        />
-      </label>
-      <label class="label">
-        <span>Interface (optional)</span>
-        <input
-          class="input"
-          type="text"
-          bind:value={iface}
-          placeholder="eth0"
-        />
-      </label>
-      <label class="label">
-        <span>OS</span>
-        <select class="select" bind:value={selectedOs}>
-          <option value="windows">Windows</option>
-          <option value="linux">Linux</option>
-          <option value="macos">macOS</option>
-        </select>
-      </label>
-      <div class="flex items-end">
-        <button
-          class="btn variant-filled-secondary w-full"
-          onclick={handleDownloadScript}
-        >
-          Download Script
-        </button>
-      </div>
-    </div>
-    <!-- Display simplified advice based on input ranges -->
-    <code
-      class="block bg-black text-green-400 p-4 mt-4 rounded font-mono text-sm overflow-x-auto"
+<div class="container mx-auto p-4 max-w-6xl pb-20 space-y-12">
+  <!-- Hero / Intro -->
+  <div class="text-center py-10 space-y-4">
+    <h1
+      class="h1 font-bold bg-linear-to-br from-primary-500 to-secondary-500 bg-clip-text text-transparent box-decoration-clone"
     >
-      {#if excludedInput.trim()}
-        {#each excludedInput.split("\n").filter(Boolean) as cidr}
-          {@html getExampleCommand(cidr)}<br />
+      NetOps Solutions
+    </h1>
+    <p class="text-xl text-surface-500 max-w-2xl mx-auto">
+      Your all-in-one toolkit for Network Operations, Development, and Security.
+      Client-side only, privacy focused.
+    </p>
+  </div>
+
+  <!-- Quick Links (Sortable) -->
+  <div class="space-y-4">
+    <div
+      class="flex justify-between items-center border-b border-surface-500/10 pb-2"
+    >
+      <h2 class="h2 font-bold flex items-center gap-2">
+        <ExternalLink class="size-6 text-primary-500" />
+        Quick Links
+      </h2>
+      <div class="flex gap-2">
+        <button
+          class="btn-sm variant-soft-surface"
+          onclick={() => (isEditing = !isEditing)}
+        >
+          {#if isEditing}Done{:else}<Edit3 class="size-4 mr-1" /> Edit{/if}
+        </button>
+        <button
+          class="btn-sm variant-filled-primary"
+          onclick={() => (showAddModal = true)}
+        >
+          <Plus class="size-4 mr-1" /> Add
+        </button>
+      </div>
+    </div>
+
+    <DragDropProvider onDragEnd={handleDragEnd}>
+      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {#each quickLinks as link, index (link.id)}
+          <SortableQuickLink
+            id={link.id}
+            {index}
+            {link}
+            {isEditing}
+            onDelete={deleteLink}
+          />
         {/each}
-      {:else}
-        # Enter exclude ranges above to see routing commands
-      {/if}
-    </code>
+      </div>
+    </DragDropProvider>
+
+    {#if quickLinks.length === 0}
+      <div
+        class="text-center p-8 border-2 border-dashed border-surface-500/20 rounded-lg text-surface-500"
+      >
+        No quick links yet. Add one to get started!
+      </div>
+    {/if}
   </div>
-  <!-- Simulator -->
-  <div class="mt-8">
-    <Simulator
-      allowedCidrs={allowedOutput
-        ? allowedOutput.split(",").map((s) => s.trim())
-        : []}
-    />
-  </div>
+
+  <!-- Tool Categories -->
+  {#each categories as cat}
+    <div class="space-y-4">
+      <h2 class="h2 font-bold pb-2 border-b border-surface-500/10 capitalize">
+        {cat.label}
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {#each tools.filter((t) => t.cat === cat.id) as tool}
+          <a
+            href={tool.href}
+            class="card p-6 bg-surface-50 dark:bg-surface-900 border border-surface-500/10 hover:border-primary-500/50 hover:shadow-lg transition-all group"
+          >
+            <div class="flex items-start gap-4">
+              <div
+                class="p-3 bg-surface-200 dark:bg-surface-800 rounded-lg group-hover:bg-primary-500/10 group-hover:text-primary-500 transition-colors"
+              >
+                <tool.icon class="size-8" />
+              </div>
+              <div>
+                <h3
+                  class="h3 font-bold group-hover:text-primary-500 transition-colors"
+                >
+                  {tool.title}
+                </h3>
+                <p class="text-sm text-surface-500 mt-1">{tool.desc}</p>
+              </div>
+            </div>
+          </a>
+        {/each}
+      </div>
+    </div>
+  {/each}
 </div>
+
+<!-- Add Link Modal (Simple Overlay) -->
+{#if showAddModal}
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+  >
+    <div
+      class="card p-6 w-full max-w-md bg-surface-100 dark:bg-surface-900 shadow-2xl space-y-4"
+    >
+      <div class="flex justify-between items-center">
+        <h3 class="h3 font-bold">Add Quick Link</h3>
+        <button
+          class="btn-icon btn-icon-sm"
+          onclick={() => (showAddModal = false)}><X class="size-5" /></button
+        >
+      </div>
+      <label class="label">
+        <span>Title</span>
+        <input
+          class="input"
+          type="text"
+          bind:value={newLink.title}
+          placeholder="e.g. My Server"
+        />
+      </label>
+      <label class="label">
+        <span>URL</span>
+        <input
+          class="input"
+          type="url"
+          bind:value={newLink.url}
+          placeholder="https://..."
+        />
+      </label>
+      <label class="label">
+        <span>Description</span>
+        <input
+          class="input"
+          type="text"
+          bind:value={newLink.desc}
+          placeholder="Optional note"
+        />
+      </label>
+      <div class="flex justify-end gap-2 mt-4">
+        <button class="btn variant-ghost" onclick={() => (showAddModal = false)}
+          >Cancel</button
+        >
+        <button class="btn variant-filled-primary" onclick={addLink}
+          >Save</button
+        >
+      </div>
+    </div>
+  </div>
+{/if}
+
+<style>
+  /* smooth flip animation */
+  :global(.animate-flip) {
+    transform-origin: 50% 50%;
+  }
+</style>
