@@ -17,6 +17,7 @@ export const changelog: ChangelogEntry[] = [
             { type: 'feat', text: "Added JWT Debugger tool" },
             { type: 'feat', text: "Added X.509 Certificate Decoder" },
             { type: 'feat', text: "Added Config Converter (JSON/YAML)" },
+            { type: 'feat', text: "Implemented Interactive Cron Generator (crontab.guru style)" },
             { type: 'feat', text: "Implemented Changelog Timeline" },
         ]
     },
