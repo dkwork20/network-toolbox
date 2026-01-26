@@ -1,7 +1,15 @@
 <script lang="ts">
   import { onMount, tick } from "svelte";
   import CalculatorWorker from "$lib/workers/calculator.worker?worker";
-  import { bigIntToIp } from "$lib/utils/ip";
+  import { bigIntToIp, isIpv6 } from "$lib/utils/ip";
+  import {
+    generateWindowsScript,
+    generateLinuxScript,
+    generateMacScript,
+    downloadFile,
+  } from "$lib/utils/scripts";
+  import Simulator from "$lib/components/Simulator.svelte";
+  import { toaster } from "$lib/toaster.svelte";
 
   let excludedInput = $state("192.168.0.0/24\n10.0.0.0/8");
   let allowedOutput = $state("");
@@ -48,6 +56,10 @@
 
   function copyToClipboard() {
     navigator.clipboard.writeText(allowedOutput);
+    toaster.success({
+      title: "Copied",
+      description: "AllowedIPs list copied to clipboard",
+    });
   }
 
   function generatePeerConfig() {
@@ -55,7 +67,36 @@
 AllowedIPs = ${allowedOutput}
 # ... other settings`;
     navigator.clipboard.writeText(config);
-    alert("Copied Peer Config to clipboard!");
+    toaster.success({
+      title: "Config Copied",
+      description: "Peer configuration copied to clipboard",
+    });
+  }
+
+  function handleDownloadScript() {
+    const cidrs = excludedInput.split("\n").filter(Boolean);
+    if (!cidrs.length)
+      return toaster.error({
+        title: "Error",
+        description: "No ranges to export",
+      });
+
+    let content = "";
+    let filename = "routes";
+    const gw = gateway || "192.168.1.1";
+
+    if (selectedOs === "windows") {
+      content = generateWindowsScript(cidrs, gateway);
+      filename += ".bat";
+    } else if (selectedOs === "linux") {
+      content = generateLinuxScript(cidrs, gateway, iface);
+      filename += ".sh";
+    } else {
+      content = generateMacScript(cidrs, gateway);
+      filename += ".sh";
+    }
+
+    downloadFile(filename, content);
   }
 
   // Routing Commands Generation
@@ -63,8 +104,12 @@ AllowedIPs = ${allowedOutput}
     if (!cidr.includes("/")) return "";
     const gw = gateway || "<GW>";
     const dev = iface || "<DEV>";
+    const isV6 = isIpv6(cidr.split("/")[0]);
 
     if (selectedOs === "windows") {
+      if (isV6) {
+        return `route add ${cidr} ${gw}`;
+      }
       try {
         const prefix = parseInt(cidr.split("/")[1], 10);
         const maskLong = (0xffffffffn << (32n - BigInt(prefix))) & 0xffffffffn;
@@ -75,21 +120,22 @@ AllowedIPs = ${allowedOutput}
         return `route add ${cidr} ${gw} -p (invalid CIDR)`;
       }
     } else if (selectedOs === "linux") {
-      return `ip route add ${cidr} via ${gw} dev ${dev}`;
+      const cmd = isV6 ? "ip -6 route add" : "ip route add";
+      return `${cmd} ${cidr} via ${gw} dev ${dev}`;
     } else {
+      if (isV6) {
+        return `route -n add -inet6 ${cidr} ${gw}`;
+      }
       return `route -n add -net ${cidr} ${gw}`;
     }
   }
 </script>
 
-<div class="container mx-auto p-4 max-w-6xl h-screen flex flex-col">
-  <header class="mb-8">
-    <h1 class="h1 font-bold text-3xl mb-2">AllowedIPs Calculator</h1>
-    <p class="text-surface-500">
-      Generate minimal WireGuard AllowedIPs to exclude specific networks (LAN,
-      etc.)
-    </p>
-  </header>
+<div
+  class="container mx-auto p-4 max-w-6xl h-full flex flex-col overflow-y-auto pb-20"
+>
+  <!-- Header moved to Navbar, keeping subtle title or removing -->
+  <!-- <header class="mb-8"> ... </header> -->
 
   <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-8 min-h-0">
     <!-- Left: Input -->
@@ -189,6 +235,14 @@ AllowedIPs = ${allowedOutput}
           <option value="macos">macOS</option>
         </select>
       </label>
+      <div class="flex items-end">
+        <button
+          class="btn variant-filled-secondary w-full"
+          onclick={handleDownloadScript}
+        >
+          Download Script
+        </button>
+      </div>
     </div>
     <!-- Display simplified advice based on input ranges -->
     <code
@@ -202,5 +256,13 @@ AllowedIPs = ${allowedOutput}
         # Enter exclude ranges above to see routing commands
       {/if}
     </code>
+  </div>
+  <!-- Simulator -->
+  <div class="mt-8">
+    <Simulator
+      allowedCidrs={allowedOutput
+        ? allowedOutput.split(",").map((s) => s.trim())
+        : []}
+    />
   </div>
 </div>
