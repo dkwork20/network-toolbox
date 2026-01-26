@@ -112,10 +112,10 @@
         <div class="flex flex-col items-center gap-6">
           <!-- The 5 Inputs -->
           <div
-            class="flex items-center gap-2 md:gap-4 text-2xl md:text-4xl font-mono font-bold"
+            class="flex flex-wrap md:flex-nowrap justify-center items-end gap-2 md:gap-4 text-xl md:text-4xl font-mono font-bold w-full"
           >
             {#each parts as part, i}
-              <div class="relative group">
+              <div class="relative group flex flex-col items-center">
                 <input
                   type="text"
                   value={parts[i]}
@@ -131,7 +131,7 @@
                 <!-- Label below input -->
                 <div
                   class={clsx(
-                    "absolute -bottom-6 left-0 right-0 text-center text-xs font-sans font-normal uppercase tracking-wider transition-opacity duration-200",
+                    "md:absolute md:-bottom-8 left-0 right-0 text-center text-[0.65rem] md:text-xs font-sans font-normal uppercase tracking-wider transition-opacity duration-200 mt-1 md:mt-0 whitespace-nowrap",
                     activeIndex === i
                       ? "opacity-100 text-primary-400"
                       : "opacity-0",
@@ -144,7 +144,7 @@
           </div>
 
           <!-- Description Readout -->
-          <div class="min-h-12 text-center">
+          <div class="min-h-12 pt-4 text-center">
             {#if error}
               <div class="text-error-500 font-bold animate-pulse">{error}</div>
             {:else}

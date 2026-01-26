@@ -16,7 +16,10 @@
     Plus,
     Edit3,
     X,
+    Lock,
+    Unlock,
   } from "@lucide/svelte";
+  import { fade } from "svelte/transition";
   import { DragDropProvider } from "@dnd-kit-svelte/svelte";
   import SortableQuickLink from "$lib/components/SortableQuickLink.svelte";
 
@@ -141,6 +144,7 @@
   let isEditing = $state(false);
   let showAddModal = $state(false);
   let newLink = $state({ title: "", url: "", desc: "" });
+  let isLocked = $state(true);
 
   // Load from LS
   onMount(() => {
@@ -214,17 +218,36 @@
       </h2>
       <div class="flex gap-2">
         <button
-          class="btn-sm variant-soft-surface"
-          onclick={() => (isEditing = !isEditing)}
+          class="btn-icon btn-icon-sm variant-ringed-surface hover:variant-filled-surface transition-all"
+          onclick={() => {
+            isLocked = !isLocked;
+            if (isLocked) isEditing = false;
+          }}
+          title={isLocked ? "Unlock to edit" : "Lock"}
         >
-          {#if isEditing}Done{:else}<Edit3 class="size-4 mr-1" /> Edit{/if}
+          {#if isLocked}
+            <Lock class="size-5" />
+          {:else}
+            <Unlock class="size-5 text-warning-500" />
+          {/if}
         </button>
-        <button
-          class="btn-sm variant-filled-primary"
-          onclick={() => (showAddModal = true)}
-        >
-          <Plus class="size-4 mr-1" /> Add
-        </button>
+
+        {#if !isLocked}
+          <div class="flex gap-2" in:fade>
+            <button
+              class="btn-sm variant-soft-surface"
+              onclick={() => (isEditing = !isEditing)}
+            >
+              {#if isEditing}Done{:else}<Edit3 class="size-4 mr-1" /> Remove{/if}
+            </button>
+            <button
+              class="btn-sm variant-filled-primary"
+              onclick={() => (showAddModal = true)}
+            >
+              <Plus class="size-4 mr-1" /> Add
+            </button>
+          </div>
+        {/if}
       </div>
     </div>
 
@@ -237,6 +260,7 @@
             {link}
             {isEditing}
             onDelete={deleteLink}
+            disabled={isLocked}
           />
         {/each}
       </div>
@@ -261,11 +285,11 @@
         {#each tools.filter((t) => t.cat === cat.id) as tool}
           <a
             href={tool.href}
-            class="card p-6 bg-surface-50 dark:bg-surface-900 border border-surface-500/10 hover:border-primary-500/50 hover:shadow-lg transition-all group"
+            class="card p-6 bg-surface-50 dark:bg-surface-800 border border-surface-500/20 hover:border-primary-500/30 hover:shadow-lg transition-all group"
           >
             <div class="flex items-start gap-4">
               <div
-                class="p-3 bg-surface-200 dark:bg-surface-800 rounded-lg group-hover:bg-primary-500/10 group-hover:text-primary-500 transition-colors"
+                class="p-3 bg-surface-200 dark:bg-surface-700/50 rounded-lg group-hover:bg-primary-500/10 group-hover:text-primary-500 transition-colors"
               >
                 <tool.icon class="size-8" />
               </div>
