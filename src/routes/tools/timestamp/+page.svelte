@@ -80,25 +80,77 @@
   let calcUnit = $state("minutes");
   let calcOperation = $state("add");
 
-  // Derived: Calculation Result
   let calcResult = $derived.by(() => {
-    const d = new Date(calcStart);
-    if (!calcStart || isNaN(d.getTime())) {
-      return "Invalid Start Date";
+    let d = new Date(calcStart);
+    if (isNaN(d.getTime())) return "Invalid Date";
+
+    const amount = calcOperation === "add" ? calcAmount : -calcAmount;
+
+    switch (calcUnit) {
+      case "seconds":
+        d.setSeconds(d.getSeconds() + amount);
+        break;
+      case "minutes":
+        d.setMinutes(d.getMinutes() + amount);
+        break;
+      case "hours":
+        d.setHours(d.getHours() + amount);
+        break;
+      case "days":
+        d.setDate(d.getDate() + amount);
+        break;
     }
-
-    let ms = calcAmount;
-    if (calcUnit === "seconds") ms *= 1000;
-    if (calcUnit === "minutes") ms *= 60000;
-    if (calcUnit === "hours") ms *= 3600000;
-    if (calcUnit === "days") ms *= 86400000;
-
-    const newTime =
-      calcOperation === "add" ? d.getTime() + ms : d.getTime() - ms;
-    const resDate = new Date(newTime);
-    return `${resDate.toLocaleString()} (${Math.floor(newTime / 1000)})`;
+    return {
+      iso: d.toISOString(),
+      ts: Math.floor(d.getTime() / 1000),
+      local: d.toLocaleString(),
+    };
   });
 
+  // Duration Converter
+  let durationAmount = $state(1);
+  let durationUnit = $state("hours");
+  let durationResult = $derived.by(() => {
+    const msPerUnit: Record<string, number> = {
+      milliseconds: 1,
+      seconds: 1000,
+      minutes: 60 * 1000,
+      hours: 60 * 60 * 1000,
+      days: 24 * 60 * 60 * 1000,
+      weeks: 7 * 24 * 60 * 60 * 1000,
+      months: 30.44 * 24 * 60 * 60 * 1000, // Average month
+      years: 365.25 * 24 * 60 * 60 * 1000, // Average year
+    };
+
+    const totalMs = durationAmount * (msPerUnit[durationUnit] || 0);
+
+    // Formatted string
+    const dDays = Math.floor(totalMs / msPerUnit.days);
+    const dHours = Math.floor((totalMs % msPerUnit.days) / msPerUnit.hours);
+    const dMinutes = Math.floor(
+      (totalMs % msPerUnit.hours) / msPerUnit.minutes,
+    );
+    const dSeconds = Math.floor((totalMs % msPerUnit.minutes) / 1000);
+
+    let parts = [];
+    if (dDays > 0) parts.push(`${dDays}d`);
+    if (dHours > 0) parts.push(`${dHours}h`);
+    if (dMinutes > 0) parts.push(`${dMinutes}m`);
+    if (dSeconds > 0 || parts.length === 0) parts.push(`${dSeconds}s`);
+    if (totalMs < 1000 && totalMs > 0) parts = [`${totalMs}ms`];
+
+    return {
+      ms: totalMs,
+      seconds: +(totalMs / 1000).toFixed(2),
+      minutes: +(totalMs / msPerUnit.minutes).toFixed(4),
+      hours: +(totalMs / msPerUnit.hours).toFixed(4),
+      days: +(totalMs / msPerUnit.days).toFixed(4),
+      weeks: +(totalMs / msPerUnit.weeks).toFixed(4),
+      months: +(totalMs / msPerUnit.months).toFixed(6),
+      years: +(totalMs / msPerUnit.years).toFixed(6),
+      formatted: parts.join(" "),
+    };
+  });
   onMount(() => {
     interval = setInterval(() => {
       nowMs = Date.now();
@@ -312,6 +364,81 @@
       <div>
         <div class="opacity-60">Y2K38 Problem</div>
         <div>2147483647</div>
+      </div>
+    </div>
+
+    <!-- Duration Converter -->
+    <div
+      class="card p-6 flex flex-col gap-4 bg-surface-50 dark:bg-surface-900 border border-surface-500/20 shadow-lg"
+    >
+      <h3 class="h3 font-bold">Duration Converter</h3>
+      <div class="flex flex-col sm:flex-row gap-2 w-full">
+        <input
+          class="input w-full flex-1 min-w-0"
+          type="number"
+          bind:value={durationAmount}
+          placeholder="Enter amount"
+        />
+        <select class="select w-full sm:w-48" bind:value={durationUnit}>
+          <option value="milliseconds">Milliseconds</option>
+          <option value="seconds">Seconds</option>
+          <option value="minutes">Minutes</option>
+          <option value="hours">Hours</option>
+          <option value="days">Days</option>
+          <option value="weeks">Weeks</option>
+          <option value="months">Months (30.44d)</option>
+          <option value="years">Years (365.25d)</option>
+        </select>
+      </div>
+
+      <div class="p-4 bg-surface-200 dark:bg-surface-800 rounded-lg">
+        <div
+          class="text-sm font-bold text-surface-600 dark:text-surface-400 mb-2"
+        >
+          Human Readable
+        </div>
+        <div
+          class="text-xl md:text-2xl font-mono font-bold text-primary-500 break-all"
+        >
+          {durationResult?.formatted || "0s"}
+        </div>
+      </div>
+
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-2 text-xs opacity-70 font-mono"
+      >
+        <div class="flex justify-between border-b border-surface-500/20 pb-1">
+          <span>Milliseconds:</span>
+          <span>{durationResult?.ms.toLocaleString()}</span>
+        </div>
+        <div class="flex justify-between border-b border-surface-500/20 pb-1">
+          <span>Seconds:</span>
+          <span>{durationResult?.seconds.toLocaleString()}</span>
+        </div>
+        <div class="flex justify-between border-b border-surface-500/20 pb-1">
+          <span>Minutes:</span>
+          <span>{durationResult?.minutes.toLocaleString()}</span>
+        </div>
+        <div class="flex justify-between border-b border-surface-500/20 pb-1">
+          <span>Hours:</span>
+          <span>{durationResult?.hours.toLocaleString()}</span>
+        </div>
+        <div class="flex justify-between border-b border-surface-500/20 pb-1">
+          <span>Days:</span>
+          <span>{durationResult?.days.toLocaleString()}</span>
+        </div>
+        <div class="flex justify-between border-b border-surface-500/20 pb-1">
+          <span>Weeks:</span>
+          <span>{durationResult?.weeks.toLocaleString()}</span>
+        </div>
+        <div class="flex justify-between border-b border-surface-500/20 pb-1">
+          <span>Months:</span>
+          <span>{durationResult?.months.toLocaleString()}</span>
+        </div>
+        <div class="flex justify-between border-b border-surface-500/20 pb-1">
+          <span>Years:</span>
+          <span>{durationResult?.years.toLocaleString()}</span>
+        </div>
       </div>
     </div>
   </div>

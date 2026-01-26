@@ -25,3 +25,8 @@ When asked to implement new UI features:
 1.  Check if a **Bits-UI** primitive exists for the interaction.
 2.  Check if a **Skeleton** component exists for the style.
 3.  Implement using these libraries rather than raw HTML/CSS/JS where possible.
+
+## Changelog Management
+
+- **Prompt Update**: When a task, implementation plan, or significant fix is completed, ALWAYS prompt the user or ask whether to update `src/lib/data/changelog.ts`.
+- **Accuracy**: Ensure changelog entries accurately reflect the technical changes (feat, fix, chore).

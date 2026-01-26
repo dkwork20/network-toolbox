@@ -19,6 +19,9 @@ export const changelog: ChangelogEntry[] = [
             { type: 'feat', text: "Added Config Converter (JSON/YAML)" },
             { type: 'feat', text: "Implemented Interactive Cron Generator (crontab.guru style)" },
             { type: 'feat', text: "Implemented Changelog Timeline" },
+            { type: 'fix', text: "Resolved Home Page build errors (dnd-kit-svelte)" },
+            { type: 'fix', text: "Fixed Cron Generator runtime crashes" },
+            { type: 'fix', text: "Fixed Timestamp Tool mobile layout overflow" },
         ]
     },
     {
@@ -26,8 +29,13 @@ export const changelog: ChangelogEntry[] = [
         date: "2026-01-27",
         title: "Network Diagnostics",
         changes: [
+            { type: 'feat', text: "Added Unix Timestamp Converter" },
+            { type: 'feat', text: "Added Duration Converter to Timestamp tools" },
             { type: 'feat', text: "Added WebRTC Leak Test tool" },
             { type: 'feat', text: "Updated navigation bar structure" },
+            { type: 'feat', text: "Added DNS Lookup Tool" },
+            { type: 'feat', text: "Added IP Calculator (Excluded Ranges)" },
+            { type: 'fix', text: "Fixed Cron Generator layout on mobile and desktop" },
         ]
     },
     {
