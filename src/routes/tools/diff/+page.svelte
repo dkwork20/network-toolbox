@@ -23,6 +23,49 @@
     diffResult = Diff.diffLines(originalText, modifiedText);
   }
 
+  // Compute character-level diff for a single line
+  function getCharDiff(oldLine: string, newLine: string): { type: 'same' | 'added' | 'removed' | 'changed'; text: string }[] {
+    const charDiff = Diff.diffChars(oldLine, newLine);
+    return charDiff.map(part => ({
+      type: part.added ? 'added' : part.removed ? 'removed' : 'same',
+      text: part.value
+    }));
+  }
+
+  // Check if two lines are similar (have changes but same structure)
+  function linesAreSimilar(line1: string, line2: string): boolean {
+    if (!line1 || !line2) return false;
+    if (line1 === line2) return false;
+    const words1 = line1.split(/\s+/);
+    const words2 = line2.split(/\s+/);
+    const commonWords = words1.filter(w => words2.includes(w));
+    return commonWords.length > 0 && Math.abs(words1.length - words2.length) <= 2;
+  }
+
+  // Highlight character-level differences in a line
+  function highlightCharDiff(oldLine: string, newLine: string): string {
+    if (!oldLine || !newLine) return escapeHtml(newLine || oldLine || '');
+    if (oldLine === newLine) return escapeHtml(oldLine);
+    
+    const diff = Diff.diffChars(oldLine, newLine);
+    return diff.map(part => {
+      const escaped = escapeHtml(part.value);
+      if (part.added) return `<span class="bg-success-500/40 text-success-600 dark:text-success-400">${escaped}</span>`;
+      if (part.removed) return `<span class="bg-error-500/40 text-error-600 dark:text-error-400">${escaped}</span>`;
+      return escaped;
+    }).join('');
+  }
+
+  // Escape HTML special characters
+  function escapeHtml(text: string): string {
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
   // Get line count for display
   function getLineCount(text: string): number {
     return text.split("\n").length;
@@ -94,6 +137,62 @@ console.log('Sum:', result);`;
   // Stats
   let additions = $derived(diffResult.filter((d) => d.added).reduce((sum, d) => sum + d.count || 0, 0));
   let deletions = $derived(diffResult.filter((d) => d.removed).reduce((sum, d) => sum + d.count || 0, 0));
+
+  // Build line-by-line diff data for split view
+  let splitDiffLines = $derived(() => {
+    const originalLines: { text: string; type: 'unchanged' | 'removed' | 'changed'; highlight?: string }[] = [];
+    const modifiedLines: { text: string; type: 'unchanged' | 'added' | 'changed'; highlight?: string }[] = [];
+    
+    let i = 0;
+    while (i < diffResult.length) {
+      const part = diffResult[i];
+      const nextPart = diffResult[i + 1];
+      
+      if (part.removed) {
+        // Check if next part is added (modified line)
+        if (nextPart?.added) {
+          const oldLines = part.value.split('\n').filter(l => l !== '');
+          const newLines = nextPart.value.split('\n').filter(l => l !== '');
+          
+          const maxLen = Math.max(oldLines.length, newLines.length);
+          for (let j = 0; j < maxLen; j++) {
+            const oldLine = oldLines[j] || '';
+            const newLine = newLines[j] || '';
+            
+            if (oldLine && newLine && oldLine !== newLine) {
+              // Changed line - show character diff
+              originalLines.push({ text: oldLine, type: 'changed', highlight: highlightCharDiff(oldLine, newLine) });
+              modifiedLines.push({ text: newLine, type: 'changed', highlight: highlightCharDiff(oldLine, newLine) });
+            } else if (oldLine) {
+              originalLines.push({ text: oldLine, type: 'removed' });
+            } else if (newLine) {
+              modifiedLines.push({ text: newLine, type: 'added' });
+            }
+          }
+          i += 2;
+        } else {
+          // Just removed lines
+          const lines = part.value.split('\n').filter(l => l !== '');
+          lines.forEach(line => originalLines.push({ text: line, type: 'removed' }));
+          i++;
+        }
+      } else if (part.added) {
+        const lines = part.value.split('\n').filter(l => l !== '');
+        lines.forEach(line => modifiedLines.push({ text: line, type: 'added' }));
+        i++;
+      } else {
+        // Unchanged lines
+        const lines = part.value.split('\n').filter(l => l !== '');
+        lines.forEach(line => {
+          originalLines.push({ text: line, type: 'unchanged' });
+          modifiedLines.push({ text: line, type: 'unchanged' });
+        });
+        i++;
+      }
+    }
+    
+    return { original: originalLines, modified: modifiedLines };
+  });
 </script>
 
 <svelte:head>
@@ -193,12 +292,14 @@ console.log('Sum:', result);`;
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
         <div class="card p-4 bg-surface-50 dark:bg-surface-900 overflow-auto">
           <h3 class="font-medium mb-2">Diff - Original</h3>
-          <div class="font-mono text-sm">
-            {#each diffResult as part}
-              {#if part.removed}
-                <pre class="bg-error-500/20 text-error-600 dark:text-error-400 p-1 -mx-1">{part.value}</pre>
-              {:else if !part.added}
-                <pre class="text-surface-600 dark:text-surface-300">{part.value}</pre>
+          <div class="font-mono text-sm space-y-0.5">
+            {#each splitDiffLines().original as line}
+              {#if line.type === 'removed'}
+                <pre class="bg-error-500/20 text-error-600 dark:text-error-400 px-1 -mx-1 rounded">{line.text}</pre>
+              {:else if line.type === 'changed' && line.highlight}
+                <pre class="text-surface-600 dark:text-surface-300 px-1 -mx-1 rounded">{@html line.highlight}</pre>
+              {:else if line.type === 'unchanged'}
+                <pre class="text-surface-500 dark:text-surface-400">{line.text}</pre>
               {/if}
             {/each}
           </div>
@@ -206,12 +307,14 @@ console.log('Sum:', result);`;
 
         <div class="card p-4 bg-surface-50 dark:bg-surface-900 overflow-auto">
           <h3 class="font-medium mb-2">Diff - Modified</h3>
-          <div class="font-mono text-sm">
-            {#each diffResult as part}
-              {#if part.added}
-                <pre class="bg-success-500/20 text-success-600 dark:text-success-400 p-1 -mx-1">{part.value}</pre>
-              {:else if !part.removed}
-                <pre class="text-surface-600 dark:text-surface-300">{part.value}</pre>
+          <div class="font-mono text-sm space-y-0.5">
+            {#each splitDiffLines().modified as line}
+              {#if line.type === 'added'}
+                <pre class="bg-success-500/20 text-success-600 dark:text-success-400 px-1 -mx-1 rounded">{line.text}</pre>
+              {:else if line.type === 'changed' && line.highlight}
+                <pre class="text-surface-600 dark:text-surface-300 px-1 -mx-1 rounded">{@html line.highlight}</pre>
+              {:else if line.type === 'unchanged'}
+                <pre class="text-surface-500 dark:text-surface-400">{line.text}</pre>
               {/if}
             {/each}
           </div>
@@ -257,13 +360,16 @@ console.log('Sum:', result);`;
             </button>
           </div>
           <div class="font-mono text-sm overflow-auto max-h-[400px] bg-surface-100 dark:bg-surface-800 rounded p-4">
-            {#each diffResult as part}
-              {#if part.added}
-                <pre class="bg-success-500/20 text-success-600 dark:text-success-400 p-1 -mx-1 border-l-4 border-success-500">{part.value}</pre>
-              {:else if part.removed}
-                <pre class="bg-error-500/20 text-error-600 dark:text-error-400 p-1 -mx-1 border-l-4 border-error-500">{part.value}</pre>
+            {#each splitDiffLines().original as line, i}
+              {@const modLine = splitDiffLines().modified[i]}
+              {#if line.type === 'removed'}
+                <pre class="bg-error-500/20 text-error-600 dark:text-error-400 px-2 -mx-2 border-l-4 border-error-500">-{line.text}</pre>
+              {:else if modLine?.type === 'added'}
+                <pre class="bg-success-500/20 text-success-600 dark:text-success-400 px-2 -mx-2 border-l-4 border-success-500">+{modLine.text}</pre>
+              {:else if line.type === 'changed' && line.highlight}
+                <pre class="text-surface-600 dark:text-surface-300 px-2 -mx-2"> {@html line.highlight.replace(/^</, '&lt;').replace(/>$/, '&gt;')}</pre>
               {:else}
-                <pre class="text-surface-600 dark:text-surface-300">{part.value}</pre>
+                <pre class="text-surface-500 dark:text-surface-400 px-2 -mx-2"> {line.text}</pre>
               {/if}
             {/each}
           </div>
