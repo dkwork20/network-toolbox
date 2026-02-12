@@ -108,7 +108,7 @@
 
     // Generate random data (chunked to avoid 64KB crypto.getRandomValues limit)
     const generateRandomData = (size: number): Blob => {
-      const chunks: Uint8Array[] = [];
+      const chunks: BlobPart[] = [];
       const maxChunkSize = 65536; // Web Crypto API limit
       
       let remaining = size;

@@ -59,6 +59,7 @@
       icon: Calculator,
       href: "/tools/ip",
       cat: "network",
+      version: "V0.4",
     },
     {
       id: "subnet",
@@ -67,6 +68,7 @@
       icon: Network,
       href: "/tools/subnet",
       cat: "network",
+      version: "V0.2",
     },
     {
       id: "dns",
@@ -75,6 +77,7 @@
       icon: Search,
       href: "/tools/dns",
       cat: "network",
+      version: "V0.4",
     },
     {
       id: "diag",
@@ -83,6 +86,7 @@
       icon: Activity,
       href: "/tools/diagnostics",
       cat: "network",
+      version: "V0.4",
     },
     {
       id: "mac",
@@ -91,6 +95,7 @@
       icon: Network,
       href: "/tools/mac",
       cat: "network",
+      version: "V0.9",
       isNew: true,
     },
     {
@@ -100,6 +105,7 @@
       icon: Scan,
       href: "/tools/port",
       cat: "network",
+      version: "V0.10",
       isNew: true,
     },
     {
@@ -109,6 +115,7 @@
       icon: Activity,
       href: "/tools/ping",
       cat: "network",
+      version: "V0.10",
       isNew: true,
     },
     {
@@ -118,6 +125,7 @@
       icon: FileSearch,
       href: "/tools/headers",
       cat: "network",
+      version: "V0.10",
       isNew: true,
     },
     {
@@ -127,6 +135,7 @@
       icon: Lock,
       href: "/tools/ssl",
       cat: "network",
+      version: "V0.10",
       isNew: true,
     },
     {
@@ -136,6 +145,7 @@
       icon: Search,
       href: "/tools/whois",
       cat: "network",
+      version: "V0.10",
       isNew: true,
     },
     {
@@ -145,6 +155,7 @@
       icon: Activity,
       href: "/tools/speed",
       cat: "network",
+      version: "V0.10",
       isNew: true,
     },
 
@@ -156,6 +167,7 @@
       icon: Fingerprint,
       href: "/tools/uuid",
       cat: "encoding",
+      version: "V0.6",
       isNew: true,
     },
     {
@@ -165,6 +177,7 @@
       icon: Hash,
       href: "/tools/hash",
       cat: "encoding",
+      version: "V0.7",
       isNew: true,
     },
     {
@@ -174,6 +187,7 @@
       icon: Binary,
       href: "/tools/base64",
       cat: "encoding",
+      version: "V0.6",
       isNew: true,
     },
     {
@@ -183,6 +197,7 @@
       icon: Link,
       href: "/tools/url",
       cat: "encoding",
+      version: "V0.6",
       isNew: true,
     },
     {
@@ -192,6 +207,7 @@
       icon: FileJson,
       href: "/tools/json",
       cat: "encoding",
+      version: "V0.6",
       isNew: true,
     },
     {
@@ -201,6 +217,7 @@
       icon: Palette,
       href: "/tools/color",
       cat: "encoding",
+      version: "V0.6",
       isNew: true,
     },
     {
@@ -210,6 +227,7 @@
       icon: QrCode,
       href: "/tools/qr",
       cat: "encoding",
+      version: "V0.7",
       isNew: true,
     },
 
@@ -221,6 +239,7 @@
       icon: KeyRound,
       href: "/tools/password",
       cat: "security",
+      version: "V0.6",
       isNew: true,
     },
     {
@@ -230,6 +249,7 @@
       icon: Key,
       href: "/tools/bcrypt",
       cat: "security",
+      version: "V0.10",
       isNew: true,
     },
     {
@@ -239,6 +259,7 @@
       icon: ShieldCheck,
       href: "/tools/sanitizer",
       cat: "security",
+      version: "V0.3",
     },
 
     // Developer Tools
@@ -249,6 +270,7 @@
       icon: Key,
       href: "/tools/jwt",
       cat: "dev",
+      version: "V0.5",
     },
     {
       id: "cert",
@@ -257,6 +279,7 @@
       icon: FileCode,
       href: "/tools/cert",
       cat: "dev",
+      version: "V0.5",
     },
     {
       id: "convert",
@@ -265,6 +288,7 @@
       icon: FileJson,
       href: "/tools/converter",
       cat: "dev",
+      version: "V0.5",
     },
     {
       id: "time",
@@ -273,6 +297,7 @@
       icon: Clock,
       href: "/tools/timestamp",
       cat: "dev",
+      version: "V0.4",
     },
     {
       id: "cron",
@@ -281,6 +306,7 @@
       icon: CalendarClock,
       href: "/tools/cron",
       cat: "dev",
+      version: "V0.5",
     },
     {
       id: "regex",
@@ -289,6 +315,7 @@
       icon: Regex,
       href: "/tools/regex",
       cat: "dev",
+      version: "V0.7",
       isNew: true,
     },
     {
@@ -298,6 +325,7 @@
       icon: GitCompare,
       href: "/tools/diff",
       cat: "dev",
+      version: "V0.8",
       isNew: true,
     },
     {
@@ -307,6 +335,7 @@
       icon: FileText,
       href: "/tools/markdown",
       cat: "dev",
+      version: "V0.10",
       isNew: true,
     },
     {
@@ -316,6 +345,7 @@
       icon: Container,
       href: "/tools/docker",
       cat: "dev",
+      version: "V0.10",
       isNew: true,
     },
   ];
@@ -496,7 +526,7 @@
                 <tool.icon class="size-8" />
               </div>
               <div class="flex-1">
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 flex-wrap">
                   <h3
                     class="h3 font-bold group-hover:text-primary-500 transition-colors"
                   >
@@ -505,6 +535,7 @@
                   {#if tool.isNew}
                     <span class="badge variant-filled-error text-xs animate-pulse">NEW</span>
                   {/if}
+                  <span class="badge variant-soft-secondary text-xs">{tool.version}</span>
                 </div>
                 <p class="text-sm text-surface-500 mt-1">{tool.desc}</p>
               </div>

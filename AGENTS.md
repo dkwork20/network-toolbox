@@ -57,9 +57,29 @@ IPv4 (32-bit), IPv6 (128-bit) - no floating-point issues.
 ## Adding a New Tool
 
 1. Create `src/routes/tools/<name>/+page.svelte`
-2. Add tool entry to homepage `+page.svelte` tools array
+2. Add tool entry to homepage `+page.svelte` tools array with `version` property
 3. Add navigation entry in `Navbar.svelte`
 4. Add entry to `changelog.ts`
+
+### Homepage Tool Card
+
+Each tool in `src/routes/+page.svelte` needs:
+```typescript
+{
+  id: "xxx",
+  title: "Tool Name",
+  desc: "Description",
+  icon: IconName,
+  href: "/tools/xxx",
+  cat: "network|encoding|security|dev",
+  version: "V0.x",  // Required - version badge
+}
+```
+
+Display in card:
+```html
+<span class="badge variant-soft-secondary text-xs">{tool.version}</span>
+```
 
 ## Version Badges
 
@@ -92,11 +112,12 @@ git push && create PR
 
 ## Changelog Generation
 
-When releasing a new version, generate changelog files:
+When request git commit meaning releasing a new version, generate changelog files:
 
 ### 1. Update `src/lib/data/changelog.ts`
 
 Add new entry at top of array:
+
 ```typescript
 {
   version: "0.11.0",
@@ -127,18 +148,23 @@ Brief overview of this release.
 ## Changes
 
 ### Features
+
 - **New Tool** (`/tools/xxx`) - Brief description
 
 ### Fixes
+
 - Fixed issue in tool
 
 ### Technical Details
+
 - Implementation notes
 
 ## Route
+
 `/tools/xxx`
 
 ## File Changes
+
 - `src/routes/tools/xxx/+page.svelte` - New tool
 - `src/routes/+page.svelte` - Added to homepage
 - `src/lib/components/Navbar.svelte` - Added nav entry
@@ -146,10 +172,12 @@ Brief overview of this release.
 ```
 
 ### Naming Convention
+
 - Use 3-digit sequence: `[001]`, `[002]`, etc.
 - Kebab-case: `[011]-release-name.md`
 
 ### Checklist
+
 - [ ] Update changelog.ts with version entry
 - [ ] Create markdown file in routes/changelog/
 - [ ] Add version badge to new tool pages
