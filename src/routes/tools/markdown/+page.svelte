@@ -204,10 +204,12 @@ Supports:
       </div>
 
       <!-- Preview -->
-      <div class="card p-4 bg-surface-50 dark:bg-surface-900 space-y-2">
-        <label class="font-medium">Preview</label>
+      <div class="card p-0 bg-surface-900 overflow-hidden space-y-2">
+        <div class="flex justify-between items-center px-4 py-2 bg-surface-800 border-b border-surface-700">
+          <span class="font-medium text-sm text-surface-400">Preview</span>
+        </div>
         <div
-          class="prose dark:prose-invert max-w-none min-h-[500px] p-4 bg-white dark:bg-surface-800 rounded-lg overflow-auto"
+          class="prose max-w-none min-h-[500px] p-6"
         >
           {#if htmlOutput}
             {@html htmlOutput}
@@ -219,16 +221,19 @@ Supports:
     </div>
   {:else}
     <!-- Preview Only -->
-    <div class="card p-6 bg-surface-50 dark:bg-surface-900 space-y-4">
+    <div class="card p-0 bg-surface-900 overflow-hidden space-y-4">
       <!-- Hidden textarea for input -->
-      <textarea
-        class="textarea font-mono text-sm min-h-[100px]"
-        bind:value={markdownInput}
-        placeholder="Enter markdown..."
-      ></textarea>
+      <div class="p-4 bg-surface-800 border-b border-surface-700">
+        <textarea
+          class="textarea font-mono text-sm w-full"
+          style="min-height: 100px;"
+          bind:value={markdownInput}
+          placeholder="Enter markdown..."
+        ></textarea>
+      </div>
 
       <div
-        class="prose dark:prose-invert max-w-none min-h-[400px] p-6 bg-white dark:bg-surface-800 rounded-lg overflow-auto"
+        class="prose max-w-none p-6"
       >
         {#if htmlOutput}
           {@html htmlOutput}
@@ -300,109 +305,186 @@ Auto-link: https://example.com
 </div>
 
 <style>
-  /* Basic prose styling for markdown output */
+  /* GitHub-inspired dark theme markdown styling */
+  .prose {
+    color: #c9d1d9;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* Headings */
   .prose h1 {
     font-size: 2em;
-    font-weight: 700;
-    margin-bottom: 0.5em;
+    font-weight: 600;
+    margin: 0 0 16px 0;
     padding-bottom: 0.3em;
-    border-bottom: 1px solid #eaecef;
+    border-bottom: 1px solid #30363d;
+    color: #f0f6fc;
   }
   .prose h2 {
     font-size: 1.5em;
     font-weight: 600;
-    margin-top: 1.5em;
-    margin-bottom: 0.5em;
+    margin: 24px 0 16px 0;
     padding-bottom: 0.3em;
-    border-bottom: 1px solid #eaecef;
+    border-bottom: 1px solid #30363d;
+    color: #f0f6fc;
   }
   .prose h3 {
     font-size: 1.25em;
     font-weight: 600;
-    margin-top: 1.5em;
+    margin: 20px 0 12px 0;
+    color: #f0f6fc;
   }
+  .prose h4 {
+    font-size: 1em;
+    font-weight: 600;
+    margin: 16px 0 8px 0;
+    color: #f0f6fc;
+  }
+
+  /* Paragraphs and text */
   .prose p {
-    margin-bottom: 1em;
-    line-height: 1.6;
+    margin: 0 0 16px 0;
   }
-  .prose ul, .prose ol {
-    margin-bottom: 1em;
-    padding-left: 2em;
+  .prose strong {
+    font-weight: 600;
+    color: #f0f6fc;
   }
-  .prose li {
-    margin-bottom: 0.25em;
+  .prose em {
+    font-style: italic;
   }
-  .prose code {
-    background: #f6f8fa;
-    padding: 0.2em 0.4em;
-    border-radius: 3px;
-    font-size: 0.9em;
-  }
-  .dark .prose code {
-    background: #2d333b;
-  }
-  .prose pre {
-    background: #f6f8fa;
-    padding: 1em;
-    border-radius: 6px;
-    overflow-x: auto;
-    margin-bottom: 1em;
-  }
-  .dark .prose pre {
-    background: #2d333b;
-  }
-  .prose pre code {
-    background: transparent;
-    padding: 0;
-  }
-  .prose blockquote {
-    border-left: 4px solid #dfe2e5;
-    padding-left: 1em;
-    margin: 0 0 1em 0;
-    color: #6a737d;
-  }
-  .dark .prose blockquote {
-    border-left-color: #444c56;
+  .prose del {
+    text-decoration: line-through;
     color: #8b949e;
   }
-  .prose table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 1em;
-  }
-  .prose th, .prose td {
-    border: 1px solid #dfe2e5;
-    padding: 0.5em 0.75em;
-  }
-  .dark .prose th, .dark .prose td {
-    border-color: #444c56;
-  }
-  .prose th {
-    background: #f6f8fa;
-  }
-  .dark .prose th {
-    background: #2d333b;
-  }
-  .prose img {
-    max-width: 100%;
-    border-radius: 6px;
-  }
+
+  /* Links */
   .prose a {
-    color: #0366d6;
-    text-decoration: none;
-  }
-  .dark .prose a {
     color: #58a6ff;
+    text-decoration: none;
   }
   .prose a:hover {
     text-decoration: underline;
   }
+
+  /* Lists */
+  .prose ul, .prose ol {
+    margin: 0 0 16px 0;
+    padding-left: 24px;
+  }
+  .prose li {
+    margin: 4px 0;
+  }
+  .prose li > ul, .prose li > ol {
+    margin: 4px 0;
+  }
+
+  /* Task lists (checkboxes) */
+  .prose ul.contains-task-list {
+    list-style: none;
+    padding-left: 0;
+  }
+  .prose li.task-list-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin: 8px 0;
+  }
+  .prose li.task-list-item input[type="checkbox"] {
+    margin-top: 4px;
+    width: 16px;
+    height: 16px;
+    accent-color: #238636;
+    cursor: pointer;
+  }
+
+  /* Inline code */
+  .prose code:not(pre code) {
+    background: rgba(110, 118, 129, 0.4);
+    padding: 0.2em 0.4em;
+    border-radius: 6px;
+    font-family: 'ui-monospace', 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+    font-size: 0.85em;
+    color: #ff7b72;
+  }
+
+  /* Code blocks */
+  .prose pre {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 16px;
+    overflow-x: auto;
+    margin: 0 0 16px 0;
+    font-family: 'ui-monospace', 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .prose pre code {
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    font-size: 100%;
+    color: #c9d1d9;
+  }
+
+  /* Blockquotes */
+  .prose blockquote {
+    border-left: 4px solid #30363d;
+    padding: 0 16px;
+    margin: 0 0 16px 0;
+    color: #8b949e;
+  }
+  .prose blockquote > :first-child {
+    margin-top: 0;
+  }
+  .prose blockquote > :last-child {
+    margin-bottom: 0;
+  }
+
+  /* Tables */
+  .prose table {
+    display: block;
+    width: max-content;
+    max-width: 100%;
+    border-collapse: collapse;
+    margin: 0 0 16px 0;
+    overflow-x: auto;
+  }
+  .prose th, .prose td {
+    border: 1px solid #30363d;
+    padding: 8px 12px;
+    text-align: left;
+  }
+  .prose th {
+    background: #21262d;
+    font-weight: 600;
+    color: #f0f6fc;
+  }
+  .prose tr:nth-child(even) {
+    background: rgba(110, 118, 129, 0.1);
+  }
+  .prose tr:hover {
+    background: rgba(110, 118, 129, 0.15);
+  }
+
+  /* Images */
+  .prose img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+    margin: 8px 0;
+  }
+
+  /* Horizontal rule */
   .prose hr {
     border: none;
-    border-top: 1px solid #eaecef;
-    margin: 1.5em 0;
+    border-top: 1px solid #30363d;
+    margin: 24px 0;
   }
-  .dark .prose hr {
-    border-top-color: #444c56;
+
+  /* Emoji */
+  .prose .emoji {
+    font-size: 1.2em;
   }
 </style>
