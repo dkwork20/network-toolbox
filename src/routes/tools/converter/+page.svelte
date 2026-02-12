@@ -1,18 +1,8 @@
 <script lang="ts">
   import { toaster } from "$lib/toaster.svelte";
   import yaml from "js-yaml";
-  import toml from "toml"; // This is a parser mostly. We need a stringifier too?
-  // 'toml' package is usually parser only. simpler might be @iarna/toml or similar.
-  // Actually let's check installed 'toml'. It might just be parser.
-  // Ideally we want bidirectional.
-  // For MVP, lets try to find a library that does both or use JSON/YAML primarily and try to standard JSON->TOML if possible.
-  // Wait, I installed `toml`. It's a parser. I need a stringifier.
-  // Let's assume for now we might fail TOML stringification without another lib, or just support JSON<->YAML robustly and TOML input.
-  // Actually, let's use a simple JSON->TOML helper function if needed or rely on user understanding.
-  // I'll stick to JSON <-> YAML focus, with TOML as input-only for now unless I add another lib.
-  // Actually, I can use a simple TOML stringifier for basic objects.
-
-  // Update: I'll use a basic JSON <-> YAML for now, and check if I can add TOML output easily later or via another lib like `smol-toml` or `@ltd/j-toml` which I mentioned earlier but installed `toml`.
+  import toml from "toml";
+  import { stringify as tomlStringify } from "smol-toml";
 
   let inputMode = $state("json");
   let outputMode = $state("yaml");
@@ -29,7 +19,7 @@
 
     try {
       // 1. Parse Input to JS Object
-      let data;
+      let data: any;
       if (inputMode === "json") {
         data = JSON.parse(inputText);
       } else if (inputMode === "yaml") {
@@ -42,12 +32,9 @@
       if (outputMode === "json") {
         outputText = JSON.stringify(data, null, 2);
       } else if (outputMode === "yaml") {
-        outputText = yaml.dump(data);
+        outputText = yaml.dump(data, { indent: 2, lineWidth: -1 });
       } else if (outputMode === "toml") {
-        // Limited TOML output support manually or via error
-        throw new Error(
-          "TOML output not yet supported (Input only). Please select JSON or YAML as output.",
-        );
+        outputText = tomlStringify(data);
       }
     } catch (e: any) {
       error = e.message;
@@ -101,6 +88,7 @@
           <select class="select w-auto py-1 px-2" bind:value={outputMode}>
             <option value="json">JSON</option>
             <option value="yaml">YAML</option>
+            <option value="toml">TOML</option>
           </select>
           <button
             class="btn btn-sm variant-filled-secondary"

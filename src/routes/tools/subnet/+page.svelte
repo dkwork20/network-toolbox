@@ -1,11 +1,12 @@
 <script lang="ts">
-  import { ipToBigInt, bigIntToIp, parseCidr } from "$lib/utils/ip";
+  import { ipToBigInt, bigIntToIp, bigIntToIpv6, parseCidr, isIpv6 } from "$lib/utils/ip";
 
   type Node = {
     cidr: string;
     start: bigint;
     end: bigint;
-    prefix: number; // e.g. 24
+    prefix: number; // e.g. 24 or 64 for IPv6
+    version: 4 | 6;
     children?: [Node, Node]; // Split into two halves
     color?: string; // Random color or specific class
   };
@@ -13,27 +14,32 @@
   let rootInput = $state("192.168.0.0/24");
   let rootNode = $state<Node | null>(null);
 
+  // Helper to convert bigint to IP string based on version
+  function bigIntToIpStr(num: bigint, version: 4 | 6): string {
+    return version === 4 ? bigIntToIp(num) : bigIntToIpv6(num);
+  }
+
   // Initialize
   function init() {
     try {
       const parsed = parseCidr(rootInput);
-      if (parsed.version === 6) {
-        alert("IPv6 visualization not supported in this demo yet.");
-        return;
-      }
+      const version = parsed.version === 4 ? 4 : 6;
+      
       rootNode = {
         cidr: rootInput,
         start: parsed.start,
         end: parsed.end,
         prefix: parsed.prefix,
+        version,
       };
     } catch (e) {
-      alert("Invalid CIDR");
+      alert("Invalid CIDR: " + (e instanceof Error ? e.message : "Unknown error"));
     }
   }
 
   function split(node: Node) {
-    if (node.prefix >= 32) return; // Cannot split /32
+    const maxPrefix = node.version === 4 ? 32 : 128;
+    if (node.prefix >= maxPrefix) return; // Cannot split /32 or /128
 
     // Calculate split
     const newPrefix = node.prefix + 1;
@@ -43,14 +49,16 @@
       start: node.start,
       end: node.start + size - 1n,
       prefix: newPrefix,
-      cidr: `${bigIntToIp(node.start)}/${newPrefix}`,
+      cidr: `${bigIntToIpStr(node.start, node.version)}/${newPrefix}`,
+      version: node.version,
     };
 
     const right: Node = {
       start: node.start + size,
       end: node.end,
       prefix: newPrefix,
-      cidr: `${bigIntToIp(node.start + size)}/${newPrefix}`,
+      cidr: `${bigIntToIpStr(node.start + size, node.version)}/${newPrefix}`,
+      version: node.version,
     };
 
     node.children = [left, right];
@@ -59,6 +67,45 @@
   function merge(node: Node) {
     if (node.children) {
       node.children = undefined;
+    }
+  }
+
+  // Format IP count for display
+  function formatIpCount(count: bigint, version: 4 | 6): string {
+    const num = Number(count);
+    if (version === 6) {
+      // IPv6 ranges can be huge
+      if (count >= 2n ** 64n) {
+        return `${Number(count >> 64n)}×2^64 IPs`;
+      }
+      if (count >= 2n ** 32n) {
+        return `${Number(count >> 32n)}×2^32 IPs`;
+      }
+    }
+    if (num >= 1e9) return `${(num / 1e9).toFixed(2)}B IPs`;
+    if (num >= 1e6) return `${(num / 1e6).toFixed(2)}M IPs`;
+    if (num >= 1e3) return `${(num / 1e3).toFixed(2)}K IPs`;
+    return `${num} IPs`;
+  }
+
+  // Get max prefix for version
+  function getMaxPrefix(version: 4 | 6): number {
+    return version === 4 ? 32 : 128;
+  }
+
+  // Get display label for block
+  function getBlockLabel(node: Node): string {
+    const maxPrefix = getMaxPrefix(node.version);
+    if (node.version === 4) {
+      if (node.prefix < 24) return "Large Block";
+      if (node.prefix < 32) return "Subnet";
+      return "Host";
+    } else {
+      // IPv6
+      if (node.prefix < 48) return "Large Block";
+      if (node.prefix < 64) return "Subnet";
+      if (node.prefix < 128) return "Small Block";
+      return "Host";
     }
   }
 </script>
@@ -72,12 +119,12 @@
     <div
       class="flex justify-between items-center text-xs p-1 bg-surface-200 dark:bg-surface-700 rounded-sm mb-1"
     >
-      <span class="font-mono font-bold">{node.cidr}</span>
-      <div class="flex gap-2">
+      <span class="font-mono font-bold text-[10px] md:text-xs">{node.cidr}</span>
+      <div class="flex gap-2 items-center">
         <span class="opacity-50 text-[10px]"
-          >{Number(node.end - node.start + 1n)} IPs</span
+          >{formatIpCount(node.end - node.start + 1n, node.version)}</span
         >
-        {#if !node.children && node.prefix < 32}
+        {#if !node.children && node.prefix < getMaxPrefix(node.version)}
           <button
             class="btn btn-xs variant-filled-primary py-0"
             onclick={() => split(node)}>Split</button
@@ -99,9 +146,9 @@
         {@render subnetBlock(node.children[1])}
       {:else}
         <div
-          class="flex-1 min-h-[50px] bg-primary-500/10 flex items-center justify-center text-xs text-surface-500 rounded-sm"
+          class="flex-1 min-h-[50px] {node.version === 6 ? 'bg-secondary-500/10' : 'bg-primary-500/10'} flex items-center justify-center text-xs text-surface-500 rounded-sm"
         >
-          {node.prefix < 24 ? "Large Block" : "Host Block"}
+          {getBlockLabel(node)}
         </div>
       {/if}
     </div>
@@ -112,17 +159,23 @@
   class="container mx-auto p-4 max-w-6xl h-full flex flex-col overflow-y-auto pb-20"
 >
   <div class="flex justify-between items-center mb-6">
-    <h2 class="h2 font-bold">Visual Subnet Calculator (IPv4)</h2>
+    <h2 class="h2 font-bold">Visual Subnet Calculator (IPv4 & IPv6)</h2>
   </div>
 
-  <div class="flex gap-4 mb-4">
+  <div class="flex gap-4 mb-4 flex-wrap">
     <input
-      class="input max-w-sm font-mono"
+      class="input flex-1 min-w-[200px] font-mono"
       type="text"
       bind:value={rootInput}
-      placeholder="192.168.0.0/24"
+      placeholder="192.168.0.0/24 or 2001:db8::/32"
     />
     <button class="btn variant-filled-primary" onclick={init}>Visualize</button>
+  </div>
+
+  <div class="mb-4 text-sm text-surface-500">
+    <strong>IPv4 examples:</strong> 192.168.0.0/24, 10.0.0.0/8
+    <br>
+    <strong>IPv6 examples:</strong> 2001:db8::/32, fd00::/8
   </div>
 
   <div

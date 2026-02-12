@@ -68,7 +68,7 @@
           <DropdownMenu.Trigger
             class="btn-sm variant-ghost-surface hover:variant-soft-primary transition-colors rounded-md py-2 px-3 flex items-center gap-1 group"
           >
-            Network Tools
+            Network
             <ChevronDown
               class="size-3 opacity-50 group-hover:opacity-100 transition-opacity"
             />
@@ -84,6 +84,15 @@
                   href="/tools/ip"
                   class="flex items-center px-3 py-2 w-full h-full text-sm"
                   >IP Calculator</a
+                >
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
+              >
+                <a
+                  href="/tools/iprange"
+                  class="flex items-center px-3 py-2 w-full h-full text-sm"
+                  >IP Range Calculator <span class="text-error-500 font-bold">**</span></a
                 >
               </DropdownMenu.Item>
               <DropdownMenu.Item
@@ -113,17 +122,202 @@
                   >Diagnostics</a
                 >
               </DropdownMenu.Item>
+              <DropdownMenu.Item
+                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
+              >
+                <a
+                  href="/tools/mac"
+                  class="flex items-center px-3 py-2 w-full h-full text-sm"
+                  >MAC Lookup <span class="text-error-500 font-bold">**</span></a
+                >
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
+              >
+                <a
+                  href="/tools/port"
+                  class="flex items-center px-3 py-2 w-full h-full text-sm"
+                  >Port Scanner <span class="text-error-500 font-bold">**</span></a
+                >
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
+              >
+                <a
+                  href="/tools/ping"
+                  class="flex items-center px-3 py-2 w-full h-full text-sm"
+                  >Ping Monitor <span class="text-error-500 font-bold">**</span></a
+                >
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
+              >
+                <a
+                  href="/tools/headers"
+                  class="flex items-center px-3 py-2 w-full h-full text-sm"
+                  >HTTP Headers <span class="text-error-500 font-bold">**</span></a
+                >
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
+              >
+                <a
+                  href="/tools/ssl"
+                  class="flex items-center px-3 py-2 w-full h-full text-sm"
+                  >SSL Checker <span class="text-error-500 font-bold">**</span></a
+                >
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
+              >
+                <a
+                  href="/tools/whois"
+                  class="flex items-center px-3 py-2 w-full h-full text-sm"
+                  >Whois Lookup <span class="text-error-500 font-bold">**</span></a
+                >
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
+              >
+                <a
+                  href="/tools/speed"
+                  class="flex items-center px-3 py-2 w-full h-full text-sm"
+                  >Speed Test <span class="text-error-500 font-bold">**</span></a
+                >
+              </DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Portal>
         </DropdownMenu.Root>
 
         <div class="h-4 w-px bg-surface-500/20 mx-1"></div>
 
-        <a
-          href="/tools/sanitizer"
-          class="btn-sm variant-ghost-surface hover:variant-soft-primary transition-colors rounded-md py-2 px-3"
-          >Log Sanitizer</a
-        >
+        <!-- Encoding & Data Dropdown -->
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger
+            class="btn-sm variant-ghost-surface hover:variant-soft-primary transition-colors rounded-md py-2 px-3 flex items-center gap-1 group"
+          >
+            Encoding
+            <ChevronDown
+              class="size-3 opacity-50 group-hover:opacity-100 transition-opacity"
+            />
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Portal>
+            <DropdownMenu.Content
+              class="z-50 min-w-[200px] bg-surface-100 dark:bg-surface-900 rounded-lg shadow-xl border border-surface-500/10 p-2 outline-none animate-in fade-in zoom-in-95 duration-100"
+            >
+              <DropdownMenu.Item
+                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
+              >
+                <a
+                  href="/tools/uuid"
+                  class="flex items-center px-3 py-2 w-full h-full text-sm"
+                  >UUID Generator <span class="text-error-500 font-bold">**</span></a
+                >
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
+              >
+                <a
+                  href="/tools/hash"
+                  class="flex items-center px-3 py-2 w-full h-full text-sm"
+                  >Hash Calculator <span class="text-error-500 font-bold">**</span></a
+                >
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
+              >
+                <a
+                  href="/tools/base64"
+                  class="flex items-center px-3 py-2 w-full h-full text-sm"
+                  >Base64 Encoder <span class="text-error-500 font-bold">**</span></a
+                >
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
+              >
+                <a
+                  href="/tools/url"
+                  class="flex items-center px-3 py-2 w-full h-full text-sm"
+                  >URL Encoder <span class="text-error-500 font-bold">**</span></a
+                >
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
+              >
+                <a
+                  href="/tools/json"
+                  class="flex items-center px-3 py-2 w-full h-full text-sm"
+                  >JSON Formatter <span class="text-error-500 font-bold">**</span></a
+                >
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
+              >
+                <a
+                  href="/tools/color"
+                  class="flex items-center px-3 py-2 w-full h-full text-sm"
+                  >Color Picker <span class="text-error-500 font-bold">**</span></a
+                >
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
+              >
+                <a
+                  href="/tools/qr"
+                  class="flex items-center px-3 py-2 w-full h-full text-sm"
+                  >QR Generator <span class="text-error-500 font-bold">**</span></a
+                >
+              </DropdownMenu.Item>
+            </DropdownMenu.Content>
+          </DropdownMenu.Portal>
+        </DropdownMenu.Root>
+
+        <div class="h-4 w-px bg-surface-500/20 mx-1"></div>
+
+        <!-- Security Dropdown -->
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger
+            class="btn-sm variant-ghost-surface hover:variant-soft-primary transition-colors rounded-md py-2 px-3 flex items-center gap-1 group"
+          >
+            Security
+            <ChevronDown
+              class="size-3 opacity-50 group-hover:opacity-100 transition-opacity"
+            />
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Portal>
+            <DropdownMenu.Content
+              class="z-50 min-w-[200px] bg-surface-100 dark:bg-surface-900 rounded-lg shadow-xl border border-surface-500/10 p-2 outline-none animate-in fade-in zoom-in-95 duration-100"
+            >
+              <DropdownMenu.Item
+                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
+              >
+                <a
+                  href="/tools/password"
+                  class="flex items-center px-3 py-2 w-full h-full text-sm"
+                  >Password Generator <span class="text-error-500 font-bold">**</span></a
+                >
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
+              >
+                <a
+                  href="/tools/bcrypt"
+                  class="flex items-center px-3 py-2 w-full h-full text-sm"
+                  >Bcrypt Hash <span class="text-error-500 font-bold">**</span></a
+                >
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
+              >
+                <a
+                  href="/tools/sanitizer"
+                  class="flex items-center px-3 py-2 w-full h-full text-sm"
+                  >Log Sanitizer</a
+                >
+              </DropdownMenu.Item>
+            </DropdownMenu.Content>
+          </DropdownMenu.Portal>
+        </DropdownMenu.Root>
 
         <div class="h-4 w-px bg-surface-500/20 mx-1"></div>
 
@@ -132,7 +326,7 @@
           <DropdownMenu.Trigger
             class="btn-sm variant-ghost-surface hover:variant-soft-primary transition-colors rounded-md py-2 px-3 flex items-center gap-1 group"
           >
-            Dev Tools
+            Developer
             <ChevronDown
               class="size-3 opacity-50 group-hover:opacity-100 transition-opacity"
             />
@@ -184,6 +378,42 @@
                   href="/tools/cron"
                   class="flex items-center px-3 py-2 w-full h-full text-sm"
                   >Cron Generator</a
+                >
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
+              >
+                <a
+                  href="/tools/regex"
+                  class="flex items-center px-3 py-2 w-full h-full text-sm"
+                  >Regex Tester <span class="text-error-500 font-bold">**</span></a
+                >
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
+              >
+                <a
+                  href="/tools/diff"
+                  class="flex items-center px-3 py-2 w-full h-full text-sm"
+                  >Diff Viewer <span class="text-error-500 font-bold">**</span></a
+                >
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
+              >
+                <a
+                  href="/tools/markdown"
+                  class="flex items-center px-3 py-2 w-full h-full text-sm"
+                  >Markdown Preview <span class="text-error-500 font-bold">**</span></a
+                >
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
+              >
+                <a
+                  href="/tools/docker"
+                  class="flex items-center px-3 py-2 w-full h-full text-sm"
+                  >Docker Compose <span class="text-error-500 font-bold">**</span></a
                 >
               </DropdownMenu.Item>
             </DropdownMenu.Content>
@@ -253,12 +483,17 @@
                 <div class="flex flex-col gap-1">
                   <span
                     class="text-xs font-bold uppercase text-surface-500 tracking-wider mb-2"
-                    >Network Tools</span
+                    >Network</span
                   >
                   <a
                     href="/tools/ip"
                     class="btn variant-ghost-surface justify-start"
                     >IP Calculator</a
+                  >
+                  <a
+                    href="/tools/iprange"
+                    class="btn variant-ghost-surface justify-start"
+                    >IP Range Calculator <span class="text-error-500 font-bold">**</span></a
                   >
                   <a
                     href="/tools/subnet"
@@ -275,12 +510,64 @@
                     class="btn variant-ghost-surface justify-start"
                     >Diagnostics</a
                   >
+                  <a
+                    href="/tools/mac"
+                    class="btn variant-ghost-surface justify-start"
+                    >MAC Lookup <span class="text-error-500 font-bold">**</span></a
+                  >
                 </div>
 
                 <div class="flex flex-col gap-1">
                   <span
                     class="text-xs font-bold uppercase text-surface-500 tracking-wider mb-2"
-                    >Utilities</span
+                    >Encoding & Data</span
+                  >
+                  <a
+                    href="/tools/uuid"
+                    class="btn variant-ghost-surface justify-start"
+                    >UUID Generator <span class="text-error-500 font-bold">**</span></a
+                  >
+                  <a
+                    href="/tools/hash"
+                    class="btn variant-ghost-surface justify-start"
+                    >Hash Calculator <span class="text-error-500 font-bold">**</span></a
+                  >
+                  <a
+                    href="/tools/base64"
+                    class="btn variant-ghost-surface justify-start"
+                    >Base64 Encoder <span class="text-error-500 font-bold">**</span></a
+                  >
+                  <a
+                    href="/tools/url"
+                    class="btn variant-ghost-surface justify-start"
+                    >URL Encoder <span class="text-error-500 font-bold">**</span></a
+                  >
+                  <a
+                    href="/tools/json"
+                    class="btn variant-ghost-surface justify-start"
+                    >JSON Formatter <span class="text-error-500 font-bold">**</span></a
+                  >
+                  <a
+                    href="/tools/color"
+                    class="btn variant-ghost-surface justify-start"
+                    >Color Picker <span class="text-error-500 font-bold">**</span></a
+                  >
+                  <a
+                    href="/tools/qr"
+                    class="btn variant-ghost-surface justify-start"
+                    >QR Generator <span class="text-error-500 font-bold">**</span></a
+                  >
+                </div>
+
+                <div class="flex flex-col gap-1">
+                  <span
+                    class="text-xs font-bold uppercase text-surface-500 tracking-wider mb-2"
+                    >Security</span
+                  >
+                  <a
+                    href="/tools/password"
+                    class="btn variant-ghost-surface justify-start"
+                    >Password Generator <span class="text-error-500 font-bold">**</span></a
                   >
                   <a
                     href="/tools/sanitizer"
@@ -316,6 +603,16 @@
                     href="/tools/cron"
                     class="btn variant-ghost-surface justify-start"
                     >Cron Generator</a
+                  >
+                  <a
+                    href="/tools/regex"
+                    class="btn variant-ghost-surface justify-start"
+                    >Regex Tester <span class="text-error-500 font-bold">**</span></a
+                  >
+                  <a
+                    href="/tools/diff"
+                    class="btn variant-ghost-surface justify-start"
+                    >Diff Viewer <span class="text-error-500 font-bold">**</span></a
                   >
                 </div>
 

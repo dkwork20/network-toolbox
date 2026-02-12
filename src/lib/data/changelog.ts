@@ -10,6 +10,70 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.10.0",
+        date: "2026-02-12",
+        title: "Phase 5: Fixes & Additional Tools",
+        changes: [
+            { type: 'feat', text: "Added HTTP Headers Analyzer with WCAG scoring" },
+            { type: 'feat', text: "Added Port Scanner for network availability checking" },
+            { type: 'feat', text: "Added Ping/Latency Monitor with history tracking" },
+            { type: 'feat', text: "Added SSL/TLS Checker for certificate validation" },
+            { type: 'feat', text: "Added Whois Lookup for domain/IP registration info" },
+            { type: 'feat', text: "Added Network Speed Test with bandwidth measurement" },
+            { type: 'feat', text: "Added Markdown Preview with GitHub-flavored support" },
+            { type: 'feat', text: "Added Docker Compose Generator" },
+            { type: 'feat', text: "Added Bcrypt Hash Generator with verification" },
+            { type: 'fix', text: "TOML output now works in Converter tool" },
+            { type: 'fix', text: "Latency Check fully implemented in Diagnostics" },
+            { type: 'fix', text: "IPv6 Subnet Visualization now supported" },
+            { type: 'fix', text: "Expanded test coverage to 42 comprehensive tests" },
+        ]
+    },
+    {
+        version: "0.9.0",
+        date: "2026-02-12",
+        title: "Phase 4: Network Tools Expansion",
+        changes: [
+            { type: 'feat', text: "Added IP Range Calculator (CIDR/Range/Netmask conversion)" },
+            { type: 'feat', text: "Added MAC Address Lookup with vendor identification" },
+            { type: 'feat', text: "Embedded OUI database for vendor lookups" },
+        ]
+    },
+    {
+        version: "0.8.0",
+        date: "2026-02-12",
+        title: "Phase 3: Developer Tools Enhancement",
+        changes: [
+            { type: 'feat', text: "Added Diff Viewer with side-by-side and unified views" },
+            { type: 'feat', text: "Line-by-line change highlighting" },
+        ]
+    },
+    {
+        version: "0.7.0",
+        date: "2026-02-12",
+        title: "Phase 2: Data & Encoding Tools Expansion",
+        changes: [
+            { type: 'feat', text: "Added Hash Calculator (SHA-256, SHA-512, etc.)" },
+            { type: 'feat', text: "Added QR Code Generator for URLs, WiFi, vCard" },
+            { type: 'feat', text: "Added Regex Tester with real-time matching" },
+            { type: 'feat', text: "Image to Base64 conversion support" },
+        ]
+    },
+    {
+        version: "0.6.0",
+        date: "2026-02-12",
+        title: "Phase 1: Quick Wins - Encoding & Data Tools",
+        changes: [
+            { type: 'feat', text: "Added UUID Generator with bulk generation" },
+            { type: 'feat', text: "Added Base64 Encoder/Decoder with UTF-8 support" },
+            { type: 'feat', text: "Added URL Encoder/Decoder with query builder" },
+            { type: 'feat', text: "Added Password Generator with strength indicator" },
+            { type: 'feat', text: "Added Color Picker with WCAG contrast checker" },
+            { type: 'feat', text: "Added JSON Formatter with minify and validate" },
+            { type: 'feat', text: "New 'Encoding & Data' category added" },
+        ]
+    },
+    {
         version: "0.5.0",
         date: "2026-01-27",
         title: "Developer Tools Expansion",
