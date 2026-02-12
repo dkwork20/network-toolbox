@@ -64,6 +64,7 @@ IPv4 (32-bit), IPv6 (128-bit) - no floating-point issues.
 ### Homepage Tool Card
 
 Each tool in `src/routes/+page.svelte` needs:
+
 ```typescript
 {
   id: "xxx",
@@ -77,6 +78,7 @@ Each tool in `src/routes/+page.svelte` needs:
 ```
 
 Display in card:
+
 ```html
 <span class="badge variant-soft-secondary text-xs">{tool.version}</span>
 ```
@@ -103,9 +105,12 @@ Add to tool page header:
 
 ## Git Workflow
 
+**IMPORTANT**: Never auto-commit. Only commit when explicitly instructed by user and perform the changelog generation step first before the flow UNLESS user asks to DIRECT COMMIT.
+
 ```bash
 git checkout -b feature/xxx
 npm run check && npx vitest
+# Wait for user to request commit
 git add . && git commit -m "feat: description"
 git push && create PR
 ```
@@ -163,12 +168,13 @@ Brief overview of this release.
 
 `/tools/xxx`
 
-## File Changes
+## File Changes (REQUIRED - must list all modified files)
 
-- `src/routes/tools/xxx/+page.svelte` - New tool
-- `src/routes/+page.svelte` - Added to homepage
-- `src/lib/components/Navbar.svelte` - Added nav entry
+- `src/routes/tools/xxx/+page.svelte` - New tool / enhancement
+- `src/routes/+page.svelte` - Homepage changes (if any)
+- `src/lib/components/Navbar.svelte` - Navigation changes (if any)
 - `src/lib/data/changelog.ts` - Added entry
+- Any other modified files...
 ```
 
 ### Naming Convention
