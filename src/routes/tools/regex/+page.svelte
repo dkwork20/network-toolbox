@@ -9,7 +9,7 @@
     groupValues: string[];
   }
 
-  // State
+  // State - inputs only
   let pattern = $state("");
   let testText = $state("");
   let flags = $state({
@@ -20,9 +20,58 @@
     u: false,
   });
 
-  let regex = $state<RegExp | null>(null);
-  let matches = $state<Match[]>([]);
-  let error = $state<string | null>(null);
+  // Derived values - computed from inputs
+  let flagsStr = $derived(() => {
+    return Object.entries(flags)
+      .filter(([_, v]) => v)
+      .map(([k]) => k)
+      .join("");
+  });
+
+  let regexResult = $derived(() => {
+    if (!pattern) return { regex: null, error: null, matches: [] as Match[] };
+
+    try {
+      const f = flagsStr();
+      const re = new RegExp(pattern, f);
+      
+      if (!testText) return { regex: re, error: null, matches: [] as Match[] };
+
+      const tempMatches: Match[] = [];
+      if (flags.g) {
+        let match;
+        while ((match = re.exec(testText)) !== null) {
+          const groupValues = match.slice(1);
+          tempMatches.push({
+            value: match[0],
+            index: match.index,
+            groups: match.groups || null,
+            groupValues: groupValues.filter(g => g !== undefined),
+          });
+        }
+      } else {
+        const match = re.exec(testText);
+        if (match) {
+          const groupValues = match.slice(1);
+          tempMatches.push({
+            value: match[0],
+            index: match.index,
+            groups: match.groups || null,
+            groupValues: groupValues.filter(g => g !== undefined),
+          });
+        }
+      }
+
+      return { regex: re, error: null, matches: tempMatches };
+    } catch (e) {
+      return { regex: null, error: e instanceof Error ? e.message : "Invalid regex", matches: [] as Match[] };
+    }
+  });
+
+  let regex = $derived(regexResult().regex);
+  let error = $derived(regexResult().error);
+  let matches = $derived(regexResult().matches);
+
   let copied = $state(false);
   let showHelp = $state(false);
 
@@ -37,63 +86,6 @@
     { name: "Credit Card", pattern: "\\b(?:\\d{4}[-\\s]?){3}\\d{4}\\b", flags: { g: true } },
     { name: "Username", pattern: "^[a-zA-Z][a-zA-Z0-9_-]{2,15}$", flags: {} },
   ];
-
-  // Build flags string
-  function getFlagsString(): string {
-    return Object.entries(flags)
-      .filter(([_, v]) => v)
-      .map(([k]) => k)
-      .join("");
-  }
-
-  // Test regex
-  function testRegex() {
-    error = null;
-    matches = [];
-
-    if (!pattern) {
-      regex = null;
-      return;
-    }
-
-    try {
-      const flagsStr = getFlagsString();
-      regex = new RegExp(pattern, flagsStr);
-
-      if (!testText) return;
-
-      if (flags.g) {
-        // Global search - get all matches with exec
-        let match;
-        const tempMatches: Match[] = [];
-        while ((match = regex.exec(testText)) !== null) {
-          const groupValues = match.slice(1);
-          tempMatches.push({
-            value: match[0],
-            index: match.index,
-            groups: match.groups || null,
-            groupValues: groupValues.filter(g => g !== undefined),
-          });
-        }
-        matches = tempMatches;
-      } else {
-        // Single match
-        const match = regex.exec(testText);
-        if (match) {
-          const groupValues = match.slice(1);
-          matches = [{
-            value: match[0],
-            index: match.index,
-            groups: match.groups || null,
-            groupValues: groupValues.filter(g => g !== undefined),
-          }];
-        }
-      }
-    } catch (e) {
-      error = e instanceof Error ? e.message : "Invalid regex";
-      regex = null;
-    }
-  }
 
   // Explain regex (basic)
   function getExplanation(): string[] {
@@ -137,8 +129,8 @@
     let remaining = pattern;
     while (remaining.length > 0) {
       let matched = false;
-      for (const [regex, meaning] of tokens) {
-        const match = remaining.match(regex);
+      for (const [r, meaning] of tokens) {
+        const match = remaining.match(r);
         if (match) {
           explanations.push({ pattern: match[0], meaning });
           remaining = remaining.slice(match[0].length);
@@ -157,10 +149,10 @@
 
   // Copy regex for code
   function getRegexForCode(language: string): string {
-    const flagsStr = getFlagsString();
+    const f = flagsStr();
     switch (language) {
       case "js":
-        return `/${pattern}/${flagsStr}`;
+        return `/${pattern}/${f}`;
       case "py":
         return `r"${pattern}"`;
       case "go":
@@ -168,7 +160,7 @@
       case "java":
         return `"${pattern}"`;
       default:
-        return `/${pattern}/${flagsStr}`;
+        return `/${pattern}/${f}`;
     }
   }
 
@@ -185,11 +177,6 @@
     pattern = preset.pattern;
     flags = { g: preset.flags.g ?? true, i: preset.flags.i ?? false, m: preset.flags.m ?? false, s: preset.flags.s ?? false, u: preset.flags.u ?? false };
   }
-
-  // Auto-test on changes
-  $effect(() => {
-    testRegex();
-  });
 </script>
 
 <svelte:head>
@@ -238,7 +225,7 @@
         bind:value={pattern}
         placeholder="Enter regex pattern..."
       />
-      <span class="text-surface-500 text-2xl">/{getFlagsString()}</span>
+      <span class="text-surface-500 text-2xl">/{flagsStr()}</span>
     </div>
 
     <!-- Flags -->
