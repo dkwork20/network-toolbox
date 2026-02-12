@@ -106,11 +106,21 @@
     let totalBytes = 0;
     const results: number[] = [];
 
-    // Generate random data
+    // Generate random data (chunked to avoid 64KB crypto.getRandomValues limit)
     const generateRandomData = (size: number): Blob => {
-      const array = new Uint8Array(size);
-      crypto.getRandomValues(array);
-      return new Blob([array]);
+      const chunks: Uint8Array[] = [];
+      const maxChunkSize = 65536; // Web Crypto API limit
+      
+      let remaining = size;
+      while (remaining > 0) {
+        const chunkSize = Math.min(remaining, maxChunkSize);
+        const array = new Uint8Array(chunkSize);
+        crypto.getRandomValues(array);
+        chunks.push(array);
+        remaining -= chunkSize;
+      }
+      
+      return new Blob(chunks);
     };
 
     // Simulate upload by measuring local processing speed
@@ -199,6 +209,7 @@
     <h1 class="h1 font-bold flex items-center gap-3">
       <Gauge class="size-8 text-primary-500" />
       Network Speed Test
+      <span class="badge variant-filled-secondary text-xs">V0.10</span>
     </h1>
     <p class="text-surface-500 mt-2">
       Test your network download and upload speeds

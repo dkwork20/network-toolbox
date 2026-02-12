@@ -90,15 +90,6 @@
                 class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
               >
                 <a
-                  href="/tools/iprange"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >IP Range Calculator <span class="text-error-500 font-bold">**</span></a
-                >
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
-              >
-                <a
                   href="/tools/subnet"
                   class="flex items-center px-3 py-2 w-full h-full text-sm"
                   >Subnet Visualizer</a
@@ -489,11 +480,6 @@
                     href="/tools/ip"
                     class="btn variant-ghost-surface justify-start"
                     >IP Calculator</a
-                  >
-                  <a
-                    href="/tools/iprange"
-                    class="btn variant-ghost-surface justify-start"
-                    >IP Range Calculator <span class="text-error-500 font-bold">**</span></a
                   >
                   <a
                     href="/tools/subnet"

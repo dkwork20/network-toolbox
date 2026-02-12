@@ -43,7 +43,10 @@
 
 <div class="container mx-auto p-4 max-w-4xl pb-20">
   <div class="mb-10 text-center">
-    <h2 class="h2 font-bold">DNS Lookup</h2>
+    <div class="flex justify-center items-center gap-3">
+      <h2 class="h2 font-bold">DNS Lookup</h2>
+      <span class="badge variant-filled-secondary text-xs">V0.4</span>
+    </div>
     <p class="mt-2 text-surface-500">Query DNS records via Cloudflare DoH</p>
   </div>
 

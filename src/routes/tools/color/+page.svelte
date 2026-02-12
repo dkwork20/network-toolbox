@@ -197,7 +197,7 @@
     <h1 class="h1 font-bold flex items-center gap-3">
       <Palette class="size-8 text-primary-500" />
       Color Picker & Converter
-      <span class="badge variant-filled-error text-xs animate-pulse">NEW</span>
+      <span class="badge variant-filled-secondary text-xs">V0.6</span>
     </h1>
     <p class="text-surface-500 mt-2">
       Pick colors, convert between formats, and check accessibility contrast

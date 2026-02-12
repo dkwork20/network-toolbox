@@ -60,6 +60,7 @@
 >
   <div class="flex justify-between items-center mb-6">
     <h2 class="h2 font-bold">Config Converter</h2>
+    <span class="badge variant-filled-secondary text-xs">V0.5</span>
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-8 h-full">

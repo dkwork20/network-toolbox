@@ -125,6 +125,7 @@ Made with ❤️ by the NetOps team
     <h1 class="h1 font-bold flex items-center gap-3">
       <FileText class="size-8 text-primary-500" />
       Markdown Preview
+      <span class="badge variant-filled-secondary text-xs">V0.10</span>
     </h1>
     <p class="text-surface-500 mt-2">
       Preview README files and documentation with GitHub-flavored markdown

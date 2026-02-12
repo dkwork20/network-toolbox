@@ -51,6 +51,7 @@
 >
   <div class="flex justify-between items-center mb-6">
     <h2 class="h2 font-bold">X.509 Certificate Decoder</h2>
+    <span class="badge variant-filled-secondary text-xs">V0.5</span>
   </div>
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 h-full">

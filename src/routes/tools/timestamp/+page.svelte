@@ -180,7 +180,10 @@
 
 <div class="container mx-auto p-4 max-w-4xl pb-20">
   <div class="mb-10 text-center">
-    <h2 class="h2 font-bold">Unix Timestamp Converter</h2>
+    <div class="flex justify-center items-center gap-3">
+      <h2 class="h2 font-bold">Unix Timestamp Converter</h2>
+      <span class="badge variant-filled-secondary text-xs">V0.4</span>
+    </div>
     <div class="mt-4 text-4xl font-mono font-bold text-primary-500">
       {Math.floor(nowMs / 1000)}
     </div>

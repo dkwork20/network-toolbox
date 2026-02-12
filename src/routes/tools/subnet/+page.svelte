@@ -159,7 +159,10 @@
   class="container mx-auto p-4 max-w-6xl h-full flex flex-col overflow-y-auto pb-20"
 >
   <div class="flex justify-between items-center mb-6">
-    <h2 class="h2 font-bold">Visual Subnet Calculator (IPv4 & IPv6)</h2>
+    <div class="flex items-center gap-3">
+      <h2 class="h2 font-bold">Visual Subnet Calculator (IPv4 & IPv6)</h2>
+      <span class="badge variant-filled-secondary text-xs">V0.2</span>
+    </div>
   </div>
 
   <div class="flex gap-4 mb-4 flex-wrap">

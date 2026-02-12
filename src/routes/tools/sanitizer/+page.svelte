@@ -172,7 +172,10 @@
   class="container mx-auto p-4 max-w-6xl h-full flex flex-col overflow-y-auto pb-20"
 >
   <div class="flex justify-between items-center mb-6">
-    <h2 class="h2 font-bold">Log Sanitizer / Masking Tool</h2>
+    <div class="flex items-center gap-3">
+      <h2 class="h2 font-bold">Log Sanitizer / Masking Tool</h2>
+      <span class="badge variant-filled-secondary text-xs">V0.3</span>
+    </div>
   </div>
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 min-h-[500px]">

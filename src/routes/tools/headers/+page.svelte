@@ -197,6 +197,7 @@
     <h1 class="h1 font-bold flex items-center gap-3">
       <FileSearch class="size-8 text-primary-500" />
       HTTP Headers Analyzer
+      <span class="badge variant-filled-secondary text-xs">V0.10</span>
     </h1>
     <p class="text-surface-500 mt-2">
       Analyze HTTP security headers and get recommendations for improvements

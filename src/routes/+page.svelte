@@ -55,19 +55,10 @@
     {
       id: "ip",
       title: "IP Calculator",
-      desc: "CIDR calculation & exclusion",
+      desc: "CIDR calculation & subnet analysis",
       icon: Calculator,
       href: "/tools/ip",
       cat: "network",
-    },
-    {
-      id: "iprange",
-      title: "IP Range Calculator",
-      desc: "CIDR, range, netmask converter",
-      icon: Calculator,
-      href: "/tools/iprange",
-      cat: "network",
-      isNew: true,
     },
     {
       id: "subnet",

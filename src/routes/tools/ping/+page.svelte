@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Activity, Clock, Trash2, RefreshCw, Plus, Download, TrendingUp, TrendingDown } from "@lucide/svelte";
   import { toaster } from "$lib/toaster.svelte";
+  import { onMount } from "svelte";
 
   interface LatencyResult {
     target: string;
@@ -19,6 +20,7 @@
   let isChecking = $state(false);
   let autoCheck = $state(false);
   let checkInterval = $state(30);
+  let initialized = $state(false);
 
   // Default endpoints for latency checking
   const defaultEndpoints = [
@@ -30,15 +32,16 @@
   ];
 
   // Load from localStorage
-  function loadFromStorage() {
+  function loadFromStorage(): string[] {
     const saved = localStorage.getItem("latencyTargets");
     if (saved) {
       try {
-        targets = JSON.parse(saved);
+        return JSON.parse(saved);
       } catch (e) {
         console.error("Failed to load targets", e);
       }
     }
+    return [];
   }
 
   // Save to localStorage
@@ -72,20 +75,32 @@
     const existing = results.get(target);
 
     if (existing) {
-      existing.latencies.push(latency || 0);
-      existing.timestamps.push(Date.now());
-      if (existing.latencies.length > 50) {
-        existing.latencies.shift();
-        existing.timestamps.shift();
+      const newLatencies = [...existing.latencies, latency || 0];
+      const newTimestamps = [...existing.timestamps, Date.now()];
+      if (newLatencies.length > 50) {
+        newLatencies.shift();
+        newTimestamps.shift();
       }
-      const validLatencies = existing.latencies.filter((l) => l > 0);
-      existing.avgLatency = validLatencies.length
+      const validLatencies = newLatencies.filter((l) => l > 0);
+      const avgLatency = validLatencies.length
         ? Math.round(validLatencies.reduce((a, b) => a + b, 0) / validLatencies.length)
         : 0;
-      existing.minLatency = validLatencies.length ? Math.min(...validLatencies) : 0;
-      existing.maxLatency = validLatencies.length ? Math.max(...validLatencies) : 0;
-      existing.lastCheck = Date.now();
-      results = new Map(results);
+      const minLatency = validLatencies.length ? Math.min(...validLatencies) : 0;
+      const maxLatency = validLatencies.length ? Math.max(...validLatencies) : 0;
+      
+      const updatedResult: LatencyResult = {
+        ...existing,
+        latencies: newLatencies,
+        timestamps: newTimestamps,
+        avgLatency,
+        minLatency,
+        maxLatency,
+        lastCheck: Date.now(),
+      };
+      
+      const newMap = new Map(results);
+      newMap.set(target, updatedResult);
+      results = newMap;
     } else {
       const newResult: LatencyResult = {
         target,
@@ -96,13 +111,15 @@
         maxLatency: latency || 0,
         lastCheck: Date.now(),
       };
-      results.set(target, newResult);
-      results = new Map(results);
+      const newMap = new Map(results);
+      newMap.set(target, newResult);
+      results = newMap;
     }
   }
 
   // Check all targets
   async function checkAll() {
+    if (isChecking || targets.length === 0) return;
     isChecking = true;
     for (const target of targets) {
       await checkTarget(target);
@@ -131,8 +148,9 @@
   // Remove target
   function removeTarget(target: string) {
     targets = targets.filter((t) => t !== target);
-    results.delete(target);
-    results = new Map(results);
+    const newMap = new Map(results);
+    newMap.delete(target);
+    results = newMap;
     saveToStorage();
   }
 
@@ -181,13 +199,17 @@
     return `${hours}h ago`;
   }
 
-  // Initialize
-  $effect(() => {
-    loadFromStorage();
-    if (targets.length === 0) {
-      loadDefaults();
-    } else {
+  // Initialize on mount (run once)
+  onMount(() => {
+    if (initialized) return;
+    initialized = true;
+    
+    const savedTargets = loadFromStorage();
+    if (savedTargets.length > 0) {
+      targets = savedTargets;
       checkAll();
+    } else {
+      loadDefaults();
     }
   });
 
@@ -213,6 +235,7 @@
     <h1 class="h1 font-bold flex items-center gap-3">
       <Activity class="size-8 text-primary-500" />
       Ping/Latency Monitor
+      <span class="badge variant-filled-secondary text-xs">V0.10</span>
     </h1>
     <p class="text-surface-500 mt-2">
       Measure and track network latency to multiple endpoints

@@ -131,7 +131,7 @@
       scanProgress = Math.round(((i + 1) / portsToScan.length) * 100);
 
       const result = await checkPort(hostname, port);
-      results.push(result);
+      results = [...results, result];
     }
 
     isScanning = false;
@@ -149,6 +149,7 @@
   // Stats
   let openCount = $derived(results.filter((r) => r.status === "open").length);
   let closedCount = $derived(results.filter((r) => r.status === "closed").length);
+  let sortedResults = $derived([...results].sort((a, b) => a.port - b.port));
 </script>
 
 <svelte:head>
@@ -161,6 +162,7 @@
     <h1 class="h1 font-bold flex items-center gap-3">
       <Scan class="size-8 text-primary-500" />
       Port Scanner
+      <span class="badge variant-filled-secondary text-xs">V0.10</span>
     </h1>
     <p class="text-surface-500 mt-2">
       Check common ports for open/closed status (browser-based, limited accuracy)
@@ -259,7 +261,7 @@
             </tr>
           </thead>
           <tbody>
-            {#each results.sort((a, b) => a.port - b.port) as result}
+            {#each sortedResults as result}
               <tr>
                 <td class="font-mono">{result.port}</td>
                 <td>{result.service}</td>

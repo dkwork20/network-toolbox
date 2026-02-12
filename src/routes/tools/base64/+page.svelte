@@ -389,7 +389,7 @@
     <h1 class="h1 font-bold flex items-center gap-3">
       <Binary class="size-8 text-primary-500" />
       Base64 Encoder/Decoder
-      <span class="badge variant-filled-error text-xs animate-pulse">NEW</span>
+      <span class="badge variant-filled-secondary text-xs">V0.6</span>
     </h1>
     <p class="text-surface-500 mt-2">
       Convert between text and Base64, encode/decode images and files

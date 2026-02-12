@@ -181,6 +181,7 @@
     <h1 class="h1 font-bold flex items-center gap-3">
       <Activity class="size-8 text-primary-500" />
       Network Diagnostics
+      <span class="badge variant-filled-secondary text-xs">V0.4</span>
     </h1>
     <p class="text-surface-500 mt-2">
       Test WebRTC IP leaks and measure network latency

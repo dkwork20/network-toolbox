@@ -154,7 +154,7 @@
     <h1 class="h1 font-bold flex items-center gap-3">
       <Link class="size-8 text-primary-500" />
       URL Encoder/Decoder
-      <span class="badge variant-filled-error text-xs animate-pulse">NEW</span>
+      <span class="badge variant-filled-secondary text-xs">V0.6</span>
     </h1>
     <p class="text-surface-500 mt-2">
       Encode, decode, parse URLs and build query strings
