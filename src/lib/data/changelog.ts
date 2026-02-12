@@ -10,6 +10,18 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.11.0",
+        date: "2026-02-13",
+        title: "Docker Tool Enhancement",
+        changes: [
+            { type: 'feat', text: "Added YAML file import with drag-and-drop support" },
+            { type: 'feat', text: "Added raw YAML editor with line numbers and error highlighting" },
+            { type: 'feat', text: "Added extra fields support for custom/unknown YAML properties" },
+            { type: 'feat', text: "Added command field as textarea for multi-line commands" },
+            { type: 'fix', text: "Fixed light mode display issues in Docker tool" },
+        ]
+    },
+    {
         version: "0.10.0",
         date: "2026-02-12",
         title: "Phase 5: Fixes & Additional Tools",

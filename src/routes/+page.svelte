@@ -345,7 +345,7 @@
       icon: Container,
       href: "/tools/docker",
       cat: "dev",
-      version: "V0.10",
+      version: "V0.11",
       isNew: true,
     },
   ];
