@@ -38,6 +38,7 @@
   import { fade } from "svelte/transition";
   import { DragDropProvider } from "@dnd-kit-svelte/svelte";
   import SortableQuickLink from "$lib/components/SortableQuickLink.svelte";
+  import { isToolVerified } from "$lib/data/verified-tools";
 
   function arrayMove(array: any[], from: number, to: number) {
     const newArray = array.slice();
@@ -517,7 +518,9 @@
         {#each tools.filter((t) => t.cat === cat.id) as tool}
           <a
             href={tool.href}
-            class="card p-6 bg-surface-50 dark:bg-surface-800 border border-surface-500/20 hover:border-primary-500/30 hover:shadow-lg transition-all group"
+            class={`card p-6 bg-surface-50 dark:bg-surface-800 border transition-all group ${isToolVerified(tool.id)
+              ? "border-success-500/40 ring-1 ring-success-500/25 hover:border-success-500/60 hover:shadow-lg hover:shadow-success-500/10"
+              : "border-surface-500/20 hover:border-primary-500/30 hover:shadow-lg"}`}
           >
             <div class="flex items-start gap-4">
               <div
@@ -534,6 +537,9 @@
                   </h3>
                   {#if tool.isNew}
                     <span class="badge preset-filled-error-500 text-xs animate-pulse">NEW</span>
+                  {/if}
+                  {#if isToolVerified(tool.id)}
+                    <span class="badge preset-tonal-success text-xs">Verified</span>
                   {/if}
                   <span class="badge preset-tonal-secondary text-xs">{tool.version}</span>
                 </div>

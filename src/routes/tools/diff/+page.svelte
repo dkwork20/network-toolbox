@@ -2,9 +2,11 @@
   import { GitCompare, Copy, Check, RefreshCw, Columns, List, Minus, Plus } from "@lucide/svelte";
   import { toaster } from "$lib/toaster.svelte";
   import { onMount } from "svelte";
+  import { isToolVerified } from "$lib/data/verified-tools";
   import type { DiffWorkerRequest, DiffWorkerResponse, SplitDiffRow, UnifiedDiffRow } from "$lib/workers/diff.worker";
 
   type ViewMode = "split" | "unified";
+  const isVerified = isToolVerified("diff");
 
   interface VirtualWindow {
     start: number;
@@ -312,7 +314,9 @@ console.log('Sum:', result);`;
       <GitCompare class="size-8 text-primary-500" />
       Diff Viewer
       <span class="badge preset-filled-secondary-500 text-xs">V0.8</span>
-      <span class="badge preset-tonal-success text-xs">Verified</span>
+      {#if isVerified}
+        <span class="badge preset-tonal-success text-xs">Verified</span>
+      {/if}
     </h1>
     <p class="text-surface-500 mt-2">Compare two text snippets and see the differences</p>
   </div>

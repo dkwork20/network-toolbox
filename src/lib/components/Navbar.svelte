@@ -3,6 +3,7 @@
   import { onMount } from "svelte";
   import { Dialog, DropdownMenu } from "bits-ui";
   import { page } from "$app/stores";
+  import { isToolHrefVerified } from "$lib/data/verified-tools";
 
   type ThemePreference = "light" | "dark";
 
@@ -39,6 +40,13 @@
     isDark = !isDark;
     applyTheme(isDark);
     localStorage.setItem(THEME_STORAGE_KEY, isDark ? "dark" : "light");
+  }
+
+  function navToolLinkClass(baseClass: string, href: string): string {
+    if (!isToolHrefVerified(href)) {
+      return baseClass;
+    }
+    return `${baseClass} text-success-700 dark:text-success-300 font-semibold border border-success-500/35 rounded-md bg-success-500/10`;
   }
 
   onMount(() => {
@@ -228,8 +236,8 @@
               >
                 <a
                   href="/tools/base64"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Base64 Encoder <span class="text-error-500 font-bold">**</span></a
+                  class={navToolLinkClass("flex items-center px-3 py-2 w-full h-full text-sm", "/tools/base64")}
+                  >Base64 Encoder <span class="text-error-500 font-bold">**</span><span class="badge preset-tonal-success text-[10px] ml-2">Verified</span></a
                 >
               </DropdownMenu.Item>
               <DropdownMenu.Item
@@ -246,8 +254,8 @@
               >
                 <a
                   href="/tools/json"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >JSON Formatter <span class="text-error-500 font-bold">**</span></a
+                  class={navToolLinkClass("flex items-center px-3 py-2 w-full h-full text-sm", "/tools/json")}
+                  >JSON Formatter <span class="text-error-500 font-bold">**</span><span class="badge preset-tonal-success text-[10px] ml-2">Verified</span></a
                 >
               </DropdownMenu.Item>
               <DropdownMenu.Item
@@ -394,8 +402,8 @@
               >
                 <a
                   href="/tools/diff"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Diff Viewer <span class="text-error-500 font-bold">**</span></a
+                  class={navToolLinkClass("flex items-center px-3 py-2 w-full h-full text-sm", "/tools/diff")}
+                  >Diff Viewer <span class="text-error-500 font-bold">**</span><span class="badge preset-tonal-success text-[10px] ml-2">Verified</span></a
                 >
               </DropdownMenu.Item>
               <DropdownMenu.Item
@@ -529,8 +537,8 @@
                   >
                   <a
                     href="/tools/base64"
-                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
-                    >Base64 Encoder <span class="text-error-500 font-bold">**</span></a
+                    class={navToolLinkClass("btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start", "/tools/base64")}
+                    >Base64 Encoder <span class="text-error-500 font-bold">**</span><span class="badge preset-tonal-success text-[10px] ml-2">Verified</span></a
                   >
                   <a
                     href="/tools/url"
@@ -539,8 +547,8 @@
                   >
                   <a
                     href="/tools/json"
-                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
-                    >JSON Formatter <span class="text-error-500 font-bold">**</span></a
+                    class={navToolLinkClass("btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start", "/tools/json")}
+                    >JSON Formatter <span class="text-error-500 font-bold">**</span><span class="badge preset-tonal-success text-[10px] ml-2">Verified</span></a
                   >
                   <a
                     href="/tools/color"
@@ -606,8 +614,8 @@
                   >
                   <a
                     href="/tools/diff"
-                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
-                    >Diff Viewer <span class="text-error-500 font-bold">**</span></a
+                    class={navToolLinkClass("btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start", "/tools/diff")}
+                    >Diff Viewer <span class="text-error-500 font-bold">**</span><span class="badge preset-tonal-success text-[10px] ml-2">Verified</span></a
                   >
                 </div>
 

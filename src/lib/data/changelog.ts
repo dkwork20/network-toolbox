@@ -10,6 +10,18 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.14.0",
+        date: "2026-02-14",
+        title: "Verified Tool Highlighting and JSON Structure Editor UX",
+        changes: [
+            { type: 'feat', text: "Added centralized verified tool metadata with reusable isToolVerified/isToolHrefVerified helpers" },
+            { type: 'feat', text: "Added verified badges and highlighted states for verified tools on homepage cards and navbar dropdown/mobile menus" },
+            { type: 'feat', text: "Expanded JSON Formatter with full-structure human editor improvements, lock/unlock flow, and change-tracking apply prompts" },
+            { type: 'fix', text: "Fixed JSON sample-load freeze/looping issue and improved structure editor auto-navigation focus behavior" },
+            { type: 'fix', text: "Improved Base64 drag-and-drop visual feedback coverage and reduced lag during large paste conversion" },
+        ]
+    },
+    {
         version: "0.13.0",
         date: "2026-02-14",
         title: "Diff Viewer Performance Hardening",
