@@ -10,6 +10,18 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.13.0",
+        date: "2026-02-14",
+        title: "Diff Viewer Performance Hardening",
+        changes: [
+            { type: 'feat', text: "Moved diff computation to a dedicated Web Worker and added virtualized rendering for large outputs" },
+            { type: 'feat', text: "Added Large File Mode with context-line controls to collapse unchanged blocks around changes" },
+            { type: 'fix', text: "Fixed split diff row spacing inflation by removing unintended vertical grid gap between rows" },
+            { type: 'fix', text: "Fixed layout theme bootstrap script collision by isolating storedTheme variables in an IIFE" },
+            { type: 'chore', text: "Added Verified badge on Diff Viewer header for stabilization tracking" },
+        ]
+    },
+    {
         version: "0.12.0",
         date: "2026-02-14",
         title: "Theme Consistency and Skeleton Preset Migration",

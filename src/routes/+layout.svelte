@@ -12,15 +12,17 @@
 <svelte:head>
   <link rel="icon" href={favicon} />
   <script>
-    const storedTheme = localStorage.getItem("theme");
-    const hasValidStoredTheme =
-      storedTheme === "light" || storedTheme === "dark";
-    const shouldUseDarkTheme =
-      storedTheme === "dark" ||
-      (!hasValidStoredTheme &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches);
+    (() => {
+      const storedTheme = localStorage.getItem("theme");
+      const hasValidStoredTheme =
+        storedTheme === "light" || storedTheme === "dark";
+      const shouldUseDarkTheme =
+        storedTheme === "dark" ||
+        (!hasValidStoredTheme &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches);
 
-    document.documentElement.classList.toggle("dark", shouldUseDarkTheme);
+      document.documentElement.classList.toggle("dark", shouldUseDarkTheme);
+    })();
   </script>
 </svelte:head>
 
