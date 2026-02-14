@@ -37,7 +37,7 @@
   >
     {#if isEditing}
       <button
-        class="absolute top-2 right-2 btn-icon btn-icon-sm variant-filled-error z-10"
+        class="absolute top-2 right-2 btn-icon btn-icon-sm preset-filled-error-500 z-10"
         onclick={(e) => {
           e.stopPropagation();
           onDelete(id);

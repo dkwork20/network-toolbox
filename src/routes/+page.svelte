@@ -450,7 +450,7 @@
       </h2>
       <div class="flex gap-2">
         <button
-          class="btn-icon btn-icon-sm variant-ringed-surface hover:variant-filled-surface transition-all"
+          class="btn-icon btn-icon-sm preset-outlined-surface-500 hover:preset-filled-surface-500 transition-all"
           onclick={() => {
             isLocked = !isLocked;
             if (isLocked) isEditing = false;
@@ -467,13 +467,13 @@
         {#if !isLocked}
           <div class="flex gap-2" in:fade>
             <button
-              class="btn-sm variant-soft-surface"
+              class="btn-sm preset-tonal-surface"
               onclick={() => (isEditing = !isEditing)}
             >
               {#if isEditing}Done{:else}<Edit3 class="size-4 mr-1" /> Remove{/if}
             </button>
             <button
-              class="btn-sm variant-filled-primary"
+              class="btn-sm preset-filled-primary-500"
               onclick={() => (showAddModal = true)}
             >
               <Plus class="size-4 mr-1" /> Add
@@ -533,9 +533,9 @@
                     {tool.title}
                   </h3>
                   {#if tool.isNew}
-                    <span class="badge variant-filled-error text-xs animate-pulse">NEW</span>
+                    <span class="badge preset-filled-error-500 text-xs animate-pulse">NEW</span>
                   {/if}
-                  <span class="badge variant-soft-secondary text-xs">{tool.version}</span>
+                  <span class="badge preset-tonal-secondary text-xs">{tool.version}</span>
                 </div>
                 <p class="text-sm text-surface-500 mt-1">{tool.desc}</p>
               </div>
@@ -590,10 +590,10 @@
         />
       </label>
       <div class="flex justify-end gap-2 mt-4">
-        <button class="btn variant-ghost" onclick={() => (showAddModal = false)}
+        <button class="btn bg-transparent" onclick={() => (showAddModal = false)}
           >Cancel</button
         >
-        <button class="btn variant-filled-primary" onclick={addLink}
+        <button class="btn preset-filled-primary-500" onclick={addLink}
           >Save</button
         >
       </div>

@@ -154,7 +154,7 @@
     <h1 class="h1 font-bold flex items-center gap-3">
       <Link class="size-8 text-primary-500" />
       URL Encoder/Decoder
-      <span class="badge variant-filled-secondary text-xs">V0.6</span>
+      <span class="badge preset-filled-secondary-500 text-xs">V0.6</span>
     </h1>
     <p class="text-surface-500 mt-2">
       Encode, decode, parse URLs and build query strings
@@ -164,26 +164,26 @@
   <!-- Mode Selection -->
   <div class="flex flex-wrap gap-2 mb-6">
     <button
-      class="btn {mode === 'encode' ? 'variant-filled-primary' : 'variant-soft-surface'}"
+      class="btn {mode === 'encode' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
       onclick={() => { mode = 'encode'; convert(); }}
     >
       Encode
     </button>
     <button
-      class="btn {mode === 'decode' ? 'variant-filled-primary' : 'variant-soft-surface'}"
+      class="btn {mode === 'decode' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
       onclick={() => { mode = 'decode'; convert(); }}
     >
       Decode
     </button>
     <button
-      class="btn {mode === 'parse' ? 'variant-filled-primary' : 'variant-soft-surface'}"
+      class="btn {mode === 'parse' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
       onclick={() => { mode = 'parse'; convert(); }}
     >
       <Search class="size-4" />
       Parse URL
     </button>
     <button
-      class="btn {mode === 'build' ? 'variant-filled-primary' : 'variant-soft-surface'}"
+      class="btn {mode === 'build' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
       onclick={() => { mode = 'build'; convert(); }}
     >
       Build Query
@@ -207,11 +207,11 @@
         <div class="flex justify-between items-center">
           <span class="font-medium">Output</span>
           <div class="flex gap-2">
-            <button class="btn btn-sm variant-soft-surface" onclick={swapInOut}>
+            <button class="btn btn-sm preset-tonal-surface" onclick={swapInOut}>
               <ArrowUpDown class="size-4" />
               Swap
             </button>
-            <button class="btn btn-sm variant-soft-surface" onclick={clearAll}>
+            <button class="btn btn-sm preset-tonal-surface" onclick={clearAll}>
               <RefreshCw class="size-4" />
             </button>
           </div>
@@ -371,7 +371,7 @@
       <div class="card p-6 bg-surface-50 dark:bg-surface-900 space-y-4">
         <div class="flex justify-between items-center">
           <span class="font-medium">Query Parameters</span>
-          <button class="btn btn-sm variant-soft-surface" onclick={addQueryParam}>
+          <button class="btn btn-sm preset-tonal-surface" onclick={addQueryParam}>
             <Plus class="size-4" />
             Add
           </button>
@@ -396,7 +396,7 @@
                 oninput={(e) => updateQueryParam(index, 1, e.currentTarget.value)}
               />
               <button
-                class="btn-icon btn-icon-sm variant-soft-error"
+                class="btn-icon btn-icon-sm preset-tonal-error"
                 onclick={() => removeQueryParam(index)}
                 disabled={queryParams.length === 1}
               >
@@ -411,7 +411,7 @@
       <div class="card p-6 bg-surface-50 dark:bg-surface-900 space-y-4">
         <div class="flex justify-between items-center">
           <span class="font-medium">Query String</span>
-          <button class="btn btn-sm variant-soft-surface" onclick={clearAll}>
+          <button class="btn btn-sm preset-tonal-surface" onclick={clearAll}>
             <RefreshCw class="size-4" />
             Clear
           </button>

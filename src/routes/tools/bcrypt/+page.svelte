@@ -127,7 +127,7 @@
     <h1 class="h1 font-bold flex items-center gap-3">
       <Key class="size-8 text-primary-500" />
       Bcrypt Hash Generator
-      <span class="badge variant-filled-secondary text-xs">V0.10</span>
+      <span class="badge preset-filled-secondary-500 text-xs">V0.10</span>
     </h1>
     <p class="text-surface-500 mt-2">
       Generate and verify bcrypt password hashes for secure storage
@@ -137,14 +137,14 @@
   <!-- Mode Selection -->
   <div class="flex gap-2 mb-6">
     <button
-      class="btn {mode === 'generate' ? 'variant-filled-primary' : 'variant-soft-surface'}"
+      class="btn {mode === 'generate' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
       onclick={() => { mode = 'generate'; verifyResult = null; }}
     >
       <Shield class="size-4" />
       Generate Hash
     </button>
     <button
-      class="btn {mode === 'verify' ? 'variant-filled-primary' : 'variant-soft-surface'}"
+      class="btn {mode === 'verify' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
       onclick={() => { mode = 'verify'; verifyResult = null; }}
     >
       <ShieldCheck class="size-4" />
@@ -204,7 +204,7 @@
 
       <div class="flex gap-2">
         <button
-          class="btn variant-filled-primary flex-1"
+          class="btn preset-filled-primary-500 flex-1"
           onclick={generateHash}
           disabled={isProcessing || !password || password !== confirmPassword}
         >
@@ -215,7 +215,7 @@
             Generate Hash
           {/if}
         </button>
-        <button class="btn variant-soft-surface" onclick={clearAll}>
+        <button class="btn preset-tonal-surface" onclick={clearAll}>
           Clear
         </button>
       </div>
@@ -283,7 +283,7 @@
 
       <div class="flex gap-2">
         <button
-          class="btn variant-filled-primary flex-1"
+          class="btn preset-filled-primary-500 flex-1"
           onclick={verifyHash}
           disabled={isProcessing || !hashToVerify || !verifyPassword}
         >
@@ -294,7 +294,7 @@
             Verify Password
           {/if}
         </button>
-        <button class="btn variant-soft-surface" onclick={clearAll}>
+        <button class="btn preset-tonal-surface" onclick={clearAll}>
           Clear
         </button>
       </div>

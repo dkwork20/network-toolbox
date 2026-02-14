@@ -621,7 +621,7 @@
     <h1 class="h1 font-bold flex items-center gap-3">
       <Container class="size-8 text-primary-500" />
       Docker Compose Generator
-      <span class="badge variant-filled-secondary text-xs">V0.11</span>
+      <span class="badge preset-filled-secondary-500 text-xs">V0.11</span>
     </h1>
     <p class="text-surface-500 mt-2">
       Generate, import & edit docker-compose.yml files visually
@@ -653,24 +653,24 @@
           bind:this={fileInput}
           onchange={handleFileImport}
         />
-        <button class="btn btn-sm variant-soft-surface" onclick={() => fileInput.click()}>
+        <button class="btn btn-sm preset-tonal-surface" onclick={() => fileInput.click()}>
           <Upload class="size-4" />
           Import File
         </button>
 
         <!-- Editor Toggle -->
-        <button class="btn btn-sm {isEditorMode ? 'variant-filled-primary' : 'variant-soft-secondary'}" onclick={toggleEditorMode}>
+        <button class="btn btn-sm {isEditorMode ? 'preset-filled-primary-500' : 'preset-tonal-secondary'}" onclick={toggleEditorMode}>
           <FileText class="size-4" />
           {isEditorMode ? 'Form Editor' : 'Raw YAML'}
         </button>
       </div>
 
       <div class="flex gap-2">
-        <button class="btn btn-sm variant-filled-primary" onclick={addService}>
+        <button class="btn btn-sm preset-filled-primary-500" onclick={addService}>
           <Plus class="size-4" />
           Add Service
         </button>
-        <button class="btn btn-sm variant-soft-surface" onclick={copyYaml}>
+        <button class="btn btn-sm preset-tonal-surface" onclick={copyYaml}>
           {#if copied}
             <Check class="size-4 text-success-500" />
           {:else}
@@ -678,11 +678,11 @@
           {/if}
           Copy
         </button>
-        <button class="btn btn-sm variant-soft-surface" onclick={downloadYaml}>
+        <button class="btn btn-sm preset-tonal-surface" onclick={downloadYaml}>
           <Download class="size-4" />
           Download
         </button>
-        <button class="btn btn-sm variant-ghost-surface" onclick={clearAll}>
+        <button class="btn btn-sm bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface" onclick={clearAll}>
           <RefreshCw class="size-4" />
           Clear
         </button>
@@ -692,7 +692,7 @@
 
   <!-- Parse errors -->
   {#if yamlErrors.length > 0}
-    <div class="alert variant-filled-error mb-4" role="alert">
+    <div class="alert preset-filled-error-500 mb-4" role="alert">
       <AlertCircle class="size-5 shrink-0" />
       <div class="flex-1 space-y-2">
         <strong>YAML Parse Error(s): {yamlErrors.length} found</strong>
@@ -726,12 +726,12 @@
       <p class="text-lg font-medium mb-2">Drop docker-compose.yml here</p>
       <p class="text-surface-500 mb-4">or use the Import File button above</p>
       <div class="flex justify-center gap-2">
-        <button class="btn btn-sm variant-soft-surface" onclick={() => fileInput.click()}>
+        <button class="btn btn-sm preset-tonal-surface" onclick={() => fileInput.click()}>
           <Upload class="size-4" />
           Import File
         </button>
         <span class="text-surface-400">or</span>
-        <button class="btn btn-sm variant-filled-primary" onclick={addService}>
+        <button class="btn btn-sm preset-filled-primary-500" onclick={addService}>
           <Plus class="size-4" />
           Add Service
         </button>
@@ -748,11 +748,11 @@
           <span class="text-xs text-surface-500 dark:text-surface-400">• {yamlLines.length} lines</span>
         </div>
         <div class="flex gap-2">
-          <button class="btn btn-sm variant-ghost-surface" onclick={handleYamlInput}>
+          <button class="btn btn-sm bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface" onclick={handleYamlInput}>
             Check Syntax
           </button>
           {#if yamlErrors.length === 0}
-            <button class="btn btn-sm variant-filled-success" onclick={parseAndSwitchToForm}>
+            <button class="btn btn-sm preset-filled-success-500" onclick={parseAndSwitchToForm}>
               Apply to Form
             </button>
           {/if}
@@ -830,7 +830,7 @@ services:
           <div class="text-center py-8 text-surface-500 border-2 border-dashed border-surface-500/30 rounded-lg">
             <Container class="size-12 mx-auto mb-2 opacity-50" />
             <p>No services yet</p>
-            <button class="btn btn-sm variant-soft-surface mt-2" onclick={addService}>
+            <button class="btn btn-sm preset-tonal-surface mt-2" onclick={addService}>
               Add Service
             </button>
           </div>
@@ -840,7 +840,7 @@ services:
           <div class="card p-4 bg-surface-50 dark:bg-surface-900 space-y-3">
             <div class="flex justify-between items-center">
               <span class="font-medium">Service {index + 1}</span>
-              <button class="btn-icon btn-icon-sm variant-ghost-error" onclick={() => removeService(service.id)}>
+              <button class="btn-icon btn-icon-sm bg-transparent text-error-600 dark:text-error-400 hover:preset-tonal-error" onclick={() => removeService(service.id)}>
                 <Trash2 class="size-4" />
               </button>
             </div>
@@ -926,7 +926,7 @@ services:
               <div class="flex justify-between items-center">
                 <span class="text-xs text-surface-400">Extra Fields (custom)</span>
                 <button 
-                  class="btn btn-xs variant-ghost-surface" 
+                  class="btn btn-xs bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface" 
                   onclick={() => { 
                     const key = prompt('Enter field name:'); 
                     if (key) { 
@@ -967,7 +967,7 @@ services:
                       placeholder="value"
                     />
                     <button 
-                      class="btn-icon btn-icon-sm variant-ghost-error" 
+                      class="btn-icon btn-icon-sm bg-transparent text-error-600 dark:text-error-400 hover:preset-tonal-error" 
                       onclick={() => { 
                         const newExtra = { ...service.extra };
                         delete newExtra[key];
@@ -1000,7 +1000,7 @@ services:
               </button>
             </div>
           {/each}
-          <button class="btn btn-sm variant-ghost-surface" onclick={addNetwork}>
+          <button class="btn btn-sm bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface" onclick={addNetwork}>
             <Plus class="size-4" />
             Add Network
           </button>

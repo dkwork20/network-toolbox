@@ -182,7 +182,7 @@
     <h1 class="h1 font-bold flex items-center gap-3">
       <FileJson class="size-8 text-primary-500" />
       JSON Formatter
-      <span class="badge variant-filled-secondary text-xs">V0.6</span>
+      <span class="badge preset-filled-secondary-500 text-xs">V0.6</span>
     </h1>
     <p class="text-surface-500 mt-2">
       Format, validate, minify, and explore JSON data
@@ -193,19 +193,19 @@
   <div class="card p-4 bg-surface-50 dark:bg-surface-900 mb-6">
     <div class="flex flex-wrap gap-4 items-center justify-between">
       <div class="flex flex-wrap gap-2">
-        <button class="btn variant-filled-primary" onclick={format}>
+        <button class="btn preset-filled-primary-500" onclick={format}>
           <Maximize2 class="size-4" />
           Format
         </button>
-        <button class="btn variant-soft-surface" onclick={minify}>
+        <button class="btn preset-tonal-surface" onclick={minify}>
           <Minimize2 class="size-4" />
           Minify
         </button>
-        <button class="btn variant-soft-surface" onclick={clearAll}>
+        <button class="btn preset-tonal-surface" onclick={clearAll}>
           <RefreshCw class="size-4" />
           Clear
         </button>
-        <button class="btn variant-ghost-surface" onclick={loadSample}>
+        <button class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface" onclick={loadSample}>
           Load Sample
         </button>
       </div>
@@ -273,7 +273,7 @@
       <div class="flex justify-between items-center">
         <label class="font-medium">Output</label>
         {#if outputJson}
-          <button class="btn btn-sm variant-soft-surface" onclick={copyOutput}>
+          <button class="btn btn-sm preset-tonal-surface" onclick={copyOutput}>
             {#if copied}
               <Check class="size-4 text-success-500" />
             {:else}

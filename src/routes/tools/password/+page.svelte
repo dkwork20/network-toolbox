@@ -423,7 +423,7 @@
     <h1 class="h1 font-bold flex items-center gap-3">
       <KeyRound class="size-8 text-primary-500" />
       Password Generator
-      <span class="badge variant-filled-secondary text-xs">V0.6</span>
+      <span class="badge preset-filled-secondary-500 text-xs">V0.6</span>
     </h1>
     <p class="text-surface-500 mt-2">
       Generate secure, random passwords with customizable complexity
@@ -435,11 +435,11 @@
     <div class="flex justify-between items-center">
       <h2 class="h2 font-bold">Generated Password</h2>
       <div class="flex gap-2">
-        <button class="btn variant-filled-primary" onclick={generateAll}>
+        <button class="btn preset-filled-primary-500" onclick={generateAll}>
           <RefreshCw class="size-4" />
           Regenerate
         </button>
-        <button class="btn variant-soft-surface" onclick={downloadPasswords}>
+        <button class="btn preset-tonal-surface" onclick={downloadPasswords}>
           <Download class="size-4" />
           Download
         </button>
@@ -486,7 +486,7 @@
       <div class="space-y-2">
         <div class="flex justify-between items-center">
           <span class="font-medium">All Passwords ({passwords.length})</span>
-          <button class="btn btn-sm variant-soft-surface" onclick={() => navigator.clipboard.writeText(passwords.join('\n'))}>
+          <button class="btn btn-sm preset-tonal-surface" onclick={() => navigator.clipboard.writeText(passwords.join('\n'))}>
             <Copy class="size-4" />
             Copy All
           </button>
@@ -516,13 +516,13 @@
     <!-- Mode Toggle -->
     <div class="flex gap-2">
       <button
-        class="btn {passphraseMode ? 'variant-soft-surface' : 'variant-filled-primary'}"
+        class="btn {passphraseMode ? 'preset-tonal-surface' : 'preset-filled-primary-500'}"
         onclick={() => { passphraseMode = false; generateAll(); }}
       >
         Password
       </button>
       <button
-        class="btn {passphraseMode ? 'variant-filled-primary' : 'variant-soft-surface'}"
+        class="btn {passphraseMode ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
         onclick={() => { passphraseMode = true; generateAll(); }}
       >
         Passphrase

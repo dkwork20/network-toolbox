@@ -9,7 +9,9 @@
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"theme:migrate-variants:dry": "node scripts/migrate-variant-to-preset.mjs",
+		"theme:migrate-variants:write": "node scripts/migrate-variant-to-preset.mjs --write"
 	},
 	"devDependencies": {
 		"@skeletonlabs/skeleton": "^4.11.0",
@@ -43,6 +45,7 @@
 		"qrcode": "^1.5.4",
 		"smol-toml": "^1.6.0",
 		"tailwind-merge": "^3.4.0",
-		"toml": "^3.0.0"
+		"toml": "^3.0.0",
+		"zero-md": "^3.1.7"
 	}
 }

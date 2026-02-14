@@ -205,7 +205,7 @@ console.log('Sum:', result);`;
     <h1 class="h1 font-bold flex items-center gap-3">
       <GitCompare class="size-8 text-primary-500" />
       Diff Viewer
-      <span class="badge variant-filled-secondary text-xs">V0.8</span>
+      <span class="badge preset-filled-secondary-500 text-xs">V0.8</span>
     </h1>
     <p class="text-surface-500 mt-2">
       Compare two text snippets and see the differences
@@ -216,28 +216,28 @@ console.log('Sum:', result);`;
   <div class="card p-4 bg-surface-50 dark:bg-surface-900 mb-6">
     <div class="flex flex-wrap gap-4 items-center justify-between">
       <div class="flex gap-2">
-        <button class="btn btn-sm variant-ghost-surface" onclick={loadSample}>
+        <button class="btn btn-sm bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface" onclick={loadSample}>
           Load Sample
         </button>
-        <button class="btn btn-sm variant-soft-surface" onclick={swapTexts}>
+        <button class="btn btn-sm preset-tonal-surface" onclick={swapTexts}>
           <RefreshCw class="size-4 rotate-90" />
           Swap
         </button>
-        <button class="btn btn-sm variant-soft-surface" onclick={clearAll}>
+        <button class="btn btn-sm preset-tonal-surface" onclick={clearAll}>
           Clear
         </button>
       </div>
 
       <div class="flex gap-2">
         <button
-          class="btn btn-sm {viewMode === 'split' ? 'variant-filled-primary' : 'variant-soft-surface'}"
+          class="btn btn-sm {viewMode === 'split' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
           onclick={() => (viewMode = 'split')}
         >
           <Columns class="size-4" />
           Split
         </button>
         <button
-          class="btn btn-sm {viewMode === 'unified' ? 'variant-filled-primary' : 'variant-soft-surface'}"
+          class="btn btn-sm {viewMode === 'unified' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
           onclick={() => (viewMode = 'unified')}
         >
           <List class="size-4" />
@@ -350,7 +350,7 @@ console.log('Sum:', result);`;
         <div class="card p-4 bg-surface-50 dark:bg-surface-900">
           <div class="flex justify-between items-center mb-2">
             <h3 class="font-medium">Unified Diff</h3>
-            <button class="btn btn-sm variant-soft-surface" onclick={copyUnified}>
+            <button class="btn btn-sm preset-tonal-surface" onclick={copyUnified}>
               {#if copied}
                 <Check class="size-4 text-success-500" />
               {:else}

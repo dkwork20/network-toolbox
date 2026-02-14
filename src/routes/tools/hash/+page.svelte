@@ -133,7 +133,7 @@
     <h1 class="h1 font-bold flex items-center gap-3">
       <Hash class="size-8 text-primary-500" />
       Hash Calculator
-      <span class="badge variant-filled-secondary text-xs">V0.7</span>
+      <span class="badge preset-filled-secondary-500 text-xs">V0.7</span>
     </h1>
     <p class="text-surface-500 mt-2">
       Calculate cryptographic hashes for text or files
@@ -145,14 +145,14 @@
     <!-- Mode Toggle -->
     <div class="flex gap-2">
       <button
-        class="btn {inputMode === 'text' ? 'variant-filled-primary' : 'variant-soft-surface'}"
+        class="btn {inputMode === 'text' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
         onclick={() => (inputMode = 'text')}
       >
         <FileText class="size-4" />
         Text Input
       </button>
       <button
-        class="btn {inputMode === 'file' ? 'variant-filled-primary' : 'variant-soft-surface'}"
+        class="btn {inputMode === 'file' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
         onclick={() => (inputMode = 'file')}
       >
         <Upload class="size-4" />
@@ -203,7 +203,7 @@
       <div class="flex flex-wrap gap-2">
         {#each algorithms as algo}
           <button
-            class="btn btn-sm {selectedAlgorithms.includes(algo) ? 'variant-filled-primary' : 'variant-soft-surface'}"
+            class="btn btn-sm {selectedAlgorithms.includes(algo) ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
             onclick={() => toggleAlgorithm(algo)}
           >
             {algo}

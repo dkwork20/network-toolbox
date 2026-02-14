@@ -181,7 +181,7 @@
     <h1 class="h1 font-bold flex items-center gap-3">
       <Activity class="size-8 text-primary-500" />
       Network Diagnostics
-      <span class="badge variant-filled-secondary text-xs">V0.4</span>
+      <span class="badge preset-filled-secondary-500 text-xs">V0.4</span>
     </h1>
     <p class="text-surface-500 mt-2">
       Test WebRTC IP leaks and measure network latency
@@ -201,7 +201,7 @@
       </p>
 
       <button
-        class="btn variant-filled-primary font-bold"
+        class="btn preset-filled-primary-500 font-bold"
         onclick={startScan}
         disabled={scanning}
       >
@@ -214,7 +214,7 @@
       </button>
 
       {#if error}
-        <div class="alert variant-filled-error p-2 text-sm">{error}</div>
+        <div class="alert preset-filled-error-500 p-2 text-sm">{error}</div>
       {/if}
 
       <div class="space-y-4 pt-4">
@@ -225,7 +225,7 @@
           {#if localIps.size > 0}
             <div class="flex flex-wrap gap-2">
               {#each Array.from(localIps) as ip}
-                <span class="badge variant-soft-secondary font-mono">{ip}</span>
+                <span class="badge preset-tonal-secondary font-mono">{ip}</span>
               {/each}
             </div>
           {:else}
@@ -239,7 +239,7 @@
           {#if publicIps.size > 0}
             <div class="flex flex-wrap gap-2">
               {#each Array.from(publicIps) as ip}
-                <span class="badge variant-filled-error font-mono">{ip}</span>
+                <span class="badge preset-filled-error-500 font-mono">{ip}</span>
               {/each}
             </div>
           {:else}
@@ -262,7 +262,7 @@
       </p>
 
       <button
-        class="btn variant-filled-primary font-bold"
+        class="btn preset-filled-primary-500 font-bold"
         onclick={checkLatency}
         disabled={latencyChecking}
       >

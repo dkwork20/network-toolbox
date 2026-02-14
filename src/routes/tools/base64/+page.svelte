@@ -389,7 +389,7 @@
     <h1 class="h1 font-bold flex items-center gap-3">
       <Binary class="size-8 text-primary-500" />
       Base64 Encoder/Decoder
-      <span class="badge variant-filled-secondary text-xs">V0.6</span>
+      <span class="badge preset-filled-secondary-500 text-xs">V0.6</span>
     </h1>
     <p class="text-surface-500 mt-2">
       Convert between text and Base64, encode/decode images and files
@@ -406,13 +406,13 @@
         <!-- Mode & Format -->
         <div class="flex flex-wrap gap-2">
           <button
-            class="btn {mode === 'encode' ? 'variant-filled-primary' : 'variant-soft-surface'}"
+            class="btn {mode === 'encode' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
             onclick={() => { mode = 'encode'; convert(); }}
           >
             Encode
           </button>
           <button
-            class="btn {mode === 'decode' ? 'variant-filled-primary' : 'variant-soft-surface'}"
+            class="btn {mode === 'decode' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
             onclick={() => { mode = 'decode'; convert(); }}
           >
             Decode
@@ -421,19 +421,19 @@
 
         <div class="flex flex-wrap gap-2">
           <button
-            class="btn btn-sm {format === 'standard' ? 'variant-filled-secondary' : 'variant-soft-surface'}"
+            class="btn btn-sm {format === 'standard' ? 'preset-filled-secondary-500' : 'preset-tonal-surface'}"
             onclick={() => { format = 'standard'; convert(); }}
           >
             Standard
           </button>
           <button
-            class="btn btn-sm {format === 'url' ? 'variant-filled-secondary' : 'variant-soft-surface'}"
+            class="btn btn-sm {format === 'url' ? 'preset-filled-secondary-500' : 'preset-tonal-surface'}"
             onclick={() => { format = 'url'; convert(); }}
           >
             Base64URL
           </button>
           <button
-            class="btn btn-sm {format === 'urlEncoded' ? 'variant-filled-secondary' : 'variant-soft-surface'}"
+            class="btn btn-sm {format === 'urlEncoded' ? 'preset-filled-secondary-500' : 'preset-tonal-surface'}"
             onclick={() => { format = 'urlEncoded'; convert(); }}
           >
             URL Encoded
@@ -457,11 +457,11 @@
         <div class="flex justify-between items-center">
           <span class="font-medium">Output ({mode === 'encode' ? 'Base64' : 'Text'})</span>
           <div class="flex gap-2">
-            <button class="btn btn-sm variant-soft-surface" onclick={swapInOut} title="Swap Input/Output">
+            <button class="btn btn-sm preset-tonal-surface" onclick={swapInOut} title="Swap Input/Output">
               <ArrowUpDown class="size-4" />
               Swap
             </button>
-            <button class="btn btn-sm variant-soft-surface" onclick={clearAll}>
+            <button class="btn btn-sm preset-tonal-surface" onclick={clearAll}>
               <RefreshCw class="size-4" />
               Clear
             </button>
@@ -508,21 +508,21 @@
     <!-- Input Mode Selection -->
     <div class="flex flex-wrap gap-2">
       <button
-        class="btn btn-sm {imageInputMode === 'file' ? 'variant-filled-primary' : 'variant-soft-surface'}"
+        class="btn btn-sm {imageInputMode === 'file' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
         onclick={() => (imageInputMode = 'file')}
       >
         <Upload class="size-4" />
         Upload File
       </button>
       <button
-        class="btn btn-sm {imageInputMode === 'url' ? 'variant-filled-primary' : 'variant-soft-surface'}"
+        class="btn btn-sm {imageInputMode === 'url' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
         onclick={() => (imageInputMode = 'url')}
       >
         <Link class="size-4" />
         From URL
       </button>
       <button
-        class="btn btn-sm {imageInputMode === 'base64' ? 'variant-filled-primary' : 'variant-soft-surface'}"
+        class="btn btn-sm {imageInputMode === 'base64' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
         onclick={() => (imageInputMode = 'base64')}
       >
         <Code class="size-4" />
@@ -572,7 +572,7 @@
                 bind:value={imageUrl}
                 placeholder="https://example.com/image.png"
               />
-              <button class="btn variant-filled-primary" onclick={fetchFromUrl} disabled={isLoading}>
+              <button class="btn preset-filled-primary-500" onclick={fetchFromUrl} disabled={isLoading}>
                 {#if isLoading}
                   <RefreshCw class="size-4 animate-spin" />
                 {:else}
@@ -592,7 +592,7 @@
               bind:value={base64DecodeInput}
               placeholder="Paste your Base64 string here...&#10;&#10;Can be raw Base64 or data URI format"
             ></textarea>
-            <button class="btn variant-filled-primary w-full" onclick={decodeBase64ToImage}>
+            <button class="btn preset-filled-primary-500 w-full" onclick={decodeBase64ToImage}>
               Decode & Preview
             </button>
           </div>
@@ -611,7 +611,7 @@
         {#if imagePreview}
           <div class="flex justify-between items-center">
             <span class="font-medium">Preview</span>
-            <button class="btn btn-sm variant-soft-surface" onclick={clearImageSection}>
+            <button class="btn btn-sm preset-tonal-surface" onclick={clearImageSection}>
               <X class="size-4" />
               Clear
             </button>
@@ -638,7 +638,7 @@
           </div>
 
           <!-- Download -->
-          <button class="btn variant-filled-secondary w-full" onclick={downloadImage}>
+          <button class="btn preset-filled-secondary-500 w-full" onclick={downloadImage}>
             <Download class="size-4" />
             Download Image
           </button>
@@ -656,7 +656,7 @@
         <div class="flex justify-between items-center">
           <span class="font-medium">Base64 Output</span>
           <div class="flex gap-2">
-            <button class="btn btn-sm variant-soft-surface" onclick={copyImageOutput}>
+            <button class="btn btn-sm preset-tonal-surface" onclick={copyImageOutput}>
               {#if imageCopied}
                 <Check class="size-4 text-success-500" />
               {:else}
@@ -670,31 +670,31 @@
         <!-- Output Format Selection -->
         <div class="flex flex-wrap gap-2">
           <button
-            class="btn btn-sm {imageOutputFormat === 'raw' ? 'variant-filled-secondary' : 'variant-soft-surface'}"
+            class="btn btn-sm {imageOutputFormat === 'raw' ? 'preset-filled-secondary-500' : 'preset-tonal-surface'}"
             onclick={() => (imageOutputFormat = 'raw')}
           >
             Raw
           </button>
           <button
-            class="btn btn-sm {imageOutputFormat === 'datauri' ? 'variant-filled-secondary' : 'variant-soft-surface'}"
+            class="btn btn-sm {imageOutputFormat === 'datauri' ? 'preset-filled-secondary-500' : 'preset-tonal-surface'}"
             onclick={() => (imageOutputFormat = 'datauri')}
           >
             Data URI
           </button>
           <button
-            class="btn btn-sm {imageOutputFormat === 'html' ? 'variant-filled-secondary' : 'variant-soft-surface'}"
+            class="btn btn-sm {imageOutputFormat === 'html' ? 'preset-filled-secondary-500' : 'preset-tonal-surface'}"
             onclick={() => (imageOutputFormat = 'html')}
           >
             HTML
           </button>
           <button
-            class="btn btn-sm {imageOutputFormat === 'css' ? 'variant-filled-secondary' : 'variant-soft-surface'}"
+            class="btn btn-sm {imageOutputFormat === 'css' ? 'preset-filled-secondary-500' : 'preset-tonal-surface'}"
             onclick={() => (imageOutputFormat = 'css')}
           >
             CSS
           </button>
           <button
-            class="btn btn-sm {imageOutputFormat === 'json' ? 'variant-filled-secondary' : 'variant-soft-surface'}"
+            class="btn btn-sm {imageOutputFormat === 'json' ? 'preset-filled-secondary-500' : 'preset-tonal-surface'}"
             onclick={() => (imageOutputFormat = 'json')}
           >
             JSON

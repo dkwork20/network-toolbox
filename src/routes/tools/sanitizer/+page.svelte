@@ -174,7 +174,7 @@
   <div class="flex justify-between items-center mb-6">
     <div class="flex items-center gap-3">
       <h2 class="h2 font-bold">Log Sanitizer / Masking Tool</h2>
-      <span class="badge variant-filled-secondary text-xs">V0.3</span>
+      <span class="badge preset-filled-secondary-500 text-xs">V0.3</span>
     </div>
   </div>
 
@@ -215,12 +215,12 @@
               >
               <div class="flex gap-2 text-[10px]">
                 <button
-                  class="btn btn-xs variant-soft"
+                  class="btn btn-xs preset-tonal"
                   onclick={() => (selectedDomains = new Set(detectedDomains))}
                   >All</button
                 >
                 <button
-                  class="btn btn-xs variant-soft"
+                  class="btn btn-xs preset-tonal"
                   onclick={() => (selectedDomains = new Set())}>None</button
                 >
               </div>
@@ -258,8 +258,8 @@
             {#each detectedDomains as domain}
               <button
                 class="chip {selectedDomains.has(domain)
-                  ? 'variant-filled-secondary'
-                  : 'variant-soft'}"
+                  ? 'preset-filled-secondary-500'
+                  : 'preset-tonal'}"
                 onclick={() => toggleDomain(domain)}
               >
                 {#if selectedDomains.has(domain)}<span>✔</span>{/if}
@@ -271,7 +271,7 @@
       {/if}
 
       <button
-        class="btn variant-filled-primary font-bold py-3"
+        class="btn preset-filled-primary-500 font-bold py-3"
         onclick={sanitize}
         disabled={!inputText}
       >
@@ -284,7 +284,7 @@
       <div class="flex justify-between items-center">
         <span class="font-bold text-lg">Sanitized Output</span>
         <button
-          class="btn variant-filled-secondary btn-sm"
+          class="btn preset-filled-secondary-500 btn-sm"
           onclick={copyOutput}
           disabled={!outputText}
         >

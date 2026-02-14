@@ -116,7 +116,7 @@
     <h1 class="h1 font-bold flex items-center gap-3">
       <Lock class="size-8 text-primary-500" />
       SSL/TLS Checker
-      <span class="badge variant-filled-secondary text-xs">V0.10</span>
+      <span class="badge preset-filled-secondary-500 text-xs">V0.10</span>
     </h1>
     <p class="text-surface-500 mt-2">
       Verify SSL/TLS certificate validity and security configuration
@@ -124,7 +124,7 @@
   </div>
 
   <!-- Warning -->
-  <div class="alert variant-soft-warning mb-6">
+  <div class="alert preset-tonal-warning mb-6">
     <AlertTriangle class="size-5" />
     <div>
       <strong>Browser Limitation:</strong> Full certificate details require server-side checking.
@@ -144,7 +144,7 @@
           placeholder="example.com"
           onkeydown={(e) => e.key === "Enter" && checkSsl()}
         />
-        <button class="btn variant-filled-primary" onclick={checkSsl} disabled={isChecking}>
+        <button class="btn preset-filled-primary-500" onclick={checkSsl} disabled={isChecking}>
           {#if isChecking}
             <RefreshCw class="size-4 animate-spin" />
           {:else}
@@ -152,7 +152,7 @@
           {/if}
           Check SSL
         </button>
-        <button class="btn variant-soft-surface" onclick={clearAll}>
+        <button class="btn preset-tonal-surface" onclick={clearAll}>
           Clear
         </button>
       </div>
@@ -161,7 +161,7 @@
 
   <!-- Error -->
   {#if error}
-    <div class="alert variant-filled-error mb-6">
+    <div class="alert preset-filled-error-500 mb-6">
       <XCircle class="size-5" />
       <span>{error}</span>
     </div>
@@ -267,23 +267,23 @@
     <div class="space-y-2 text-sm">
       <div class="flex justify-between items-center p-2 bg-success-500/10 rounded">
         <span class="font-medium">TLS 1.3</span>
-        <span class="badge variant-filled-success">Recommended</span>
+        <span class="badge preset-filled-success-500">Recommended</span>
       </div>
       <div class="flex justify-between items-center p-2 bg-surface-100 dark:bg-surface-800 rounded">
         <span class="font-medium">TLS 1.2</span>
-        <span class="badge variant-soft-surface">Acceptable</span>
+        <span class="badge preset-tonal-surface">Acceptable</span>
       </div>
       <div class="flex justify-between items-center p-2 bg-error-500/10 rounded">
         <span class="font-medium">TLS 1.1</span>
-        <span class="badge variant-filled-error">Deprecated</span>
+        <span class="badge preset-filled-error-500">Deprecated</span>
       </div>
       <div class="flex justify-between items-center p-2 bg-error-500/10 rounded">
         <span class="font-medium">TLS 1.0</span>
-        <span class="badge variant-filled-error">Deprecated</span>
+        <span class="badge preset-filled-error-500">Deprecated</span>
       </div>
       <div class="flex justify-between items-center p-2 bg-error-500/10 rounded">
         <span class="font-medium">SSL 3.0</span>
-        <span class="badge variant-filled-error">Insecure</span>
+        <span class="badge preset-filled-error-500">Insecure</span>
       </div>
     </div>
   </div>

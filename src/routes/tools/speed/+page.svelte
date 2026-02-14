@@ -209,7 +209,7 @@
     <h1 class="h1 font-bold flex items-center gap-3">
       <Gauge class="size-8 text-primary-500" />
       Network Speed Test
-      <span class="badge variant-filled-secondary text-xs">V0.10</span>
+      <span class="badge preset-filled-secondary-500 text-xs">V0.10</span>
     </h1>
     <p class="text-surface-500 mt-2">
       Test your network download and upload speeds
@@ -217,7 +217,7 @@
   </div>
 
   <!-- Warning -->
-  <div class="alert variant-soft-warning mb-6">
+  <div class="alert preset-tonal-warning mb-6">
     <AlertTriangle class="size-5" />
     <div>
       <strong>Note:</strong> Browser-based speed tests are approximations. For accurate results, 
@@ -277,7 +277,7 @@
 
     <!-- Start Button -->
     <button
-      class="btn variant-filled-primary btn-lg"
+      class="btn preset-filled-primary-500 btn-lg"
       onclick={startTest}
       disabled={isRunning}
     >

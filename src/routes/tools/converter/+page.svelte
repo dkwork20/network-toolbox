@@ -60,7 +60,7 @@
 >
   <div class="flex justify-between items-center mb-6">
     <h2 class="h2 font-bold">Config Converter</h2>
-    <span class="badge variant-filled-secondary text-xs">V0.5</span>
+    <span class="badge preset-filled-secondary-500 text-xs">V0.5</span>
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-8 h-full">
@@ -92,7 +92,7 @@
             <option value="toml">TOML</option>
           </select>
           <button
-            class="btn btn-sm variant-filled-secondary"
+            class="btn btn-sm preset-filled-secondary-500"
             onclick={copyOutput}
             disabled={!outputText}>Copy</button
           >
@@ -110,7 +110,7 @@
         ></textarea>
         {#if error}
           <div
-            class="absolute bottom-4 left-4 right-4 alert variant-filled-error p-2 text-xs"
+            class="absolute bottom-4 left-4 right-4 alert preset-filled-error-500 p-2 text-xs"
           >
             {error}
           </div>

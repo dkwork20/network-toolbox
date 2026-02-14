@@ -4,37 +4,46 @@
   import { Dialog, DropdownMenu } from "bits-ui";
   import { page } from "$app/stores";
 
-  // Simple logic for dark mode toggling using tailwind 'dark' class on html
-  // SvelteKit usually runs on server, so we need to handle hydration.
-  // For MVP, we toggle class on documentElement.
+  type ThemePreference = "light" | "dark";
 
-  let isDark = $state(true); // Default to dark? Check app.html or user system.
+  const THEME_STORAGE_KEY = "theme";
+
+  let isDark = $state(true);
   let isMobileMenuOpen = $state(false);
+
+  function getStoredThemePreference(): ThemePreference | null {
+    const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    if (storedTheme === "light" || storedTheme === "dark") {
+      return storedTheme;
+    }
+    return null;
+  }
+
+  function getSystemPrefersDark(): boolean {
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+
+  function applyTheme(darkMode: boolean) {
+    document.documentElement.classList.toggle("dark", darkMode);
+  }
+
+  function resolveInitialTheme(): boolean {
+    const storedTheme = getStoredThemePreference();
+    if (storedTheme) {
+      return storedTheme === "dark";
+    }
+    return getSystemPrefersDark();
+  }
 
   function toggleTheme() {
     isDark = !isDark;
-    if (isDark) {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-    }
+    applyTheme(isDark);
+    localStorage.setItem(THEME_STORAGE_KEY, isDark ? "dark" : "light");
   }
 
-  // Sync with system or existing class on mount
   onMount(() => {
-    if (document.documentElement.classList.contains("dark")) {
-      isDark = true;
-    } else {
-      // Check system preference if no class set
-      if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-        isDark = true;
-        document.documentElement.classList.add("dark");
-      } else {
-        isDark = false;
-      }
-    }
+    isDark = resolveInitialTheme();
+    applyTheme(isDark);
   });
 
   // Close menu on navigation
@@ -66,7 +75,7 @@
         <!-- Network Tools Dropdown -->
         <DropdownMenu.Root>
           <DropdownMenu.Trigger
-            class="btn-sm variant-ghost-surface hover:variant-soft-primary transition-colors rounded-md py-2 px-3 flex items-center gap-1 group"
+            class="btn-sm bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface hover:preset-tonal-primary transition-colors rounded-md py-2 px-3 flex items-center gap-1 group"
           >
             Network
             <ChevronDown
@@ -185,7 +194,7 @@
         <!-- Encoding & Data Dropdown -->
         <DropdownMenu.Root>
           <DropdownMenu.Trigger
-            class="btn-sm variant-ghost-surface hover:variant-soft-primary transition-colors rounded-md py-2 px-3 flex items-center gap-1 group"
+            class="btn-sm bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface hover:preset-tonal-primary transition-colors rounded-md py-2 px-3 flex items-center gap-1 group"
           >
             Encoding
             <ChevronDown
@@ -268,7 +277,7 @@
         <!-- Security Dropdown -->
         <DropdownMenu.Root>
           <DropdownMenu.Trigger
-            class="btn-sm variant-ghost-surface hover:variant-soft-primary transition-colors rounded-md py-2 px-3 flex items-center gap-1 group"
+            class="btn-sm bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface hover:preset-tonal-primary transition-colors rounded-md py-2 px-3 flex items-center gap-1 group"
           >
             Security
             <ChevronDown
@@ -315,7 +324,7 @@
         <!-- Dev Tools Dropdown -->
         <DropdownMenu.Root>
           <DropdownMenu.Trigger
-            class="btn-sm variant-ghost-surface hover:variant-soft-primary transition-colors rounded-md py-2 px-3 flex items-center gap-1 group"
+            class="btn-sm bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface hover:preset-tonal-primary transition-colors rounded-md py-2 px-3 flex items-center gap-1 group"
           >
             Developer
             <ChevronDown
@@ -433,7 +442,7 @@
       </div>
 
       <button
-        class="btn-icon btn-icon-sm variant-ringed-surface hover:variant-soft-primary transition-all"
+        class="btn-icon btn-icon-sm preset-outlined-surface-500 hover:preset-tonal-primary transition-all"
         onclick={toggleTheme}
         aria-label="Toggle Dark Mode"
       >
@@ -447,7 +456,7 @@
       <!-- Mobile Menu Trigger -->
       <div class="lg:hidden ml-2">
         <Dialog.Root bind:open={isMobileMenuOpen}>
-          <Dialog.Trigger class="btn-icon btn-icon-sm variant-filled-surface">
+          <Dialog.Trigger class="btn-icon btn-icon-sm preset-filled-surface-500">
             <Menu class="size-5" />
           </Dialog.Trigger>
           <Dialog.Portal>
@@ -463,7 +472,7 @@
               >
                 <span class="font-bold text-lg tracking-tight">Menu</span>
                 <Dialog.Close
-                  class="btn-icon btn-icon-sm variant-ghost-surface"
+                  class="btn-icon btn-icon-sm bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface"
                 >
                   <X class="size-5" />
                 </Dialog.Close>
@@ -478,27 +487,27 @@
                   >
                   <a
                     href="/tools/ip"
-                    class="btn variant-ghost-surface justify-start"
+                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
                     >IP Calculator</a
                   >
                   <a
                     href="/tools/subnet"
-                    class="btn variant-ghost-surface justify-start"
+                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
                     >Subnet Visualizer</a
                   >
                   <a
                     href="/tools/dns"
-                    class="btn variant-ghost-surface justify-start"
+                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
                     >DNS Lookup</a
                   >
                   <a
                     href="/tools/diagnostics"
-                    class="btn variant-ghost-surface justify-start"
+                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
                     >Diagnostics</a
                   >
                   <a
                     href="/tools/mac"
-                    class="btn variant-ghost-surface justify-start"
+                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
                     >MAC Lookup <span class="text-error-500 font-bold">**</span></a
                   >
                 </div>
@@ -510,37 +519,37 @@
                   >
                   <a
                     href="/tools/uuid"
-                    class="btn variant-ghost-surface justify-start"
+                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
                     >UUID Generator <span class="text-error-500 font-bold">**</span></a
                   >
                   <a
                     href="/tools/hash"
-                    class="btn variant-ghost-surface justify-start"
+                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
                     >Hash Calculator <span class="text-error-500 font-bold">**</span></a
                   >
                   <a
                     href="/tools/base64"
-                    class="btn variant-ghost-surface justify-start"
+                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
                     >Base64 Encoder <span class="text-error-500 font-bold">**</span></a
                   >
                   <a
                     href="/tools/url"
-                    class="btn variant-ghost-surface justify-start"
+                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
                     >URL Encoder <span class="text-error-500 font-bold">**</span></a
                   >
                   <a
                     href="/tools/json"
-                    class="btn variant-ghost-surface justify-start"
+                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
                     >JSON Formatter <span class="text-error-500 font-bold">**</span></a
                   >
                   <a
                     href="/tools/color"
-                    class="btn variant-ghost-surface justify-start"
+                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
                     >Color Picker <span class="text-error-500 font-bold">**</span></a
                   >
                   <a
                     href="/tools/qr"
-                    class="btn variant-ghost-surface justify-start"
+                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
                     >QR Generator <span class="text-error-500 font-bold">**</span></a
                   >
                 </div>
@@ -552,12 +561,12 @@
                   >
                   <a
                     href="/tools/password"
-                    class="btn variant-ghost-surface justify-start"
+                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
                     >Password Generator <span class="text-error-500 font-bold">**</span></a
                   >
                   <a
                     href="/tools/sanitizer"
-                    class="btn variant-ghost-surface justify-start"
+                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
                     >Log Sanitizer</a
                   >
                 </div>
@@ -569,35 +578,35 @@
                   >
                   <a
                     href="/tools/jwt"
-                    class="btn variant-ghost-surface justify-start"
+                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
                     >JWT Debugger</a
                   >
                   <a
                     href="/tools/cert"
-                    class="btn variant-ghost-surface justify-start"
+                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
                     >Cert Decoder</a
                   >
                   <a
                     href="/tools/converter"
-                    class="btn variant-ghost-surface justify-start">Converter</a
+                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start">Converter</a
                   >
                   <a
                     href="/tools/timestamp"
-                    class="btn variant-ghost-surface justify-start">Timestamp</a
+                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start">Timestamp</a
                   >
                   <a
                     href="/tools/cron"
-                    class="btn variant-ghost-surface justify-start"
+                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
                     >Cron Generator</a
                   >
                   <a
                     href="/tools/regex"
-                    class="btn variant-ghost-surface justify-start"
+                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
                     >Regex Tester <span class="text-error-500 font-bold">**</span></a
                   >
                   <a
                     href="/tools/diff"
-                    class="btn variant-ghost-surface justify-start"
+                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
                     >Diff Viewer <span class="text-error-500 font-bold">**</span></a
                   >
                 </div>
@@ -607,14 +616,14 @@
                 <div class="flex flex-col gap-2">
                   <a
                     href="/changelog"
-                    class="btn variant-ghost-surface justify-start text-surface-500"
+                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start text-surface-500"
                     >Changelog</a
                   >
                   <a
                     href="https://github.com/skeletonlabs/skeleton"
                     target="_blank"
                     rel="noreferrer"
-                    class="btn variant-ghost-surface justify-start text-surface-500"
+                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start text-surface-500"
                     >GitHub</a
                   >
                 </div>

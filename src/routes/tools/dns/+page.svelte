@@ -45,7 +45,7 @@
   <div class="mb-10 text-center">
     <div class="flex justify-center items-center gap-3">
       <h2 class="h2 font-bold">DNS Lookup</h2>
-      <span class="badge variant-filled-secondary text-xs">V0.4</span>
+      <span class="badge preset-filled-secondary-500 text-xs">V0.4</span>
     </div>
     <p class="mt-2 text-surface-500">Query DNS records via Cloudflare DoH</p>
   </div>
@@ -78,7 +78,7 @@
       </div>
       <div class="flex items-end">
         <button
-          class="btn variant-filled-primary w-full md:w-auto"
+          class="btn preset-filled-primary-500 w-full md:w-auto"
           onclick={lookup}
           disabled={isLoading || !domain}
         >
@@ -88,7 +88,7 @@
     </div>
 
     {#if error}
-      <div class="alert variant-filled-error p-4">{error}</div>
+      <div class="alert preset-filled-error-500 p-4">{error}</div>
     {/if}
 
     {#if result}
@@ -135,7 +135,7 @@
             </table>
           </div>
         {:else if result.Status === 0}
-          <div class="alert variant-soft-warning">No records found.</div>
+          <div class="alert preset-tonal-warning">No records found.</div>
         {/if}
 
         <!-- Raw Response Debug -->

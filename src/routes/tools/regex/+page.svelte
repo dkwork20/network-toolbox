@@ -189,7 +189,7 @@
     <h1 class="h1 font-bold flex items-center gap-3">
       <Regex class="size-8 text-primary-500" />
       Regex Tester
-      <span class="badge variant-filled-secondary text-xs">V0.7</span>
+      <span class="badge preset-filled-secondary-500 text-xs">V0.7</span>
     </h1>
     <p class="text-surface-500 mt-2">
       Build and test regular expressions with real-time matching
@@ -201,11 +201,11 @@
     <div class="flex justify-between items-center">
       <span class="font-medium">Regular Expression</span>
       <div class="flex gap-2">
-        <button class="btn btn-sm variant-ghost-surface" onclick={() => (showHelp = !showHelp)}>
+        <button class="btn btn-sm bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface" onclick={() => (showHelp = !showHelp)}>
           <HelpCircle class="size-4" />
           Help
         </button>
-        <button class="btn btn-sm variant-soft-surface" onclick={copyRegex}>
+        <button class="btn btn-sm preset-tonal-surface" onclick={copyRegex}>
           {#if copied}
             <Check class="size-4 text-success-500" />
           {:else}
@@ -282,7 +282,7 @@
     <div class="flex flex-wrap gap-2">
       {#each presets as preset}
         <button
-          class="btn btn-sm variant-soft-surface"
+          class="btn btn-sm preset-tonal-surface"
           onclick={() => applyPreset(preset)}
         >
           {preset.name}

@@ -10,6 +10,17 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.12.0",
+        date: "2026-02-14",
+        title: "Theme Consistency and Skeleton Preset Migration",
+        changes: [
+            { type: 'fix', text: "Fixed Markdown preview theme adaptation to follow app dark/light class toggles in real time" },
+            { type: 'fix', text: "Fixed theme bootstrap logic to prioritize saved user preference before system preference" },
+            { type: 'chore', text: "Migrated legacy variant utility classes to Skeleton v4 preset utility classes across tools and shared components" },
+            { type: 'chore', text: "Added reusable migration script and npm commands for dry-run and write-mode class migration" },
+        ]
+    },
+    {
         version: "0.11.0",
         date: "2026-02-13",
         title: "Docker Tool Enhancement",

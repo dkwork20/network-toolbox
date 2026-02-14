@@ -337,7 +337,7 @@ AllowedIPs = ${allowedOutput}
   <!-- Header -->
   <div class="mb-6 flex items-center gap-3">
     <h1 class="h1 font-bold">IP Calculator</h1>
-    <span class="badge variant-filled-secondary text-xs">V0.4</span>
+    <span class="badge preset-filled-secondary-500 text-xs">V0.4</span>
   </div>
 
   <!-- Header moved to Navbar, keeping subtle title or removing -->
@@ -357,14 +357,14 @@ AllowedIPs = ${allowedOutput}
 
       <div class="flex gap-4">
         <button
-          class="btn variant-filled-primary flex-1 py-3 font-bold"
+          class="btn preset-filled-primary-500 flex-1 py-3 font-bold"
           onclick={handleCalculate}
           disabled={isCalculating}
         >
           {isCalculating ? "Calculating..." : "Calculate AllowedIPs"}
         </button>
         <button
-          class="btn variant-ghost-surface"
+          class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface"
           onclick={() => (excludedInput = "")}>Clear</button
         >
       </div>
@@ -390,14 +390,14 @@ AllowedIPs = ${allowedOutput}
 
       <div class="flex gap-4 flex-wrap">
         <button
-          class="btn variant-filled-secondary"
+          class="btn preset-filled-secondary-500"
           onclick={copyToClipboard}
           disabled={!allowedOutput}
         >
           Copy List
         </button>
         <button
-          class="btn variant-filled-tertiary"
+          class="btn preset-filled-tertiary-500"
           onclick={generatePeerConfig}
           disabled={!allowedOutput}
         >
@@ -443,7 +443,7 @@ AllowedIPs = ${allowedOutput}
       </label>
       <div class="flex items-end">
         <button
-          class="btn variant-filled-secondary w-full"
+          class="btn preset-filled-secondary-500 w-full"
           onclick={handleDownloadScript}
         >
           Download Script
@@ -482,19 +482,19 @@ AllowedIPs = ${allowedOutput}
     <!-- Input Mode Selection -->
     <div class="flex flex-wrap gap-2 mb-4">
       <button
-        class="btn btn-sm {subnetMode === 'cidr' ? 'variant-filled-primary' : 'variant-soft-surface'}"
+        class="btn btn-sm {subnetMode === 'cidr' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
         onclick={() => (subnetMode = 'cidr')}
       >
         CIDR Notation
       </button>
       <button
-        class="btn btn-sm {subnetMode === 'range' ? 'variant-filled-primary' : 'variant-soft-surface'}"
+        class="btn btn-sm {subnetMode === 'range' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
         onclick={() => (subnetMode = 'range')}
       >
         IP Range
       </button>
       <button
-        class="btn btn-sm {subnetMode === 'netmask' ? 'variant-filled-primary' : 'variant-soft-surface'}"
+        class="btn btn-sm {subnetMode === 'netmask' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
         onclick={() => (subnetMode = 'netmask')}
       >
         IP + Netmask
@@ -557,7 +557,7 @@ AllowedIPs = ${allowedOutput}
         </div>
       {/if}
 
-      <button class="btn btn-sm variant-ghost-surface" onclick={clearSubnet}>
+      <button class="btn btn-sm bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface" onclick={clearSubnet}>
         <RefreshCw class="size-4" />
         Clear
       </button>

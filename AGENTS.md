@@ -80,7 +80,7 @@ Each tool in `src/routes/+page.svelte` needs:
 Display in card:
 
 ```html
-<span class="badge variant-soft-secondary text-xs">{tool.version}</span>
+<span class="badge preset-tonal-secondary text-xs">{tool.version}</span>
 ```
 
 ## Version Badges
@@ -88,7 +88,7 @@ Display in card:
 Add to tool page header:
 
 ```html
-<span class="badge variant-filled-secondary text-xs">V0.x</span>
+<span class="badge preset-filled-secondary-500 text-xs">V0.x</span>
 ```
 
 | Version | Tools                                                            |
@@ -103,95 +103,120 @@ Add to tool page header:
 | V0.3    | sanitizer                                                        |
 | V0.2    | subnet                                                           |
 
-## Git Workflow
+## Git & Release Workflow
 
-**IMPORTANT**: Never auto-commit. Only commit when explicitly instructed by user and perform the changelog generation step first before the flow UNLESS user asks to DIRECT COMMIT.
+### Core Rule
+
+- Never auto-commit.
+- Commit only when user explicitly requests commit.
+- By default, treat commit request as **Release Commit** workflow.
+- Only switch to **Direct Commit** when explicit override keywords appear.
+
+### Mode A: Release Commit (default)
+
+Default trigger: any normal commit request without direct-override wording.
+
+Behavior (MANDATORY):
+
+1. Execute full changelog generation:
+   - Update `src/lib/data/changelog.ts` (new entry at top).
+   - Create release markdown in `src/routes/changelog/[NNN]-kebab-case-title.md`.
+2. Run validation (`npm run check` and `npx vitest`).
+3. Then commit.
+
+### Mode B: Direct Commit (explicit override)
+
+Trigger keywords (examples): **"directly"**, **"direct commit"**, **"git commit all directly"**.
+
+Behavior:
+
+- Skip release/changelog generation requirement.
+- Commit immediately with current changes (still run validations if feasible unless user says skip).
+
+### Commit Flow Template
 
 ```bash
 git checkout -b feature/xxx
 npm run check && npx vitest
 # Wait for user to request commit
-git add . && git commit -m "feat: description"
+git add . && git commit -m "feat|fix|chore: description"
 git push && create PR
 ```
 
-## Changelog Generation
+## Changelog Generation (Release Mode Only)
 
-When request git commit meaning releasing a new version, generate changelog files:
+### 1) Update `src/lib/data/changelog.ts`
 
-### 1. Update `src/lib/data/changelog.ts`
-
-Add new entry at top of array:
+Add entry at top:
 
 ```typescript
 {
-  version: "0.11.0",
+  version: "0.12.0",
   date: "YYYY-MM-DD",
   title: "Release Title",
   changes: [
-    { type: 'feat', text: "Added X tool" },
-    { type: 'fix', text: "Fixed Y issue" },
+    { type: 'feat', text: "Added X" },
+    { type: 'fix', text: "Fixed Y" },
+    { type: 'chore', text: "Refactored Z" },
   ]
 }
 ```
 
-### 2. Generate Markdown File
+### 2) Create markdown release note
 
-Create `src/routes/changelog/[xxx]-kebab-case-title.md`:
+Create file: `src/routes/changelog/[NNN]-kebab-case-title.md`
 
 ```markdown
 # Release Title
 
-**Version:** 0.11.0  
+**Version:** 0.12.0  
 **Date:** YYYY-MM-DD  
 **Type:** feat|fix|chore
 
 ## Summary
 
-Brief overview of this release.
+Brief overview.
 
 ## Changes
 
 ### Features
-
-- **New Tool** (`/tools/xxx`) - Brief description
+- Item
 
 ### Fixes
-
-- Fixed issue in tool
+- Item
 
 ### Technical Details
-
-- Implementation notes
+- Item
 
 ## Route
 
 `/tools/xxx`
 
-## File Changes (REQUIRED - must list all modified files)
-
-- `src/routes/tools/xxx/+page.svelte` - New tool / enhancement
-- `src/routes/+page.svelte` - Homepage version update (REQUIRED for any version change)
-- `src/lib/components/Navbar.svelte` - Navigation changes (if any)
-- `src/lib/data/changelog.ts` - Added entry
-- Any other modified files...
+## File Changes (REQUIRED - list all modified files)
+- `path/to/file` - reason
 ```
 
 ### Naming Convention
 
-- Use 3-digit sequence: `[001]`, `[002]`, etc.
-- Kebab-case: `[011]-release-name.md`
+- Sequence format: `[001]`, `[002]`, ...
+- Filename format: `[NNN]-kebab-case-title.md`
 
-### Checklist
+### Release Checklist
 
-- [ ] Update changelog.ts with version entry
-- [ ] Create markdown file in routes/changelog/
-- [ ] Add version badge to new tool pages
-- [ ] Update version in homepage tools array (src/routes/+page.svelte)
-- [ ] Run `npm run check`
-- [ ] Test new tools
+- [ ] `changelog.ts` updated
+- [ ] release markdown created
+- [ ] homepage/tool version badges updated when relevant
+- [ ] `npm run check` passed
+- [ ] `npx vitest` passed
 
 ## Docs
 
 - Skeleton: https://www.skeleton.dev/llms.txt
 - Bits-UI: https://bits-ui.com/llms.txt
+
+## Changelog Management
+
+- After any significant task is completed, confirm commit mode with user when ambiguous.
+- Default to Mode A (release with full changelog generation) unless user explicitly asks Mode B (direct commit).
+- In Mode A, always generate both `src/lib/data/changelog.ts` and `src/routes/changelog/[NNN]-*.md`.
+- Keep change type classification accurate: `feat`, `fix`, `chore`, `docs`.

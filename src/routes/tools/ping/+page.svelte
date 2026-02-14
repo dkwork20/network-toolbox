@@ -235,7 +235,7 @@
     <h1 class="h1 font-bold flex items-center gap-3">
       <Activity class="size-8 text-primary-500" />
       Ping/Latency Monitor
-      <span class="badge variant-filled-secondary text-xs">V0.10</span>
+      <span class="badge preset-filled-secondary-500 text-xs">V0.10</span>
     </h1>
     <p class="text-surface-500 mt-2">
       Measure and track network latency to multiple endpoints
@@ -246,7 +246,7 @@
   <div class="card p-4 bg-surface-50 dark:bg-surface-900 mb-6">
     <div class="flex flex-wrap gap-4 items-center justify-between">
       <div class="flex gap-2">
-        <button class="btn variant-filled-primary" onclick={checkAll} disabled={isChecking}>
+        <button class="btn preset-filled-primary-500" onclick={checkAll} disabled={isChecking}>
           {#if isChecking}
             <RefreshCw class="size-4 animate-spin" />
           {:else}
@@ -254,14 +254,14 @@
           {/if}
           Check Now
         </button>
-        <button class="btn variant-soft-surface" onclick={loadDefaults}>
+        <button class="btn preset-tonal-surface" onclick={loadDefaults}>
           Load Defaults
         </button>
-        <button class="btn variant-soft-surface" onclick={clearHistory}>
+        <button class="btn preset-tonal-surface" onclick={clearHistory}>
           <Trash2 class="size-4" />
           Clear
         </button>
-        <button class="btn variant-soft-surface" onclick={exportCSV}>
+        <button class="btn preset-tonal-surface" onclick={exportCSV}>
           <Download class="size-4" />
           Export
         </button>
@@ -294,7 +294,7 @@
         placeholder="Add endpoint URL (e.g., https://api.example.com)"
         onkeydown={(e) => e.key === "Enter" && addTarget()}
       />
-      <button class="btn variant-soft-surface" onclick={addTarget}>
+      <button class="btn preset-tonal-surface" onclick={addTarget}>
         <Plus class="size-4" />
         Add
       </button>
@@ -311,7 +311,7 @@
             <p class="text-xs text-surface-500">{timeAgo(result.lastCheck)}</p>
           </div>
           <button
-            class="btn-icon btn-icon-sm variant-ghost-surface"
+            class="btn-icon btn-icon-sm bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface"
             onclick={() => removeTarget(target)}
           >
             <Trash2 class="size-4" />
@@ -373,7 +373,7 @@
     <div class="text-center py-12 text-surface-500">
       <Activity class="size-16 mx-auto mb-4 opacity-50" />
       <p>No targets added yet.</p>
-      <button class="btn variant-soft-surface mt-4" onclick={loadDefaults}>
+      <button class="btn preset-tonal-surface mt-4" onclick={loadDefaults}>
         Load Default Endpoints
       </button>
     </div>
