@@ -73,7 +73,7 @@ Each tool in `src/routes/+page.svelte` needs:
   icon: IconName,
   href: "/tools/xxx",
   cat: "network|encoding|security|dev",
-  version: "V0.x",  // Required - version badge
+  version: "V0.x",  // Required - version badge (or "V0.x ~ V0.y" for updated/bugfix tools)
 }
 ```
 
@@ -90,6 +90,15 @@ Add to tool page header:
 ```html
 <span class="badge preset-filled-secondary-500 text-xs">V0.x</span>
 ```
+
+For updates/bug fixes on existing tools, keep the initial version and append the current release version:
+
+```html
+<span class="badge preset-filled-secondary-500 text-xs">V0.x ~ V0.y</span>
+```
+
+- `V0.x` = original/default tool version
+- `V0.y` = current release version for the update/fix session
 
 | Version | Tools                                                            |
 | ------- | ---------------------------------------------------------------- |

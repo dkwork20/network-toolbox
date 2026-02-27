@@ -2,14 +2,17 @@
  * Converts a standard IPv4 string to a BigInt.
  */
 export function ipToBigInt(ip: string): bigint {
-	const parts = ip.split('.');
+	const parts = ip.trim().split('.');
 	if (parts.length !== 4) {
 		throw new Error(`Invalid IPv4 address: ${ip}`);
 	}
 	let result = 0n;
 	for (const part of parts) {
-		const num = parseInt(part, 10);
-		if (isNaN(num) || num < 0 || num > 255) {
+		if (!/^\d{1,3}$/.test(part)) {
+			throw new Error(`Invalid IPv4 octet: ${part}`);
+		}
+		const num = Number(part);
+		if (!Number.isInteger(num) || num < 0 || num > 255) {
 			throw new Error(`Invalid IPv4 octet: ${part}`);
 		}
 		result = (result << 8n) + BigInt(num);
@@ -147,11 +150,19 @@ export function isValidCidr(cidr: string): boolean {
  * Parses CIDR (v4 or v6)
  */
 export function parseCidr(cidr: string) {
-    const [ipStr, maskStr] = cidr.split('/');
+    const parts = cidr.split('/');
+    if (parts.length !== 2) throw new Error(`Invalid CIDR format: ${cidr}`);
+
+    const ipStr = parts[0].trim();
+    const maskStr = parts[1].trim();
     if (!ipStr || !maskStr) throw new Error(`Invalid CIDR format: ${cidr}`);
-    
+
+    if (!/^\d+$/.test(maskStr)) {
+        throw new Error(`Invalid prefix length: ${maskStr}`);
+    }
+
     const isV6 = isIpv6(ipStr);
-    const prefix = parseInt(maskStr, 10);
+    const prefix = Number(maskStr);
     const totalBits = isV6 ? 128n : 32n;
     
     if (isNaN(prefix) || prefix < 0 || prefix > Number(totalBits)) throw new Error(`Invalid prefix length: ${maskStr}`);
@@ -163,4 +174,29 @@ export function parseCidr(cidr: string) {
     const end = start + (1n << hostBits) - 1n;
     
     return { start, end, prefix, version: isV6 ? 6 : 4 };
+}
+
+/**
+ * Converts a dotted IPv4 netmask to CIDR prefix length.
+ * Rejects non-contiguous masks (e.g. 255.0.255.0).
+ */
+export function ipv4NetmaskToPrefix(mask: string): number {
+    const maskValue = ipToBigInt(mask);
+
+    let prefix = 0;
+    let sawZero = false;
+
+    for (let bit = 31; bit >= 0; bit--) {
+        const isOne = ((maskValue >> BigInt(bit)) & 1n) === 1n;
+        if (isOne) {
+            if (sawZero) {
+                throw new Error(`Invalid IPv4 netmask: ${mask}`);
+            }
+            prefix++;
+            continue;
+        }
+        sawZero = true;
+    }
+
+    return prefix;
 }

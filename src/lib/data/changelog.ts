@@ -10,6 +10,18 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.15.0",
+        date: "2026-02-27",
+        title: "Parsing Hardening, Route Stability, and Compose Round-Trip Reliability",
+        changes: [
+            { type: 'fix', text: "Hardened IPv4/CIDR parsing to reject malformed octets, prefixes with trailing characters, and invalid CIDR separators" },
+            { type: 'fix', text: "Fixed subnet netmask mode by enforcing contiguous-mask validation and corrected IPv6 subnet output formatting to canonical IPv6 notation" },
+            { type: 'fix', text: "Made Quick Links resilient against malformed URLs from input/localStorage and fixed DNS answer type labeling to use per-row record type codes" },
+            { type: 'fix', text: "Refactored Docker Compose import/export to preserve array/map variants for environment/depends_on/labels and retain structured unknown fields during round-trip" },
+            { type: 'docs', text: "Updated AGENTS.md with version-badge policy to keep original version and append current release version for updated/bugfix tools" },
+        ]
+    },
+    {
         version: "0.14.0",
         date: "2026-02-14",
         title: "Verified Tool Highlighting and JSON Structure Editor UX",

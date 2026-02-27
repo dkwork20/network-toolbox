@@ -8,6 +8,29 @@
   let error = $state("");
 
   const recordTypes = ["A", "AAAA", "MX", "TXT", "NS", "CNAME", "SOA", "PTR"];
+  const dnsTypeMap: Record<number, string> = {
+    1: "A",
+    2: "NS",
+    5: "CNAME",
+    6: "SOA",
+    12: "PTR",
+    15: "MX",
+    16: "TXT",
+    28: "AAAA",
+    33: "SRV",
+    65: "HTTPS",
+  };
+
+  function formatDnsRecordType(value: unknown): string {
+    if (typeof value === "number") {
+      return dnsTypeMap[value] ?? `TYPE${value}`;
+    }
+    if (typeof value === "string" && /^\d+$/.test(value)) {
+      const numeric = Number(value);
+      return dnsTypeMap[numeric] ?? `TYPE${numeric}`;
+    }
+    return String(value ?? "UNKNOWN");
+  }
 
   async function lookup() {
     if (!domain) return;
@@ -45,7 +68,7 @@
   <div class="mb-10 text-center">
     <div class="flex justify-center items-center gap-3">
       <h2 class="h2 font-bold">DNS Lookup</h2>
-      <span class="badge preset-filled-secondary-500 text-xs">V0.4</span>
+      <span class="badge preset-filled-secondary-500 text-xs">V0.4 ~ V0.15</span>
     </div>
     <p class="mt-2 text-surface-500">Query DNS records via Cloudflare DoH</p>
   </div>
@@ -122,11 +145,7 @@
                 {#each result.Answer as answer}
                   <tr>
                     <td>{answer.name}</td>
-                    <td
-                      >{recordTypes.find((t) => t === recordType) ||
-                        answer.type}</td
-                    >
-                    <!-- Type ID map needed optimally, but keeping simple -->
+                    <td>{formatDnsRecordType(answer.type)}</td>
                     <td>{answer.TTL}</td>
                     <td class="font-mono text-xs break-all">{answer.data}</td>
                   </tr>

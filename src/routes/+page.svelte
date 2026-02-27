@@ -50,6 +50,54 @@
     return newArray;
   }
 
+  interface QuickLink {
+    id: string;
+    title: string;
+    url: string;
+    desc: string;
+  }
+
+  function normalizeQuickLinkUrl(rawUrl: string): string | null {
+    const trimmed = rawUrl.trim();
+    if (!trimmed) return null;
+
+    const withProtocol = /^[a-z][a-z0-9+.-]*:\/\//i.test(trimmed)
+      ? trimmed
+      : `https://${trimmed}`;
+
+    try {
+      const parsed = new URL(withProtocol);
+      if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+        return null;
+      }
+      return parsed.toString();
+    } catch {
+      return null;
+    }
+  }
+
+  function sanitizeQuickLinks(raw: unknown): QuickLink[] {
+    if (!Array.isArray(raw)) return [];
+
+    return raw
+      .map((entry) => {
+        if (!entry || typeof entry !== "object") return null;
+        const item = entry as Partial<QuickLink>;
+        const title = typeof item.title === "string" ? item.title.trim() : "";
+        const desc = typeof item.desc === "string" ? item.desc.trim() : "";
+        const url = typeof item.url === "string" ? normalizeQuickLinkUrl(item.url) : null;
+        if (!title || !url) return null;
+
+        return {
+          id: typeof item.id === "string" && item.id.trim() ? item.id : crypto.randomUUID(),
+          title,
+          url,
+          desc,
+        } satisfies QuickLink;
+      })
+      .filter((item): item is QuickLink => item !== null);
+  }
+
   // --- Tool Data ---
   const tools = [
     // Network Tools
@@ -60,7 +108,7 @@
       icon: Calculator,
       href: "/tools/ip",
       cat: "network",
-      version: "V0.4",
+      version: "V0.4 ~ V0.15",
     },
     {
       id: "subnet",
@@ -78,7 +126,7 @@
       icon: Search,
       href: "/tools/dns",
       cat: "network",
-      version: "V0.4",
+      version: "V0.4 ~ V0.15",
     },
     {
       id: "diag",
@@ -346,7 +394,7 @@
       icon: Container,
       href: "/tools/docker",
       cat: "dev",
-      version: "V0.11",
+      version: "V0.11 ~ V0.15",
       isNew: true,
     },
   ];
@@ -359,7 +407,7 @@
   ];
 
   // --- Quick Links (Draggable) ---
-  let quickLinks = $state([
+  let quickLinks = $state<QuickLink[]>([
     {
       id: "1",
       title: "Google",
@@ -384,7 +432,7 @@
     const saved = localStorage.getItem("quickLinks");
     if (saved) {
       try {
-        quickLinks = JSON.parse(saved);
+        quickLinks = sanitizeQuickLinks(JSON.parse(saved));
       } catch (e) {
         console.error("Failed to load quick links", e);
       }
@@ -393,9 +441,7 @@
 
   // Save to LS
   $effect(() => {
-    if (quickLinks.length > 0) {
-      localStorage.setItem("quickLinks", JSON.stringify(quickLinks));
-    }
+    localStorage.setItem("quickLinks", JSON.stringify(quickLinks));
   });
 
   function handleDragEnd(event: any) {
@@ -419,7 +465,25 @@
       });
       return;
     }
-    quickLinks = [...quickLinks, { id: crypto.randomUUID(), ...newLink }];
+
+    const normalizedUrl = normalizeQuickLinkUrl(newLink.url);
+    if (!normalizedUrl) {
+      toaster.error({
+        title: "Invalid URL",
+        description: "Please enter a valid http(s) URL",
+      });
+      return;
+    }
+
+    quickLinks = [
+      ...quickLinks,
+      {
+        id: crypto.randomUUID(),
+        title: newLink.title.trim(),
+        url: normalizedUrl,
+        desc: newLink.desc.trim(),
+      },
+    ];
     newLink = { title: "", url: "", desc: "" };
     showAddModal = false;
     toaster.success({ title: "Success", description: "Link added" });

@@ -10,13 +10,20 @@
     ports: string[];
     volumes: string[];
     environment: string[];
+    environmentMode: "array" | "map";
+    environmentMap: Record<string, string | null> | null;
     depends_on: string[];
+    dependsOnMode: "array" | "map";
+    dependsOnMap: Record<string, unknown> | null;
     restart: "always" | "unless-stopped" | "on-failure" | "no";
     networks: string[];
     command: string;
     labels: string[];
+    labelsMode: "array" | "map";
+    labelsMap: Record<string, string> | null;
     // Extra fields to support any custom/unknown YAML properties
     extra: Record<string, string>;
+    rawExtra: Record<string, unknown>;
   }
 
   interface Network {
@@ -30,6 +37,103 @@
     col?: number;
     message: string;
     suggestion?: string;
+  }
+
+  function isRecord(value: unknown): value is Record<string, unknown> {
+    return !!value && typeof value === "object" && !Array.isArray(value);
+  }
+
+  function cloneValue<T>(value: T): T {
+    return JSON.parse(JSON.stringify(value)) as T;
+  }
+
+  function normalizeStringArray(value: unknown): string[] {
+    if (!Array.isArray(value)) return [];
+    return value
+      .map((item) => String(item).trim())
+      .filter((item) => item.length > 0);
+  }
+
+  function parseEnvironment(
+    value: unknown,
+  ): { list: string[]; mode: "array" | "map"; map: Record<string, string | null> | null } {
+    if (Array.isArray(value)) {
+      return {
+        list: normalizeStringArray(value),
+        mode: "array",
+        map: null,
+      };
+    }
+
+    if (!isRecord(value)) {
+      return { list: [], mode: "array", map: null };
+    }
+
+    const environmentMap: Record<string, string | null> = {};
+    const list: string[] = [];
+
+    for (const [key, rawValue] of Object.entries(value)) {
+      const normalizedKey = key.trim();
+      if (!normalizedKey) continue;
+      if (rawValue === null) {
+        environmentMap[normalizedKey] = null;
+        list.push(normalizedKey);
+        continue;
+      }
+      const normalizedValue = String(rawValue);
+      environmentMap[normalizedKey] = normalizedValue;
+      list.push(`${normalizedKey}=${normalizedValue}`);
+    }
+
+    return { list, mode: "map", map: environmentMap };
+  }
+
+  function parseDependsOn(
+    value: unknown,
+  ): { list: string[]; mode: "array" | "map"; map: Record<string, unknown> | null } {
+    if (Array.isArray(value)) {
+      return {
+        list: normalizeStringArray(value),
+        mode: "array",
+        map: null,
+      };
+    }
+
+    if (!isRecord(value)) {
+      return { list: [], mode: "array", map: null };
+    }
+
+    const dependsOnMap = cloneValue(value);
+    const list = Object.keys(dependsOnMap).map((key) => key.trim()).filter(Boolean);
+    return { list, mode: "map", map: dependsOnMap };
+  }
+
+  function parseLabels(
+    value: unknown,
+  ): { list: string[]; mode: "array" | "map"; map: Record<string, string> | null } {
+    if (Array.isArray(value)) {
+      return {
+        list: normalizeStringArray(value),
+        mode: "array",
+        map: null,
+      };
+    }
+
+    if (!isRecord(value)) {
+      return { list: [], mode: "array", map: null };
+    }
+
+    const labelsMap: Record<string, string> = {};
+    const list: string[] = [];
+    for (const [key, rawValue] of Object.entries(value)) {
+      const normalizedKey = key.trim();
+      if (!normalizedKey) continue;
+      const normalizedValue = String(rawValue);
+      labelsMap[normalizedKey] = normalizedValue;
+      list.push(`${normalizedKey}=${normalizedValue}`);
+    }
+
+    return { list, mode: "map", map: labelsMap };
   }
 
   // Templates
@@ -220,12 +324,19 @@
       ports: s.ports || [],
       volumes: s.volumes || [],
       environment: s.environment || [],
+      environmentMode: "array",
+      environmentMap: null,
       depends_on: s.depends_on || [],
+      dependsOnMode: "array",
+      dependsOnMap: null,
       restart: s.restart || "always",
       networks: s.networks || [],
       command: s.command || "",
       labels: s.labels || [],
+      labelsMode: "array",
+      labelsMap: null,
       extra: {},
+      rawExtra: {},
     }));
 
     selectedTemplate = "";
@@ -261,13 +372,11 @@
   function importFromParsedData(data: any) {
     // Parse services
     const parsedServices: Service[] = [];
-    if (data.services) {
+    if (isRecord(data.services)) {
       for (const [name, svc] of Object.entries(data.services)) {
-        const service = svc as any;
-        
-        // Debug: log all keys to see what's being parsed
-        console.log('Service:', name, 'Keys:', Object.keys(service));
-        
+        if (!isRecord(svc)) continue;
+        const service = svc as Record<string, unknown>;
+
         // Handle command - can be string, array, or null/undefined
         let command = "";
         if (service.command !== undefined && service.command !== null) {
@@ -279,7 +388,6 @@
             command = String(service.command);
           }
         }
-        console.log('Parsed command:', command);
 
         // Handle restart - can be string or null/undefined
         let restart: "always" | "unless-stopped" | "on-failure" | "no" = "no";
@@ -290,33 +398,52 @@
           }
         }
 
+        const parsedEnvironment = parseEnvironment(service.environment);
+        const parsedDependsOn = parseDependsOn(service.depends_on);
+        const parsedLabels = parseLabels(service.labels);
+        const { extra, rawExtra } = collectExtraFields(service);
+
         parsedServices.push({
           id: crypto.randomUUID(),
           name,
           image: service.image?.toString() || "",
-          ports: Array.isArray(service.ports) ? service.ports.map(String) : [],
-          volumes: Array.isArray(service.volumes) ? service.volumes.map(String) : [],
-          environment: Array.isArray(service.environment) ? service.environment.map(String) : [],
-          depends_on: Array.isArray(service.depends_on) ? service.depends_on.map(String) : [],
+          ports: normalizeStringArray(service.ports),
+          volumes: normalizeStringArray(service.volumes),
+          environment: parsedEnvironment.list,
+          environmentMode: parsedEnvironment.mode,
+          environmentMap: parsedEnvironment.map,
+          depends_on: parsedDependsOn.list,
+          dependsOnMode: parsedDependsOn.mode,
+          dependsOnMap: parsedDependsOn.map,
           restart,
-          networks: Array.isArray(service.networks) ? service.networks.map(String) : [],
+          networks: normalizeStringArray(service.networks),
           command,
-          labels: Array.isArray(service.labels) ? service.labels.map(String) : [],
+          labels: parsedLabels.list,
+          labelsMode: parsedLabels.mode,
+          labelsMap: parsedLabels.map,
           // Collect extra fields not in the standard schema
-          extra: collectExtraFields(service),
+          extra,
+          rawExtra,
         });
       }
     }
 
     // Parse networks
     const parsedNetworks: Network[] = [{ id: crypto.randomUUID(), name: "default", driver: "bridge" }];
-    if (data.networks) {
+    if (isRecord(data.networks)) {
       for (const [name, net] of Object.entries(data.networks)) {
         if (name !== "default") {
+          const networkObject = isRecord(net) ? net : {};
+          const driverValue = String(networkObject.driver || "bridge");
+          const driver: Network["driver"] =
+            driverValue === "overlay" || driverValue === "host" || driverValue === "none"
+              ? driverValue
+              : "bridge";
+
           parsedNetworks.push({
             id: crypto.randomUUID(),
             name,
-            driver: (net as any)?.driver || "bridge",
+            driver,
           });
         }
       }
@@ -324,7 +451,7 @@
 
     services = parsedServices;
     networks = parsedNetworks;
-    composeVersion = data.version || "3.8";
+    composeVersion = data.version ? String(data.version) : "3.8";
   }
 
   // Import from YAML
@@ -371,12 +498,19 @@
       ports: [],
       volumes: [],
       environment: [],
+      environmentMode: "array",
+      environmentMap: null,
       depends_on: [],
+      dependsOnMode: "array",
+      dependsOnMap: null,
       restart: "always",
       networks: [],
       command: "",
       labels: [],
+      labelsMode: "array",
+      labelsMap: null,
       extra: {},
+      rawExtra: {},
     };
     services = [...services, newService];
     yamlContent = generateYaml();
@@ -419,111 +553,139 @@
     yamlErrors = parseYamlErrors(yamlContent);
   }
 
-  // Quote YAML value if it contains special characters
-  function quoteYamlValue(value: any): string {
-    if (value === null || value === undefined) return '""';
-    const str = String(value);
-    if (!str) return '""';
-    // Quote if contains colon, hash, or special YAML chars
-    if (str.includes(':') || str.includes('#') || str.includes('&') || str.includes('*') || str.includes('!') || str.includes('|') || str.includes('>') || str.includes("'") || str.includes('"') || str.startsWith(' ') || str.endsWith(' ')) {
-      // Escape existing quotes and wrap in quotes
-      return `"${str.replace(/"/g, '\\"')}"`;
-    }
-    return str;
-  }
-
   // Collect extra fields not in the standard schema
-  function collectExtraFields(service: any): Record<string, string> {
-    const standardFields = ['image', 'ports', 'volumes', 'environment', 'depends_on', 'restart', 'networks', 'command', 'labels', 'container_name', 'build', 'entrypoint', 'working_dir', 'user', 'expose', 'external_links', 'extra_hosts', 'logging'];
+  function collectExtraFields(service: Record<string, unknown>): { extra: Record<string, string>; rawExtra: Record<string, unknown> } {
+    const standardFields = ['image', 'ports', 'volumes', 'environment', 'depends_on', 'restart', 'networks', 'command', 'labels'];
     const extra: Record<string, string> = {};
-    
+    const rawExtra: Record<string, unknown> = {};
+
     for (const [key, value] of Object.entries(service)) {
       if (!standardFields.includes(key) && value !== undefined && value !== null) {
         if (typeof value === 'string') {
           extra[key] = value;
         } else if (typeof value === 'number' || typeof value === 'boolean') {
           extra[key] = String(value);
-        } else if (Array.isArray(value)) {
-          // Store array as comma-separated string for simple editing
-          extra[key] = value.map(v => String(v)).join(', ');
+        } else {
+          rawExtra[key] = cloneValue(value);
         }
       }
     }
-    return extra;
+    return { extra, rawExtra };
+  }
+
+  function parsePairsToObject(values: string[]): Record<string, string> | null {
+    const result: Record<string, string> = {};
+    for (const rawValue of values) {
+      const entry = rawValue.trim();
+      if (!entry) continue;
+      const separatorIndex = entry.indexOf("=");
+      if (separatorIndex < 1) return null;
+      const key = entry.slice(0, separatorIndex).trim();
+      const value = entry.slice(separatorIndex + 1).trim();
+      if (!key) return null;
+      result[key] = value;
+    }
+    return Object.keys(result).length > 0 ? result : null;
+  }
+
+  function buildServiceYamlObject(service: Service): Record<string, unknown> {
+    const serviceDoc: Record<string, unknown> = {};
+
+    if (service.image.trim()) {
+      serviceDoc.image = service.image.trim();
+    }
+
+    if (service.restart !== "no") {
+      serviceDoc.restart = service.restart;
+    }
+
+    const ports = service.ports.map((port) => port.trim()).filter(Boolean);
+    if (ports.length > 0) {
+      serviceDoc.ports = ports;
+    }
+
+    const volumes = service.volumes.map((volume) => volume.trim()).filter(Boolean);
+    if (volumes.length > 0) {
+      serviceDoc.volumes = volumes;
+    }
+
+    const environment = service.environment.map((value) => value.trim()).filter(Boolean);
+    if (environment.length > 0) {
+      if (service.environmentMode === "map" && service.environmentMap) {
+        serviceDoc.environment = cloneValue(service.environmentMap);
+      } else {
+        const asMap = parsePairsToObject(environment);
+        serviceDoc.environment = asMap ?? environment;
+      }
+    }
+
+    const dependsOn = service.depends_on.map((value) => value.trim()).filter(Boolean);
+    if (dependsOn.length > 0) {
+      if (service.dependsOnMode === "map" && service.dependsOnMap) {
+        serviceDoc.depends_on = cloneValue(service.dependsOnMap);
+      } else {
+        serviceDoc.depends_on = dependsOn;
+      }
+    }
+
+    const networksList = service.networks.map((value) => value.trim()).filter(Boolean);
+    if (networksList.length > 0) {
+      serviceDoc.networks = networksList;
+    }
+
+    if (service.command.trim()) {
+      serviceDoc.command = service.command;
+    }
+
+    const labels = service.labels.map((value) => value.trim()).filter(Boolean);
+    if (labels.length > 0) {
+      if (service.labelsMode === "map" && service.labelsMap) {
+        serviceDoc.labels = cloneValue(service.labelsMap);
+      } else {
+        const asMap = parsePairsToObject(labels);
+        serviceDoc.labels = asMap ?? labels;
+      }
+    }
+
+    for (const [key, value] of Object.entries(service.rawExtra)) {
+      if (key.trim() && value !== undefined) {
+        serviceDoc[key] = cloneValue(value);
+      }
+    }
+
+    for (const [key, value] of Object.entries(service.extra)) {
+      if (key.trim() && value) {
+        serviceDoc[key.trim()] = value;
+      }
+    }
+
+    return serviceDoc;
   }
 
   // Generate YAML
   function generateYaml(): string {
-    let yaml = `version: "${composeVersion}"\n\n`;
+    const composeDoc: Record<string, unknown> = {
+      version: composeVersion,
+      services: {},
+    };
 
-    // Services
-    yaml += "services:\n";
-    for (const service of services) {
-      yaml += `  ${service.name}:\n`;
-      yaml += `    image: ${quoteYamlValue(service.image)}\n`;
-
-      if (service.restart !== "no") {
-        yaml += `    restart: ${service.restart}\n`;
-      }
-
-      if (service.ports.length > 0) {
-        yaml += "    ports:\n";
-        for (const port of service.ports) {
-          if (port) yaml += `      - ${quoteYamlValue(port)}\n`;
-        }
-      }
-
-      if (service.volumes.length > 0) {
-        yaml += "    volumes:\n";
-        for (const vol of service.volumes) {
-          if (vol) yaml += `      - ${quoteYamlValue(vol)}\n`;
-        }
-      }
-
-      if (service.environment.length > 0) {
-        yaml += "    environment:\n";
-        for (const env of service.environment) {
-          if (env) yaml += `      - ${quoteYamlValue(env)}\n`;
-        }
-      }
-
-      if (service.depends_on.length > 0) {
-        yaml += "    depends_on:\n";
-        for (const dep of service.depends_on) {
-          if (dep) yaml += `      - ${dep}\n`;
-        }
-      }
-
-      if (service.networks.length > 0) {
-        yaml += "    networks:\n";
-        for (const net of service.networks) {
-          if (net) yaml += `      - ${net}\n`;
-        }
-      }
-
-      if (service.command) {
-        yaml += `    command: ${quoteYamlValue(service.command)}\n`;
-      }
-
-      // Extra fields (custom/unknown properties)
-      if (service.extra && Object.keys(service.extra).length > 0) {
-        for (const [key, value] of Object.entries(service.extra)) {
-          if (value) {
-            yaml += `    ${key}: ${quoteYamlValue(value)}\n`;
-          }
-        }
-      }
-
-      yaml += "\n";
-    }
+    const serviceDoc = composeDoc.services as Record<string, Record<string, unknown>>;
+    services.forEach((service, index) => {
+      const serviceName = service.name.trim() || `service${index + 1}`;
+      serviceDoc[serviceName] = buildServiceYamlObject(service);
+    });
 
     // Networks
     const definedNetworks = networks.filter((n) => n.name && n.name !== "default");
     if (definedNetworks.length > 0) {
-      yaml += "networks:\n";
+      const composeNetworks: Record<string, { driver: Network["driver"] }> = {};
       for (const net of definedNetworks) {
-        yaml += `  ${net.name}:\n`;
-        yaml += `    driver: ${net.driver}\n`;
+        const netName = net.name.trim();
+        if (!netName) continue;
+        composeNetworks[netName] = { driver: net.driver };
+      }
+      if (Object.keys(composeNetworks).length > 0) {
+        composeDoc.networks = composeNetworks;
       }
     }
 
@@ -538,13 +700,19 @@
       }
     }
     if (volumeNames.size > 0) {
-      yaml += "\nvolumes:\n";
+      const volumeDoc: Record<string, Record<string, never>> = {};
       for (const vol of volumeNames) {
-        yaml += `  ${vol}:\n`;
+        volumeDoc[vol] = {};
       }
+      composeDoc.volumes = volumeDoc;
     }
 
-    return yaml;
+    return yaml.dump(composeDoc, {
+      indent: 2,
+      lineWidth: -1,
+      noRefs: true,
+      sortKeys: false,
+    });
   }
 
   // Copy YAML
@@ -621,7 +789,7 @@
     <h1 class="h1 font-bold flex items-center gap-3">
       <Container class="size-8 text-primary-500" />
       Docker Compose Generator
-      <span class="badge preset-filled-secondary-500 text-xs">V0.11</span>
+      <span class="badge preset-filled-secondary-500 text-xs">V0.11 ~ V0.15</span>
     </h1>
     <p class="text-surface-500 mt-2">
       Generate, import & edit docker-compose.yml files visually
@@ -874,7 +1042,7 @@ services:
                 bind:value={service.command} 
                 oninput={syncYamlFromForm} 
                 placeholder="npm start"
-              />
+              ></textarea>
             </label>
 
             <label class="label">
@@ -905,7 +1073,12 @@ services:
                 class="textarea textarea-sm font-mono text-xs"
                 rows="2"
                 value={service.environment.join("\n")}
-                oninput={(e) => { service.environment = e.currentTarget.value.split("\n").filter(Boolean); syncYamlFromForm(); }}
+                oninput={(e) => {
+                  service.environmentMode = "array";
+                  service.environmentMap = null;
+                  service.environment = e.currentTarget.value.split("\n").filter(Boolean);
+                  syncYamlFromForm();
+                }}
                 placeholder="NODE_ENV=production&#10;DATABASE_URL=postgres://..."
               ></textarea>
             </label>
@@ -916,7 +1089,12 @@ services:
                 type="text"
                 class="input input-sm"
                 value={service.depends_on.join(", ")}
-                oninput={(e) => { service.depends_on = e.currentTarget.value.split(",").map((s) => s.trim()).filter(Boolean); syncYamlFromForm(); }}
+                oninput={(e) => {
+                  service.dependsOnMode = "array";
+                  service.dependsOnMap = null;
+                  service.depends_on = e.currentTarget.value.split(",").map((s) => s.trim()).filter(Boolean);
+                  syncYamlFromForm();
+                }}
                 placeholder="db, redis"
               />
             </label>

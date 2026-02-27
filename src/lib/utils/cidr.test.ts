@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { calculateAllowedIPs, mergeIntervals, subtractIntervals, rangeToCidrs } from './cidr';
-import { ipToBigInt, bigIntToIp, ipv6ToBigInt, bigIntToIpv6, isValidCidr, parseCidr } from './ip';
+import { ipToBigInt, bigIntToIp, ipv6ToBigInt, bigIntToIpv6, isValidCidr, parseCidr, ipv4NetmaskToPrefix } from './ip';
 
 describe('CIDR Logic', () => {
   describe('Basic IPv4 Exclusions', () => {
@@ -146,6 +146,14 @@ describe('CIDR Parsing', () => {
     it('should reject prefix out of range (IPv6)', () => {
       expect(() => parseCidr('2001:db8::/129')).toThrow();
     });
+
+    it('should reject prefix with trailing characters', () => {
+      expect(() => parseCidr('192.168.1.0/24foo')).toThrow();
+    });
+
+    it('should reject CIDR with extra separators', () => {
+      expect(() => parseCidr('192.168.1.0/24/1')).toThrow();
+    });
   });
 });
 
@@ -205,6 +213,11 @@ describe('IP Utilities', () => {
         expect(bigIntToIp(ipToBigInt(ip))).toBe(ip);
       }
     });
+
+    it('should reject malformed IPv4 octets', () => {
+      expect(() => ipToBigInt('1a.2.3.4')).toThrow();
+      expect(() => ipToBigInt('1.2.3.-1')).toThrow();
+    });
   });
 
   describe('IPv6 Conversions', () => {
@@ -234,7 +247,22 @@ describe('IP Utilities', () => {
       expect(isValidCidr('/24')).toBe(false);
       expect(isValidCidr('invalid')).toBe(false);
       expect(isValidCidr('192.168.1.0/33')).toBe(false);
+      expect(isValidCidr('10.0.0.0/8abc')).toBe(false);
     });
+  });
+});
+
+describe('IPv4 Netmask Utilities', () => {
+  it('should convert valid netmasks to prefixes', () => {
+    expect(ipv4NetmaskToPrefix('255.255.255.0')).toBe(24);
+    expect(ipv4NetmaskToPrefix('255.255.0.0')).toBe(16);
+    expect(ipv4NetmaskToPrefix('0.0.0.0')).toBe(0);
+  });
+
+  it('should reject non-contiguous netmasks', () => {
+    expect(() => ipv4NetmaskToPrefix('255.0.255.0')).toThrow();
+    expect(() => ipv4NetmaskToPrefix('255.255.255.1')).toThrow();
+    expect(() => ipv4NetmaskToPrefix('0.255.0.0')).toThrow();
   });
 });
 

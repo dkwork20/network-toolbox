@@ -1,7 +1,15 @@
 <script lang="ts">
   import { onMount, tick } from "svelte";
   import CalculatorWorker from "$lib/workers/calculator.worker?worker";
-  import { bigIntToIp, isIpv6, parseCidr, ipToBigInt, isValidCidr } from "$lib/utils/ip";
+  import {
+    bigIntToIp,
+    bigIntToIpv6,
+    isIpv6,
+    parseCidr,
+    ipToBigInt,
+    isValidCidr,
+    ipv4NetmaskToPrefix,
+  } from "$lib/utils/ip";
   import {
     generateWindowsScript,
     generateLinuxScript,
@@ -91,7 +99,7 @@
       const totalHosts = end - start + 1n;
       const usableHosts = prefix >= (version === 4 ? 31 : 127) ? totalHosts : totalHosts - 2n;
 
-      const convertIp = version === 4 ? bigIntToIp : (n: bigint) => n.toString(16);
+      const convertIp = version === 4 ? bigIntToIp : bigIntToIpv6;
 
       subnetResults = {
         networkAddress: convertIp(networkAddress),
@@ -157,20 +165,14 @@
     try {
       const ip = ipToBigInt(subnetIp);
       const mask = ipToBigInt(subnetNetmask);
-
-      let prefix = 0;
-      let temp = mask;
-      while (temp !== 0n) {
-        prefix += Number(temp & 1n);
-        temp >>= 1n;
-      }
+      const prefix = ipv4NetmaskToPrefix(subnetNetmask);
 
       const network = ip & mask;
 
       subnetCidr = `${bigIntToIp(network)}/${prefix}`;
       calculateSubnetFromCidr();
     } catch (e) {
-      subnetError = "Invalid IP address or netmask format";
+      subnetError = e instanceof Error ? e.message : "Invalid IP address or netmask format";
     }
   }
 
@@ -337,7 +339,7 @@ AllowedIPs = ${allowedOutput}
   <!-- Header -->
   <div class="mb-6 flex items-center gap-3">
     <h1 class="h1 font-bold">IP Calculator</h1>
-    <span class="badge preset-filled-secondary-500 text-xs">V0.4</span>
+    <span class="badge preset-filled-secondary-500 text-xs">V0.4 ~ V0.15</span>
   </div>
 
   <!-- Header moved to Navbar, keeping subtle title or removing -->
