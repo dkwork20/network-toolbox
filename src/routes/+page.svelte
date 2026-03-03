@@ -178,8 +178,9 @@
       icon: FileSearch,
       href: "/tools/headers",
       cat: "network",
-      version: "V0.10",
+      version: "V0.10 ~ V0.17",
       isNew: true,
+      isUpdated: true,
     },
     {
       id: "ssl",
@@ -230,8 +231,9 @@
       icon: Hash,
       href: "/tools/hash",
       cat: "encoding",
-      version: "V0.7",
+      version: "V0.7 ~ V0.17",
       isNew: true,
+      isUpdated: true,
     },
     {
       id: "base64",
@@ -240,8 +242,9 @@
       icon: Binary,
       href: "/tools/base64",
       cat: "encoding",
-      version: "V0.6",
+      version: "V0.6 ~ V0.17",
       isNew: true,
+      isUpdated: true,
     },
     {
       id: "url",
@@ -292,8 +295,9 @@
       icon: KeyRound,
       href: "/tools/password",
       cat: "security",
-      version: "V0.6",
+      version: "V0.6 ~ V0.17",
       isNew: true,
+      isUpdated: true,
     },
     {
       id: "bcrypt",
@@ -313,7 +317,6 @@
       href: "/tools/sanitizer",
       cat: "security",
       version: "V0.3 ~ V0.16",
-      isUpdated: true,
     },
 
     // Developer Tools

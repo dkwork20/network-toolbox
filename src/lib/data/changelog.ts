@@ -10,6 +10,16 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.17.0",
+        date: "2026-03-03",
+        title: "Accessibility & Stability Fixes",
+        changes: [
+            { type: 'fix', text: "Resolved accessibility label warnings in Base64 and Hash tools" },
+            { type: 'fix', text: "Fixed non-interactive semantic structural warnings in Hash drag-and-drop zone" },
+            { type: 'chore', text: "Migrated legacy svelte:component dynamic components to Svelte 5 syntax in Headers and Password tools" },
+        ]
+    },
+    {
         version: "0.16.0",
         date: "2026-03-03",
         title: "Log Sanitizer Enhancements & Privacy Features",

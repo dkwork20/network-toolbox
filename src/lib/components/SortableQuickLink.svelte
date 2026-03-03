@@ -22,7 +22,7 @@
 
   /* eslint-disable svelte/state-referenced-locally */
   const { ref, handleRef, isDragging } = useSortable({
-    id,
+    id: () => id,
     index: () => index,
     disabled: () => disabled,
   });

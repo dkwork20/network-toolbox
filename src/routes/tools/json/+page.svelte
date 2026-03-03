@@ -1159,7 +1159,7 @@
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
     <!-- Input -->
     <div class="card p-4 bg-surface-50 dark:bg-surface-900 space-y-2">
-      <label class="font-medium">Input JSON</label>
+      <p class="font-medium">Input JSON</p>
       <textarea
         class="textarea font-mono text-sm min-h-[400px]"
         class:text-error-500={!isValid && inputJson}
@@ -1171,7 +1171,7 @@
     <!-- Output -->
     <div class="card p-4 bg-surface-50 dark:bg-surface-900 space-y-2">
       <div class="flex justify-between items-center">
-        <label class="font-medium">Output</label>
+        <p class="font-medium">Output</p>
         {#if outputJson}
           <button class="btn btn-sm preset-tonal-surface" onclick={copyOutput}>
             {#if copied}

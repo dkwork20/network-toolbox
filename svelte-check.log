@@ -1,0 +1,121 @@
+Loading svelte-check in workspace: c:\workspace\AI\2026\opensource\wireguard-helper
+Getting Svelte diagnostics...
+
+c:\workspace\AI\2026\opensource\wireguard-helper\[32msrc\lib\components\SortableQuickLink.svelte[39m:25:5
+[33mWarn[39m: This reference only captures the initial value of `id`. Did you mean to reference it inside a closure instead?
+https://svelte.dev/e/state_referenced_locally (svelte)
+[36m  const { ref, handleRef, isDragging } = useSortable({
+    [35mid[36m,
+    index: () => index,[39m
+
+c:\workspace\AI\2026\opensource\wireguard-helper\[32msrc\routes\tools\base64\+page.svelte[39m:723:13
+[33mWarn[39m: A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control (svelte)
+[36m          <div class="space-y-2">
+            [35m<label class="label"><span>Image URL</span></label>[36m
+            <div class="flex gap-2">[39m
+
+c:\workspace\AI\2026\opensource\wireguard-helper\[32msrc\routes\tools\base64\+page.svelte[39m:743:13
+[33mWarn[39m: A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control (svelte)
+[36m          <div class="space-y-2">
+            [35m<label class="label"><span>Base64 String</span></label>[36m
+            <textarea[39m
+
+c:\workspace\AI\2026\opensource\wireguard-helper\[32msrc\routes\tools\hash\+page.svelte[39m:173:7
+[33mWarn[39m: `<div>` with a dragover or drop handler must have an ARIA role
+https://svelte.dev/e/a11y_no_static_element_interactions (svelte)
+[36m      <!-- File Drop Zone -->
+      [35m<div
+        class="border-2 border-dashed border-surface-500/30 rounded-lg p-8 text-center transition-colors hover:border-primary-500/50"
+        ondragover={(e) => e.preventDefault()}
+        ondrop={handleFileDrop}
+      >
+        <input
+          type="file"
+          id="file-input"
+          class="hidden"
+          onchange={handleFileSelect}
+        />
+        <label for="file-input" class="cursor-pointer">
+          <Upload class="size-12 mx-auto text-surface-400 mb-4" />
+          <p class="text-surface-500">
+            Drag & drop a file here, or click to select
+          </p>
+        </label>
+
+        {#if inputFile}
+          <div class="mt-4 p-4 bg-surface-100 dark:bg-surface-800 rounded-lg">
+            <p class="font-medium">{inputFile.name}</p>
+            <p class="text-sm text-surface-500">{formatFileSize(inputFile.size)}</p>
+          </div>
+        {/if}
+      </div>[36m
+    {/if}[39m
+
+c:\workspace\AI\2026\opensource\wireguard-helper\[32msrc\routes\tools\hash\+page.svelte[39m:202:7
+[33mWarn[39m: A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control (svelte)
+[36m    <div class="space-y-2">
+      [35m<label class="label"><span>Select Algorithms</span></label>[36m
+      <div class="flex flex-wrap gap-2">[39m
+
+c:\workspace\AI\2026\opensource\wireguard-helper\[32msrc\routes\tools\hash\+page.svelte[39m:230:11
+[33mWarn[39m: A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control (svelte)
+[36m        <div class="space-y-2">
+          [35m<label class="label"><span>Hash to Compare</span></label>[36m
+          <input[39m
+
+c:\workspace\AI\2026\opensource\wireguard-helper\[32msrc\routes\tools\headers\+page.svelte[39m:286:17
+[33mWarn[39m: `<svelte:component>` is deprecated in runes mode — components are dynamic by default
+https://svelte.dev/e/svelte_component_deprecated (svelte)
+[36m              {#if getStatusIcon(header.status)}
+                [35m<svelte:component
+                  this={getStatusIcon(header.status)}
+                  class="size-5 mt-0.5 {getStatusColor(header.status)}"
+                />[36m
+              {/if}[39m
+
+c:\workspace\AI\2026\opensource\wireguard-helper\[32msrc\routes\tools\json\+page.svelte[39m:1162:7
+[33mWarn[39m: A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control (svelte)
+[36m    <div class="card p-4 bg-surface-50 dark:bg-surface-900 space-y-2">
+      [35m<label class="font-medium">Input JSON</label>[36m
+      <textarea[39m
+
+c:\workspace\AI\2026\opensource\wireguard-helper\[32msrc\routes\tools\json\+page.svelte[39m:1174:9
+[33mWarn[39m: A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control (svelte)
+[36m      <div class="flex justify-between items-center">
+        [35m<label class="font-medium">Output</label>[36m
+        {#if outputJson}[39m
+
+c:\workspace\AI\2026\opensource\wireguard-helper\[32msrc\routes\tools\markdown\+page.svelte[39m:250:9
+[33mWarn[39m: Avoid declaring classes below the top level scope
+https://svelte.dev/e/perf_avoid_nested_class (svelte)
+[36m      if (!customElements.get("zero-md")) {
+        [35mclass CustomZeroMd extends ZeroMd {
+          async load() {
+            await super.load();
+            this.template = buildZeroMdTemplate(getCurrentTheme());
+          }
+        }[36m[39m
+
+c:\workspace\AI\2026\opensource\wireguard-helper\[32msrc\routes\tools\markdown\+page.svelte[39m:400:11
+[33mWarn[39m: A form label must be associated with a control
+https://svelte.dev/e/a11y_label_has_associated_control (svelte)
+[36m        <div class="flex justify-between items-center">
+          [35m<label class="font-medium">Input</label>[36m
+          <button[39m
+
+c:\workspace\AI\2026\opensource\wireguard-helper\[32msrc\routes\tools\password\+page.svelte[39m:465:11
+[33mWarn[39m: `<svelte:component>` is deprecated in runes mode — components are dynamic by default
+https://svelte.dev/e/svelte_component_deprecated (svelte)
+[36m        <div class="mt-4 flex items-center gap-3">
+          [35m<svelte:component this={getStrengthIcon(calculateStrength(password).level)} class="size-5 {getStrengthColor(calculateStrength(password).level)}" />[36m
+          <div class="flex-1">[39m
+
+====================================
+[33msvelte-check found 0 errors and 12 warnings in 7 files
+[39m

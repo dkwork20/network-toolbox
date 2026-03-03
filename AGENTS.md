@@ -88,7 +88,11 @@ You can highlight tools on the homepage by adding boolean flags to their object 
 - `isNew: true` - Renders a pulsing red **NEW** badge.
 - `isUpdated: true` - Renders a pulsing purple **UPDATED** badge.
 
-Only apply one of these flags at a time.
+**Rules:**
+
+1. **`isNew` is USER-MANAGED.** Do NOT add, remove, or modify `isNew` on any tool unless the user explicitly instructs you to. It is used by the user to distinguish early-implemented features from later ones and is independent of release versions.
+2. **`isUpdated` is version-scoped.** Only tools modified in the **current (latest) release version** should have `isUpdated: true`. When preparing a new release commit, REMOVE `isUpdated: true` from any tools that are NOT part of the new release.
+3. `isNew` and `isUpdated` **can coexist** on the same tool — they serve different purposes and do not conflict.
 
 ## Version Badges
 
@@ -137,8 +141,9 @@ Behavior (MANDATORY):
 1. Execute full changelog generation:
    - Update `src/lib/data/changelog.ts` (new entry at top).
    - Create release markdown in `src/routes/changelog/[NNN]-kebab-case-title.md`.
-2. Run validation (`npm run check` and `npx vitest`).
-3. Then commit.
+2. Update homepage tool versions and `isUpdated` flag for the modified tools, and REMOVE `isUpdated: true` from tools NOT part of this release. Do NOT touch `isNew` flags.
+3. Run validation (`npm run check` and `npx vitest`).
+4. **THEN** perform a single `git commit`. Do NOT commit prematurely and amend later.
 
 ### Mode B: Direct Commit (explicit override)
 
