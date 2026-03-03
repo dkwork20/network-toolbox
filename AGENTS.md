@@ -77,11 +77,18 @@ Each tool in `src/routes/+page.svelte` needs:
 }
 ```
 
-Display in card:
-
 ```html
 <span class="badge preset-tonal-secondary text-xs">{tool.version}</span>
 ```
+
+### Status Flags
+
+You can highlight tools on the homepage by adding boolean flags to their object in the `.ts` array:
+
+- `isNew: true` - Renders a pulsing red **NEW** badge.
+- `isUpdated: true` - Renders a pulsing purple **UPDATED** badge.
+
+Only apply one of these flags at a time.
 
 ## Version Badges
 
@@ -189,12 +196,15 @@ Brief overview.
 ## Changes
 
 ### Features
+
 - Item
 
 ### Fixes
+
 - Item
 
 ### Technical Details
+
 - Item
 
 ## Route
@@ -202,6 +212,7 @@ Brief overview.
 `/tools/xxx`
 
 ## File Changes (REQUIRED - list all modified files)
+
 - `path/to/file` - reason
 ```
 

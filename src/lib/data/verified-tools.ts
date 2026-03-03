@@ -1,4 +1,4 @@
-export const verifiedToolIds = ["base64", "diff", "json"] as const;
+export const verifiedToolIds = ["base64", "diff", "json", "sanitizer"] as const;
 
 const verifiedToolIdSet = new Set<string>(verifiedToolIds);
 

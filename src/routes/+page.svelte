@@ -313,7 +313,7 @@
       href: "/tools/sanitizer",
       cat: "security",
       version: "V0.3 ~ V0.16",
-      isNew: true,
+      isUpdated: true,
     },
 
     // Developer Tools
@@ -610,6 +610,12 @@
                     <span
                       class="badge preset-filled-error-500 text-xs animate-pulse"
                       >NEW</span
+                    >
+                  {/if}
+                  {#if tool.isUpdated}
+                    <span
+                      class="badge preset-filled-tertiary-500 text-xs animate-pulse"
+                      >UPDATED</span
                     >
                   {/if}
                   {#if isToolVerified(tool.id)}

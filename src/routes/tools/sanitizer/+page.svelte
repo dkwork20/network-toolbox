@@ -342,6 +342,7 @@
       <h2 class="h2 font-bold">Log Sanitizer / Masking Tool</h2>
       <span class="badge preset-filled-secondary-500 text-xs">V0.3 ~ V0.16</span
       >
+      <span class="badge preset-tonal-success text-xs">Verified</span>
     </div>
   </div>
 

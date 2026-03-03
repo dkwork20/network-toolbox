@@ -83,7 +83,7 @@
         <!-- Network Tools Dropdown -->
         <DropdownMenu.Root>
           <DropdownMenu.Trigger
-            class="btn-sm bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface hover:preset-tonal-primary transition-colors rounded-md py-2 px-3 flex items-center gap-1 group"
+            class="btn-sm bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-primary transition-colors rounded-md py-2 px-3 flex items-center gap-1 group"
           >
             Network
             <ChevronDown
@@ -136,7 +136,8 @@
                 <a
                   href="/tools/mac"
                   class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >MAC Lookup <span class="text-error-500 font-bold">**</span></a
+                  >MAC Lookup <span class="text-error-500 font-bold">**</span
+                  ></a
                 >
               </DropdownMenu.Item>
               <DropdownMenu.Item
@@ -145,7 +146,8 @@
                 <a
                   href="/tools/port"
                   class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Port Scanner <span class="text-error-500 font-bold">**</span></a
+                  >Port Scanner <span class="text-error-500 font-bold">**</span
+                  ></a
                 >
               </DropdownMenu.Item>
               <DropdownMenu.Item
@@ -154,7 +156,8 @@
                 <a
                   href="/tools/ping"
                   class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Ping Monitor <span class="text-error-500 font-bold">**</span></a
+                  >Ping Monitor <span class="text-error-500 font-bold">**</span
+                  ></a
                 >
               </DropdownMenu.Item>
               <DropdownMenu.Item
@@ -163,7 +166,8 @@
                 <a
                   href="/tools/headers"
                   class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >HTTP Headers <span class="text-error-500 font-bold">**</span></a
+                  >HTTP Headers <span class="text-error-500 font-bold">**</span
+                  ></a
                 >
               </DropdownMenu.Item>
               <DropdownMenu.Item
@@ -172,7 +176,8 @@
                 <a
                   href="/tools/ssl"
                   class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >SSL Checker <span class="text-error-500 font-bold">**</span></a
+                  >SSL Checker <span class="text-error-500 font-bold">**</span
+                  ></a
                 >
               </DropdownMenu.Item>
               <DropdownMenu.Item
@@ -181,7 +186,8 @@
                 <a
                   href="/tools/whois"
                   class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Whois Lookup <span class="text-error-500 font-bold">**</span></a
+                  >Whois Lookup <span class="text-error-500 font-bold">**</span
+                  ></a
                 >
               </DropdownMenu.Item>
               <DropdownMenu.Item
@@ -190,7 +196,8 @@
                 <a
                   href="/tools/speed"
                   class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Speed Test <span class="text-error-500 font-bold">**</span></a
+                  >Speed Test <span class="text-error-500 font-bold">**</span
+                  ></a
                 >
               </DropdownMenu.Item>
             </DropdownMenu.Content>
@@ -202,7 +209,7 @@
         <!-- Encoding & Data Dropdown -->
         <DropdownMenu.Root>
           <DropdownMenu.Trigger
-            class="btn-sm bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface hover:preset-tonal-primary transition-colors rounded-md py-2 px-3 flex items-center gap-1 group"
+            class="btn-sm bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-primary transition-colors rounded-md py-2 px-3 flex items-center gap-1 group"
           >
             Encoding
             <ChevronDown
@@ -219,7 +226,9 @@
                 <a
                   href="/tools/uuid"
                   class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >UUID Generator <span class="text-error-500 font-bold">**</span></a
+                  >UUID Generator <span class="text-error-500 font-bold"
+                    >**</span
+                  ></a
                 >
               </DropdownMenu.Item>
               <DropdownMenu.Item
@@ -228,7 +237,9 @@
                 <a
                   href="/tools/hash"
                   class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Hash Calculator <span class="text-error-500 font-bold">**</span></a
+                  >Hash Calculator <span class="text-error-500 font-bold"
+                    >**</span
+                  ></a
                 >
               </DropdownMenu.Item>
               <DropdownMenu.Item
@@ -236,8 +247,15 @@
               >
                 <a
                   href="/tools/base64"
-                  class={navToolLinkClass("flex items-center px-3 py-2 w-full h-full text-sm", "/tools/base64")}
-                  >Base64 Encoder <span class="text-error-500 font-bold">**</span><span class="badge preset-tonal-success text-[10px] ml-2">Verified</span></a
+                  class={navToolLinkClass(
+                    "flex items-center px-3 py-2 w-full h-full text-sm",
+                    "/tools/base64",
+                  )}
+                  >Base64 Encoder <span class="text-error-500 font-bold"
+                    >**</span
+                  ><span class="badge preset-tonal-success text-[10px] ml-2"
+                    >Verified</span
+                  ></a
                 >
               </DropdownMenu.Item>
               <DropdownMenu.Item
@@ -246,7 +264,8 @@
                 <a
                   href="/tools/url"
                   class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >URL Encoder <span class="text-error-500 font-bold">**</span></a
+                  >URL Encoder <span class="text-error-500 font-bold">**</span
+                  ></a
                 >
               </DropdownMenu.Item>
               <DropdownMenu.Item
@@ -254,8 +273,15 @@
               >
                 <a
                   href="/tools/json"
-                  class={navToolLinkClass("flex items-center px-3 py-2 w-full h-full text-sm", "/tools/json")}
-                  >JSON Formatter <span class="text-error-500 font-bold">**</span><span class="badge preset-tonal-success text-[10px] ml-2">Verified</span></a
+                  class={navToolLinkClass(
+                    "flex items-center px-3 py-2 w-full h-full text-sm",
+                    "/tools/json",
+                  )}
+                  >JSON Formatter <span class="text-error-500 font-bold"
+                    >**</span
+                  ><span class="badge preset-tonal-success text-[10px] ml-2"
+                    >Verified</span
+                  ></a
                 >
               </DropdownMenu.Item>
               <DropdownMenu.Item
@@ -264,7 +290,8 @@
                 <a
                   href="/tools/color"
                   class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Color Picker <span class="text-error-500 font-bold">**</span></a
+                  >Color Picker <span class="text-error-500 font-bold">**</span
+                  ></a
                 >
               </DropdownMenu.Item>
               <DropdownMenu.Item
@@ -273,7 +300,8 @@
                 <a
                   href="/tools/qr"
                   class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >QR Generator <span class="text-error-500 font-bold">**</span></a
+                  >QR Generator <span class="text-error-500 font-bold">**</span
+                  ></a
                 >
               </DropdownMenu.Item>
             </DropdownMenu.Content>
@@ -285,7 +313,7 @@
         <!-- Security Dropdown -->
         <DropdownMenu.Root>
           <DropdownMenu.Trigger
-            class="btn-sm bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface hover:preset-tonal-primary transition-colors rounded-md py-2 px-3 flex items-center gap-1 group"
+            class="btn-sm bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-primary transition-colors rounded-md py-2 px-3 flex items-center gap-1 group"
           >
             Security
             <ChevronDown
@@ -302,7 +330,9 @@
                 <a
                   href="/tools/password"
                   class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Password Generator <span class="text-error-500 font-bold">**</span></a
+                  >Password Generator <span class="text-error-500 font-bold"
+                    >**</span
+                  ></a
                 >
               </DropdownMenu.Item>
               <DropdownMenu.Item
@@ -311,7 +341,8 @@
                 <a
                   href="/tools/bcrypt"
                   class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Bcrypt Hash <span class="text-error-500 font-bold">**</span></a
+                  >Bcrypt Hash <span class="text-error-500 font-bold">**</span
+                  ></a
                 >
               </DropdownMenu.Item>
               <DropdownMenu.Item
@@ -319,8 +350,14 @@
               >
                 <a
                   href="/tools/sanitizer"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Log Sanitizer</a
+                  class={navToolLinkClass(
+                    "flex items-center px-3 py-2 w-full h-full text-sm",
+                    "/tools/sanitizer",
+                  )}
+                  >Log Sanitizer<span
+                    class="badge preset-tonal-success text-[10px] ml-2"
+                    >Verified</span
+                  ></a
                 >
               </DropdownMenu.Item>
             </DropdownMenu.Content>
@@ -332,7 +369,7 @@
         <!-- Dev Tools Dropdown -->
         <DropdownMenu.Root>
           <DropdownMenu.Trigger
-            class="btn-sm bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface hover:preset-tonal-primary transition-colors rounded-md py-2 px-3 flex items-center gap-1 group"
+            class="btn-sm bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-primary transition-colors rounded-md py-2 px-3 flex items-center gap-1 group"
           >
             Developer
             <ChevronDown
@@ -394,7 +431,8 @@
                 <a
                   href="/tools/regex"
                   class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Regex Tester <span class="text-error-500 font-bold">**</span></a
+                  >Regex Tester <span class="text-error-500 font-bold">**</span
+                  ></a
                 >
               </DropdownMenu.Item>
               <DropdownMenu.Item
@@ -402,8 +440,14 @@
               >
                 <a
                   href="/tools/diff"
-                  class={navToolLinkClass("flex items-center px-3 py-2 w-full h-full text-sm", "/tools/diff")}
-                  >Diff Viewer <span class="text-error-500 font-bold">**</span><span class="badge preset-tonal-success text-[10px] ml-2">Verified</span></a
+                  class={navToolLinkClass(
+                    "flex items-center px-3 py-2 w-full h-full text-sm",
+                    "/tools/diff",
+                  )}
+                  >Diff Viewer <span class="text-error-500 font-bold">**</span
+                  ><span class="badge preset-tonal-success text-[10px] ml-2"
+                    >Verified</span
+                  ></a
                 >
               </DropdownMenu.Item>
               <DropdownMenu.Item
@@ -412,7 +456,9 @@
                 <a
                   href="/tools/markdown"
                   class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Markdown Preview <span class="text-error-500 font-bold">**</span></a
+                  >Markdown Preview <span class="text-error-500 font-bold"
+                    >**</span
+                  ></a
                 >
               </DropdownMenu.Item>
               <DropdownMenu.Item
@@ -421,7 +467,9 @@
                 <a
                   href="/tools/docker"
                   class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Docker Compose <span class="text-error-500 font-bold">**</span></a
+                  >Docker Compose <span class="text-error-500 font-bold"
+                    >**</span
+                  ></a
                 >
               </DropdownMenu.Item>
             </DropdownMenu.Content>
@@ -464,7 +512,9 @@
       <!-- Mobile Menu Trigger -->
       <div class="lg:hidden ml-2">
         <Dialog.Root bind:open={isMobileMenuOpen}>
-          <Dialog.Trigger class="btn-icon btn-icon-sm preset-filled-surface-500">
+          <Dialog.Trigger
+            class="btn-icon btn-icon-sm preset-filled-surface-500"
+          >
             <Menu class="size-5" />
           </Dialog.Trigger>
           <Dialog.Portal>
@@ -516,7 +566,8 @@
                   <a
                     href="/tools/mac"
                     class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
-                    >MAC Lookup <span class="text-error-500 font-bold">**</span></a
+                    >MAC Lookup <span class="text-error-500 font-bold">**</span
+                    ></a
                   >
                 </div>
 
@@ -528,37 +579,60 @@
                   <a
                     href="/tools/uuid"
                     class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
-                    >UUID Generator <span class="text-error-500 font-bold">**</span></a
+                    >UUID Generator <span class="text-error-500 font-bold"
+                      >**</span
+                    ></a
                   >
                   <a
                     href="/tools/hash"
                     class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
-                    >Hash Calculator <span class="text-error-500 font-bold">**</span></a
+                    >Hash Calculator <span class="text-error-500 font-bold"
+                      >**</span
+                    ></a
                   >
                   <a
                     href="/tools/base64"
-                    class={navToolLinkClass("btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start", "/tools/base64")}
-                    >Base64 Encoder <span class="text-error-500 font-bold">**</span><span class="badge preset-tonal-success text-[10px] ml-2">Verified</span></a
+                    class={navToolLinkClass(
+                      "btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start",
+                      "/tools/base64",
+                    )}
+                    >Base64 Encoder <span class="text-error-500 font-bold"
+                      >**</span
+                    ><span class="badge preset-tonal-success text-[10px] ml-2"
+                      >Verified</span
+                    ></a
                   >
                   <a
                     href="/tools/url"
                     class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
-                    >URL Encoder <span class="text-error-500 font-bold">**</span></a
+                    >URL Encoder <span class="text-error-500 font-bold">**</span
+                    ></a
                   >
                   <a
                     href="/tools/json"
-                    class={navToolLinkClass("btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start", "/tools/json")}
-                    >JSON Formatter <span class="text-error-500 font-bold">**</span><span class="badge preset-tonal-success text-[10px] ml-2">Verified</span></a
+                    class={navToolLinkClass(
+                      "btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start",
+                      "/tools/json",
+                    )}
+                    >JSON Formatter <span class="text-error-500 font-bold"
+                      >**</span
+                    ><span class="badge preset-tonal-success text-[10px] ml-2"
+                      >Verified</span
+                    ></a
                   >
                   <a
                     href="/tools/color"
                     class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
-                    >Color Picker <span class="text-error-500 font-bold">**</span></a
+                    >Color Picker <span class="text-error-500 font-bold"
+                      >**</span
+                    ></a
                   >
                   <a
                     href="/tools/qr"
                     class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
-                    >QR Generator <span class="text-error-500 font-bold">**</span></a
+                    >QR Generator <span class="text-error-500 font-bold"
+                      >**</span
+                    ></a
                   >
                 </div>
 
@@ -570,12 +644,20 @@
                   <a
                     href="/tools/password"
                     class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
-                    >Password Generator <span class="text-error-500 font-bold">**</span></a
+                    >Password Generator <span class="text-error-500 font-bold"
+                      >**</span
+                    ></a
                   >
                   <a
                     href="/tools/sanitizer"
-                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
-                    >Log Sanitizer</a
+                    class={navToolLinkClass(
+                      "btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start",
+                      "/tools/sanitizer",
+                    )}
+                    >Log Sanitizer<span
+                      class="badge preset-tonal-success text-[10px] ml-2"
+                      >Verified</span
+                    ></a
                   >
                 </div>
 
@@ -596,11 +678,13 @@
                   >
                   <a
                     href="/tools/converter"
-                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start">Converter</a
+                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
+                    >Converter</a
                   >
                   <a
                     href="/tools/timestamp"
-                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start">Timestamp</a
+                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
+                    >Timestamp</a
                   >
                   <a
                     href="/tools/cron"
@@ -610,12 +694,20 @@
                   <a
                     href="/tools/regex"
                     class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start"
-                    >Regex Tester <span class="text-error-500 font-bold">**</span></a
+                    >Regex Tester <span class="text-error-500 font-bold"
+                      >**</span
+                    ></a
                   >
                   <a
                     href="/tools/diff"
-                    class={navToolLinkClass("btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start", "/tools/diff")}
-                    >Diff Viewer <span class="text-error-500 font-bold">**</span><span class="badge preset-tonal-success text-[10px] ml-2">Verified</span></a
+                    class={navToolLinkClass(
+                      "btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start",
+                      "/tools/diff",
+                    )}
+                    >Diff Viewer <span class="text-error-500 font-bold">**</span
+                    ><span class="badge preset-tonal-success text-[10px] ml-2"
+                      >Verified</span
+                    ></a
                   >
                 </div>
 
@@ -624,14 +716,14 @@
                 <div class="flex flex-col gap-2">
                   <a
                     href="/changelog"
-                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start text-surface-500"
+                    class="btn bg-transparent dark:text-surface-100 hover:preset-tonal-surface justify-start text-surface-500"
                     >Changelog</a
                   >
                   <a
                     href="https://github.com/skeletonlabs/skeleton"
                     target="_blank"
                     rel="noreferrer"
-                    class="btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start text-surface-500"
+                    class="btn bg-transparent dark:text-surface-100 hover:preset-tonal-surface justify-start text-surface-500"
                     >GitHub</a
                   >
                 </div>
