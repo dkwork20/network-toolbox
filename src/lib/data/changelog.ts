@@ -10,6 +10,18 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.16.0",
+        date: "2026-03-03",
+        title: "Log Sanitizer Enhancements & Privacy Features",
+        changes: [
+            { type: 'feat', text: "Added HTML tags and Regex-based Token masking controls to Log Sanitizer" },
+            { type: 'feat', text: "Added Parameter prefix masking with granular termination character controls" },
+            { type: 'feat', text: "Added live Line/Character metrics and visual size diffing to Log Sanitizer I/O" },
+            { type: 'feat', text: "Upgraded mapped replacement visibility with high-contrast highlights and copy-to-clipboard Modals" },
+            { type: 'fix', text: "Fixed Sanitizer height constraints via an Auto-Expand toggle and improved input/output flex containment" },
+        ]
+    },
+    {
         version: "0.15.0",
         date: "2026-02-27",
         title: "Parsing Hardening, Route Stability, and Compose Round-Trip Reliability",

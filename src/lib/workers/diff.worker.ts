@@ -70,10 +70,10 @@ function buildCharDiffHtml(oldLine: string, newLine: string, side: "left" | "rig
 
       const escaped = escapeHtml(part.value);
       if (part.added) {
-        return `<span class="bg-success-500/40 text-success-600 dark:text-success-400">${escaped}</span>`;
+        return `<span class="bg-success-800/60 text-success-200 dark:text-success-400">${escaped}</span>`;
       }
       if (part.removed) {
-        return `<span class="bg-error-500/40 text-error-600 dark:text-error-400">${escaped}</span>`;
+        return `<span class="bg-error-800/60 text-error-200 dark:text-error-400">${escaped}</span>`;
       }
       return escaped;
     })

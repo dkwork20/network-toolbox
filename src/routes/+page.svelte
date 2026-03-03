@@ -85,11 +85,15 @@
         const item = entry as Partial<QuickLink>;
         const title = typeof item.title === "string" ? item.title.trim() : "";
         const desc = typeof item.desc === "string" ? item.desc.trim() : "";
-        const url = typeof item.url === "string" ? normalizeQuickLinkUrl(item.url) : null;
+        const url =
+          typeof item.url === "string" ? normalizeQuickLinkUrl(item.url) : null;
         if (!title || !url) return null;
 
         return {
-          id: typeof item.id === "string" && item.id.trim() ? item.id : crypto.randomUUID(),
+          id:
+            typeof item.id === "string" && item.id.trim()
+              ? item.id
+              : crypto.randomUUID(),
           title,
           url,
           desc,
@@ -308,7 +312,8 @@
       icon: ShieldCheck,
       href: "/tools/sanitizer",
       cat: "security",
-      version: "V0.3",
+      version: "V0.3 ~ V0.16",
+      isNew: true,
     },
 
     // Developer Tools
@@ -582,9 +587,11 @@
         {#each tools.filter((t) => t.cat === cat.id) as tool}
           <a
             href={tool.href}
-            class={`card p-6 bg-surface-50 dark:bg-surface-800 border transition-all group ${isToolVerified(tool.id)
-              ? "border-success-500/40 ring-1 ring-success-500/25 hover:border-success-500/60 hover:shadow-lg hover:shadow-success-500/10"
-              : "border-surface-500/20 hover:border-primary-500/30 hover:shadow-lg"}`}
+            class={`card p-6 bg-surface-50 dark:bg-surface-800 border transition-all group ${
+              isToolVerified(tool.id)
+                ? "border-success-500/40 ring-1 ring-success-500/25 hover:border-success-500/60 hover:shadow-lg hover:shadow-success-500/10"
+                : "border-surface-500/20 hover:border-primary-500/30 hover:shadow-lg"
+            }`}
           >
             <div class="flex items-start gap-4">
               <div
@@ -600,12 +607,19 @@
                     {tool.title}
                   </h3>
                   {#if tool.isNew}
-                    <span class="badge preset-filled-error-500 text-xs animate-pulse">NEW</span>
+                    <span
+                      class="badge preset-filled-error-500 text-xs animate-pulse"
+                      >NEW</span
+                    >
                   {/if}
                   {#if isToolVerified(tool.id)}
-                    <span class="badge preset-tonal-success text-xs">Verified</span>
+                    <span class="badge preset-tonal-success text-xs"
+                      >Verified</span
+                    >
                   {/if}
-                  <span class="badge preset-tonal-secondary text-xs">{tool.version}</span>
+                  <span class="badge preset-tonal-secondary text-xs"
+                    >{tool.version}</span
+                  >
                 </div>
                 <p class="text-sm text-surface-500 mt-1">{tool.desc}</p>
               </div>
@@ -660,8 +674,9 @@
         />
       </label>
       <div class="flex justify-end gap-2 mt-4">
-        <button class="btn bg-transparent" onclick={() => (showAddModal = false)}
-          >Cancel</button
+        <button
+          class="btn bg-transparent"
+          onclick={() => (showAddModal = false)}>Cancel</button
         >
         <button class="btn preset-filled-primary-500" onclick={addLink}
           >Save</button
