@@ -292,8 +292,8 @@
       icon: KeyRound,
       href: "/tools/password",
       cat: "security",
-      version: "V0.6",
-      isNew: true,
+      version: "V0.6 ~ V0.17",
+      isUpdated: true,
     },
     {
       id: "bcrypt",

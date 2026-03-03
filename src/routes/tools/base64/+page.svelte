@@ -534,7 +534,7 @@
     <h1 class="h1 font-bold flex items-center gap-3">
       <Binary class="size-8 text-primary-500" />
       Base64 Encoder/Decoder
-      <span class="badge preset-filled-secondary-500 text-xs">V0.6</span>
+      <span class="badge preset-filled-secondary-500 text-xs">V0.6 ~ V0.17</span>
       {#if isVerified}
         <span class="badge preset-tonal-success text-xs">Verified</span>
       {/if}
@@ -720,9 +720,10 @@
           </p>
         {:else if imageInputMode === "url"}
           <div class="space-y-2">
-            <label class="label"><span>Image URL</span></label>
+            <label class="label" for="image-url-input"><span>Image URL</span></label>
             <div class="flex gap-2">
               <input
+                id="image-url-input"
                 type="url"
                 class="input flex-1"
                 bind:value={imageUrl}
@@ -740,8 +741,9 @@
           </div>
         {:else if imageInputMode === "base64"}
           <div class="space-y-2">
-            <label class="label"><span>Base64 String</span></label>
+            <label class="label" for="base64-decode-input"><span>Base64 String</span></label>
             <textarea
+              id="base64-decode-input"
               class="textarea font-mono text-sm min-h-[150px]"
               bind:this={base64DecodeTextarea}
               placeholder="Paste your Base64 string here...&#10;&#10;Can be raw Base64 or data URI format"

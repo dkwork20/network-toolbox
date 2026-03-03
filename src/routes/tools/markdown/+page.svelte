@@ -247,12 +247,12 @@ ${textInput}
       zeroMdStyles = module.STYLES;
 
       if (!customElements.get("zero-md")) {
-        class CustomZeroMd extends ZeroMd {
+        const CustomZeroMd = class extends ZeroMd {
           async load() {
             await super.load();
             this.template = buildZeroMdTemplate(getCurrentTheme());
           }
-        }
+        };
 
         customElements.define("zero-md", CustomZeroMd);
       }
@@ -397,7 +397,7 @@ ${textInput}
       <!-- Editor -->
       <div class="card p-4 bg-surface-50 dark:bg-surface-900 space-y-2">
         <div class="flex justify-between items-center">
-          <label class="font-medium">Input</label>
+          <p class="font-medium">Input</p>
           <button
             class="btn btn-sm preset-tonal-surface p-1"
             title="Copy Input"
