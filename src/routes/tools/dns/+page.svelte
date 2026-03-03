@@ -68,7 +68,7 @@
   <div class="mb-10 text-center">
     <div class="flex justify-center items-center gap-3">
       <h2 class="h2 font-bold">DNS Lookup</h2>
-      <span class="badge preset-filled-secondary-500 text-xs">V0.4 ~ V0.15</span>
+      <span class="badge preset-filled-secondary-500 text-xs">V0.4 ~ V0.17</span>
     </div>
     <p class="mt-2 text-surface-500">Query DNS records via Cloudflare DoH</p>
   </div>

@@ -161,7 +161,7 @@
   <div class="flex justify-between items-center mb-6">
     <div class="flex items-center gap-3">
       <h2 class="h2 font-bold">Visual Subnet Calculator (IPv4 & IPv6)</h2>
-      <span class="badge preset-filled-secondary-500 text-xs">V0.2</span>
+      <span class="badge preset-filled-secondary-500 text-xs">V0.2 ~ V0.17</span>
     </div>
   </div>
 

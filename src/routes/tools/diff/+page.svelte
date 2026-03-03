@@ -313,7 +313,7 @@ console.log('Sum:', result);`;
     <h1 class="h1 font-bold flex items-center gap-3">
       <GitCompare class="size-8 text-primary-500" />
       Diff Viewer
-      <span class="badge preset-filled-secondary-500 text-xs">V0.8</span>
+      <span class="badge preset-filled-secondary-500 text-xs">V0.8 ~ V0.17</span>
       {#if isVerified}
         <span class="badge preset-tonal-success text-xs">Verified</span>
       {/if}
@@ -321,7 +321,7 @@ console.log('Sum:', result);`;
     <p class="text-surface-500 mt-2">Compare two text snippets and see the differences</p>
   </div>
 
-  <div class="card p-4 bg-surface-50 dark:bg-surface-900 mb-6 space-y-3">
+  <div class="card p-4 bg-surface-50 dark:bg-surface-950 mb-6 space-y-3">
     <div class="flex flex-wrap gap-4 items-center justify-between">
       <div class="flex gap-2">
         <button
@@ -413,7 +413,7 @@ console.log('Sum:', result);`;
 
   {#if viewMode === "split"}
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <div class="card p-4 bg-surface-50 dark:bg-surface-900 space-y-2">
+      <div class="card p-4 bg-surface-50 dark:bg-surface-950 space-y-2">
         <span class="font-medium text-surface-500">Original</span>
         <textarea
           class="textarea font-mono text-sm min-h-[400px]"
@@ -422,7 +422,7 @@ console.log('Sum:', result);`;
         ></textarea>
       </div>
 
-      <div class="card p-4 bg-surface-50 dark:bg-surface-900 space-y-2">
+      <div class="card p-4 bg-surface-50 dark:bg-surface-950 space-y-2">
         <span class="font-medium text-surface-500">Modified</span>
         <textarea
           class="textarea font-mono text-sm min-h-[400px]"
@@ -433,7 +433,7 @@ console.log('Sum:', result);`;
     </div>
 
     {#if splitRows.length > 0}
-      <div class="card p-4 mt-6 bg-surface-50 dark:bg-surface-900">
+      <div class="card p-4 mt-6 bg-surface-50 dark:bg-surface-950">
         <div class="grid grid-cols-2 gap-4 mb-2 font-medium">
           <h3>Diff - Original</h3>
           <h3>Diff - Modified</h3>
@@ -471,7 +471,7 @@ console.log('Sum:', result);`;
   {:else}
     <div class="grid grid-cols-1 gap-4">
       <div class="grid grid-cols-2 gap-4">
-        <div class="card p-4 bg-surface-50 dark:bg-surface-900 space-y-2">
+        <div class="card p-4 bg-surface-50 dark:bg-surface-950 space-y-2">
           <span class="font-medium text-surface-500">Original</span>
           <textarea
             class="textarea font-mono text-sm min-h-[200px]"
@@ -480,7 +480,7 @@ console.log('Sum:', result);`;
           ></textarea>
         </div>
 
-        <div class="card p-4 bg-surface-50 dark:bg-surface-900 space-y-2">
+        <div class="card p-4 bg-surface-50 dark:bg-surface-950 space-y-2">
           <span class="font-medium text-surface-500">Modified</span>
           <textarea
             class="textarea font-mono text-sm min-h-[200px]"
@@ -491,7 +491,7 @@ console.log('Sum:', result);`;
       </div>
 
       {#if unifiedRows.length > 0}
-        <div class="card p-4 bg-surface-50 dark:bg-surface-900">
+        <div class="card p-4 bg-surface-50 dark:bg-surface-950">
           <div class="flex justify-between items-center mb-2">
             <h3 class="font-medium">Unified Diff</h3>
             <button class="btn btn-sm preset-tonal-surface" onclick={copyUnified}>

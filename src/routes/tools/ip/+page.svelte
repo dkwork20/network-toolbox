@@ -339,7 +339,7 @@ AllowedIPs = ${allowedOutput}
   <!-- Header -->
   <div class="mb-6 flex items-center gap-3">
     <h1 class="h1 font-bold">IP Calculator</h1>
-    <span class="badge preset-filled-secondary-500 text-xs">V0.4 ~ V0.15</span>
+    <span class="badge preset-filled-secondary-500 text-xs">V0.4 ~ V0.17</span>
   </div>
 
   <!-- Header moved to Navbar, keeping subtle title or removing -->

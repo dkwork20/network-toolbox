@@ -301,7 +301,7 @@ ${textInput}
     <h1 class="h1 font-bold flex items-center gap-3">
       <FileText class="size-8 text-primary-500" />
       Text Viewer
-      <span class="badge preset-filled-secondary-500 text-xs">V0.10</span>
+      <span class="badge preset-filled-secondary-500 text-xs">V0.10 ~ V0.17</span>
     </h1>
     <p class="text-surface-500 mt-2">
       View and render documents with syntax highlighting - Markdown, JSON, HTML,
@@ -395,7 +395,7 @@ ${textInput}
   {#if viewMode === "split"}
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <!-- Editor -->
-      <div class="card p-4 bg-surface-50 dark:bg-surface-900 space-y-2">
+      <div class="card p-4 bg-surface-50 dark:bg-surface-950 space-y-2">
         <div class="flex justify-between items-center">
           <p class="font-medium">Input</p>
           <button

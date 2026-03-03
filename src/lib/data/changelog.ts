@@ -14,6 +14,8 @@ export const changelog: ChangelogEntry[] = [
         date: "2026-03-03",
         title: "Accessibility & Stability Fixes",
         changes: [
+            { type: 'feat', text: "Improved visual contrast for input fields and navigation menus app-wide" },
+            { type: 'feat', text: "Refactored Navbar to a data-driven structure, significantly reducing code duplication" },
             { type: 'fix', text: "Resolved accessibility label warnings in Base64 and Hash tools" },
             { type: 'fix', text: "Fixed non-interactive semantic structural warnings in Hash drag-and-drop zone" },
             { type: 'chore', text: "Migrated legacy svelte:component dynamic components to Svelte 5 syntax in Headers and Password tools" },

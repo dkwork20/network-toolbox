@@ -789,7 +789,7 @@
     <h1 class="h1 font-bold flex items-center gap-3">
       <Container class="size-8 text-primary-500" />
       Docker Compose Generator
-      <span class="badge preset-filled-secondary-500 text-xs">V0.11 ~ V0.15</span>
+      <span class="badge preset-filled-secondary-500 text-xs">V0.11 ~ V0.17</span>
     </h1>
     <p class="text-surface-500 mt-2">
       Generate, import & edit docker-compose.yml files visually
@@ -797,7 +797,7 @@
   </div>
 
   <!-- Controls -->
-  <div class="card p-4 bg-surface-50 dark:bg-surface-900 mb-6">
+  <div class="card p-4 bg-surface-50 dark:bg-surface-600 mb-6">
     <div class="flex flex-wrap gap-4 items-center justify-between">
       <div class="flex gap-2 items-center flex-wrap">
         <select class="select select-sm" bind:value={composeVersion} onchange={syncYamlFromForm}>
@@ -884,7 +884,7 @@
   <!-- Empty state with drop zone -->
   {#if services.length === 0 && !isEditorMode}
     <div 
-      class="border-2 border-dashed border-surface-500/30 rounded-lg p-12 mb-6 text-center"
+      class="border-2 border-dashed border-surface-500/60 rounded-lg p-12 mb-6 text-center"
       ondragover={handleDragOver}
       ondrop={handleDrop}
       role="region"
@@ -909,7 +909,7 @@
 
   {#if isEditorMode}
     <!-- YAML Editor with line numbers and error highlighting -->
-    <div class="card bg-surface-50 dark:bg-surface-900 overflow-hidden border border-surface-200 dark:border-surface-700">
+    <div class="card bg-surface-50 dark:bg-surface-600 overflow-hidden border border-surface-200 dark:border-surface-700">
       <div class="flex items-center justify-between px-4 py-2 bg-surface-100 dark:bg-surface-800 border-b border-surface-200 dark:border-surface-700">
         <div class="flex items-center gap-2">
           <span class="font-medium">YAML Editor</span>
@@ -995,7 +995,7 @@ services:
         <h2 class="h2 font-bold">Services</h2>
 
         {#if services.length === 0}
-          <div class="text-center py-8 text-surface-500 border-2 border-dashed border-surface-500/30 rounded-lg">
+          <div class="text-center py-8 text-surface-500 border-2 border-dashed border-surface-500/60 rounded-lg">
             <Container class="size-12 mx-auto mb-2 opacity-50" />
             <p>No services yet</p>
             <button class="btn btn-sm preset-tonal-surface mt-2" onclick={addService}>
@@ -1005,7 +1005,7 @@ services:
         {/if}
 
         {#each services as service, index (service.id)}
-          <div class="card p-4 bg-surface-50 dark:bg-surface-900 space-y-3">
+          <div class="card p-4 bg-surface-50 dark:bg-surface-600 space-y-3">
             <div class="flex justify-between items-center">
               <span class="font-medium">Service {index + 1}</span>
               <button class="btn-icon btn-icon-sm bg-transparent text-error-600 dark:text-error-400 hover:preset-tonal-error" onclick={() => removeService(service.id)}>
@@ -1188,7 +1188,7 @@ services:
       <!-- YAML Output -->
       <div>
         <h2 class="h2 font-bold mb-4">docker-compose.yml</h2>
-        <div class="card p-4 bg-surface-50 dark:bg-surface-900">
+        <div class="card p-4 bg-surface-50 dark:bg-surface-600">
           <pre class="font-mono text-sm overflow-auto max-h-[700px] whitespace-pre-wrap">{generateYaml()}</pre>
         </div>
       </div>

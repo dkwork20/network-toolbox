@@ -20,11 +20,11 @@
   let selectedDomains = $state<Set<string>>(new Set());
   let domainSearchQuery = $state("");
   let customMaskInputs = $state("");
-  let customStopAmpersand = $state(true);
-  let customStopSlash = $state(true);
+  let customStopAmpersand = $state(false);
+  let customStopSlash = $state(false);
   let customStopQuotes = $state(true);
   let customStopSpace = $state(true);
-  let customStopComma = $state(false);
+  let customStopComma = $state(true);
 
   let targetHtmlTags = $state("");
   let customTokenRegex = $state(
@@ -340,8 +340,7 @@
   <div class="flex justify-between items-center mb-6">
     <div class="flex items-center gap-3">
       <h2 class="h2 font-bold">Log Sanitizer / Masking Tool</h2>
-      <span class="badge preset-filled-secondary-500 text-xs">V0.3 ~ V0.16</span
-      >
+      <span class="badge preset-filled-secondary-500 text-xs">V0.3 ~ V0.17</span>
       <span class="badge preset-tonal-success text-xs">Verified</span>
     </div>
   </div>
@@ -397,7 +396,7 @@
       </div>
 
       <textarea
-        class="textarea p-4 font-mono text-xs bg-surface-100 dark:bg-surface-800 h-[60vh]"
+        class="textarea p-4 font-mono text-xs h-[60vh] border-surface-900/40 dark:border-surface-100/40 shadow-inner bg-white dark:bg-black"
         bind:value={inputText}
         placeholder="Paste logs here... e.g. Connection from 192.168.1.50 to api.example.com failed."
       ></textarea>
@@ -524,7 +523,7 @@
 
       <!-- Custom Params Masking Panel -->
       <div
-        class="bg-surface-200 dark:bg-surface-700 p-3 rounded-lg text-sm flex flex-col gap-3"
+        class="bg-surface-100 dark:bg-surface-600 p-3 rounded-lg text-sm flex flex-col gap-3"
       >
         <span class="font-bold text-xs uppercase tracking-wide opacity-70"
           >Custom Param Masking</span
@@ -644,7 +643,7 @@
       <!-- Rendered Div for highlights instead of textarea -->
       {#if outputText}
         <div
-          class="textarea p-4 font-mono text-xs bg-surface-100 dark:bg-surface-800 whitespace-pre-wrap break-all transition-all duration-300 w-full {expandTextareas
+          class="textarea p-4 font-mono text-xs whitespace-pre-wrap break-all transition-all duration-300 w-full border-surface-900/40 dark:border-surface-100/40 shadow-inner bg-white dark:bg-black {expandTextareas
             ? 'h-fit overflow-visible min-h-[60vh]'
             : 'h-[60vh] max-h-[60vh] overflow-y-auto'}"
           style="tab-size: 2"
@@ -653,7 +652,7 @@
         </div>
       {:else}
         <textarea
-          class="textarea p-4 font-mono text-xs bg-surface-100 dark:bg-surface-800 transition-all duration-300 w-full {expandTextareas
+          class="textarea p-4 font-mono text-xs transition-all duration-300 w-full border-surface-900/40 dark:border-surface-100/40 shadow-inner bg-white dark:bg-black {expandTextareas
             ? 'h-auto overflow-hidden resize-none min-h-[60vh]'
             : 'h-[60vh] max-h-[60vh] overflow-y-auto'}"
           readonly
