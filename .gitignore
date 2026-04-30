@@ -21,3 +21,9 @@ Thumbs.db
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# OMC agent state
+.omc/
+
+# Build logs
+svelte-check.log

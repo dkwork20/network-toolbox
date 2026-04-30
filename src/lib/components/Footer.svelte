@@ -19,7 +19,7 @@
         >Changelog</a
       >
       <a
-        href="https://github.com/skeletonlabs/skeleton"
+        href="https://github.com/dkwork20/network-toolbox"
         target="_blank"
         rel="noreferrer"
         class="hover:text-primary-500 transition-colors">GitHub</a
