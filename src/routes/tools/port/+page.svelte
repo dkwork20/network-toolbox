@@ -131,7 +131,7 @@
       scanProgress = Math.round(((i + 1) / portsToScan.length) * 100);
 
       const result = await checkPort(hostname, port);
-      results.push(result);
+      results = [...results, result];
     }
 
     isScanning = false;
@@ -149,6 +149,7 @@
   // Stats
   let openCount = $derived(results.filter((r) => r.status === "open").length);
   let closedCount = $derived(results.filter((r) => r.status === "closed").length);
+  let sortedResults = $derived([...results].sort((a, b) => a.port - b.port));
 </script>
 
 <svelte:head>
@@ -161,6 +162,7 @@
     <h1 class="h1 font-bold flex items-center gap-3">
       <Scan class="size-8 text-primary-500" />
       Port Scanner
+      <span class="badge preset-filled-secondary-500 text-xs">V0.10</span>
     </h1>
     <p class="text-surface-500 mt-2">
       Check common ports for open/closed status (browser-based, limited accuracy)
@@ -168,7 +170,7 @@
   </div>
 
   <!-- Warning -->
-  <div class="alert variant-soft-warning mb-6">
+  <div class="alert preset-tonal-warning mb-6">
     <AlertTriangle class="size-5" />
     <div>
       <strong>Browser Limitation:</strong> True port scanning requires system-level access.
@@ -201,7 +203,7 @@
 
     <div class="flex gap-2">
       <button
-        class="btn variant-filled-primary flex-1"
+        class="btn preset-filled-primary-500 flex-1"
         onclick={startScan}
         disabled={isScanning || !hostname}
       >
@@ -213,7 +215,7 @@
           Start Scan
         {/if}
       </button>
-      <button class="btn variant-soft-surface" onclick={clearAll}>
+      <button class="btn preset-tonal-surface" onclick={clearAll}>
         Clear
       </button>
     </div>
@@ -259,25 +261,25 @@
             </tr>
           </thead>
           <tbody>
-            {#each results.sort((a, b) => a.port - b.port) as result}
+            {#each sortedResults as result}
               <tr>
                 <td class="font-mono">{result.port}</td>
                 <td>{result.service}</td>
                 <td>
                   {#if result.status === 'open'}
-                    <span class="badge variant-filled-success flex items-center gap-1 w-fit">
+                    <span class="badge preset-filled-success-500 flex items-center gap-1 w-fit">
                       <CheckCircle class="size-3" /> Open
                     </span>
                   {:else if result.status === 'closed'}
-                    <span class="badge variant-filled-error flex items-center gap-1 w-fit">
+                    <span class="badge preset-filled-error-500 flex items-center gap-1 w-fit">
                       <XCircle class="size-3" /> Closed
                     </span>
                   {:else if result.status === 'filtered'}
-                    <span class="badge variant-filled-warning flex items-center gap-1 w-fit">
+                    <span class="badge preset-filled-warning-500 flex items-center gap-1 w-fit">
                       <Clock class="size-3" /> Filtered
                     </span>
                   {:else}
-                    <span class="badge variant-soft-surface">Unknown</span>
+                    <span class="badge preset-tonal-surface">Unknown</span>
                   {/if}
                 </td>
                 <td>

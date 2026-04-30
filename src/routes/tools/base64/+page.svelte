@@ -1,11 +1,28 @@
 <script lang="ts">
-  import { Binary, ArrowUpDown, Copy, Check, Upload, Download, RefreshCw, FileCode, Image as ImageIcon, Link, Code, Clipboard, X, AlertCircle } from "@lucide/svelte";
+  import {
+    Binary,
+    ArrowUpDown,
+    Copy,
+    Check,
+    Upload,
+    Download,
+    RefreshCw,
+    FileCode,
+    Image as ImageIcon,
+    Link,
+    Code,
+    Clipboard,
+    X,
+    AlertCircle,
+  } from "@lucide/svelte";
   import { toaster } from "$lib/toaster.svelte";
+  import { isToolVerified } from "$lib/data/verified-tools";
 
   type Mode = "encode" | "decode";
   type Format = "standard" | "url" | "urlEncoded";
   type ImageOutputFormat = "raw" | "datauri" | "html" | "css" | "json";
   type ImageInputMode = "file" | "url" | "base64";
+  const isVerified = isToolVerified("base64");
 
   // Text encoding state
   let inputText = $state("");
@@ -14,11 +31,15 @@
   let format = $state<Format>("standard");
   let copied = $state(false);
   let error = $state("");
+  let isConverting = $state(false);
+  let pendingTextConversion = $state(false);
+  let textConvertTimeout: ReturnType<typeof setTimeout> | null = null;
+  const LARGE_TEXT_INPUT_THRESHOLD = 120000;
 
   // Image/Base64 file handling
   let imageInputMode = $state<ImageInputMode>("file");
   let imageUrl = $state("");
-  let base64DecodeInput = $state("");
+  let base64DecodeTextarea = $state<HTMLTextAreaElement | null>(null);
   let inputFile = $state<File | null>(null);
   let base64FromFile = $state("");
   let detectedMimeType = $state("");
@@ -29,6 +50,12 @@
   let imageCopied = $state(false);
   let imageError = $state("");
   let isLoading = $state(false);
+  let isDragActive = $state(false);
+  let isDropZoneActive = $state(false);
+  let dragDepth = 0;
+  const DROP_ZONE_SIDE_MARGIN_RATIO = 0.2;
+  const DROP_ZONE_TOP_RATIO = 0.5;
+  const DROP_ZONE_BOTTOM_MARGIN_RATIO = 0.2;
 
   // Base64 URL encoding/decoding
   function toBase64URL(base64: string): string {
@@ -64,6 +91,7 @@
   // Main text conversion
   function convert() {
     error = "";
+    isConverting = true;
     try {
       if (mode === "encode") {
         let result = utf8ToBase64(inputText);
@@ -83,9 +111,95 @@
         outputText = base64ToUtf8(base64);
       }
     } catch {
-      error = `Invalid input for ${mode === 'encode' ? 'encoding' : 'decoding'}`;
+      error = `Invalid input for ${mode === "encode" ? "encoding" : "decoding"}`;
       outputText = "";
+    } finally {
+      isConverting = false;
+      pendingTextConversion = false;
     }
+  }
+
+  function clearTextConvertTimeout() {
+    if (textConvertTimeout) {
+      clearTimeout(textConvertTimeout);
+      textConvertTimeout = null;
+    }
+  }
+
+  function scheduleTextConvert() {
+    clearTextConvertTimeout();
+
+    if (!inputText) {
+      outputText = "";
+      error = "";
+      pendingTextConversion = false;
+      return;
+    }
+
+    if (inputText.length >= LARGE_TEXT_INPUT_THRESHOLD) {
+      pendingTextConversion = true;
+      return;
+    }
+
+    textConvertTimeout = setTimeout(() => {
+      convert();
+      textConvertTimeout = null;
+    }, 120);
+  }
+
+  function runPendingTextConvert() {
+    if (!inputText) return;
+    clearTextConvertTimeout();
+    convert();
+  }
+
+  function isImageDragEvent(event: DragEvent): boolean {
+    const items = event.dataTransfer?.items;
+    if (!items || items.length === 0) return false;
+    return Array.from(items).some((item) => item.kind === "file" && item.type.startsWith("image/"));
+  }
+
+  function isInsideDropZone(event: DragEvent): boolean {
+    const minX = window.innerWidth * DROP_ZONE_SIDE_MARGIN_RATIO;
+    const maxX = window.innerWidth * (1 - DROP_ZONE_SIDE_MARGIN_RATIO);
+    const minY = window.innerHeight * DROP_ZONE_TOP_RATIO;
+    const maxY = window.innerHeight * (1 - DROP_ZONE_BOTTOM_MARGIN_RATIO);
+
+    return event.clientX >= minX && event.clientX <= maxX && event.clientY >= minY && event.clientY <= maxY;
+  }
+
+  function handleDragEnter(event: DragEvent) {
+    if (!isImageDragEvent(event)) return;
+    event.preventDefault();
+    dragDepth += 1;
+    isDragActive = true;
+    isDropZoneActive = isInsideDropZone(event);
+  }
+
+  function handleDragOver(event: DragEvent) {
+    if (!isImageDragEvent(event)) return;
+    event.preventDefault();
+    isDropZoneActive = isInsideDropZone(event);
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = isDropZoneActive ? "copy" : "none";
+    }
+    isDragActive = true;
+  }
+
+  function handleDragLeave(event: DragEvent) {
+    if (!isDragActive) return;
+    event.preventDefault();
+    dragDepth = Math.max(0, dragDepth - 1);
+    if (dragDepth === 0) {
+      isDragActive = false;
+      isDropZoneActive = false;
+    }
+  }
+
+  function resetDragState() {
+    dragDepth = 0;
+    isDragActive = false;
+    isDropZoneActive = false;
   }
 
   function swapInOut() {
@@ -146,11 +260,11 @@
   function detectMimeType(base64: string): string {
     const signatures: Record<string, string> = {
       "/9j/": "image/jpeg",
-      "iVBOR": "image/png",
-      "R0lGO": "image/gif",
-      "UklGR": "image/webp",
-      "AAABA": "image/x-icon",
-      "PHN2Z": "image/svg+xml",
+      iVBOR: "image/png",
+      R0lGO: "image/gif",
+      UklGR: "image/webp",
+      AAABA: "image/x-icon",
+      PHN2Z: "image/svg+xml",
     };
 
     const header = base64.substring(0, 5);
@@ -174,10 +288,16 @@
 
   async function handleFileDrop(event: DragEvent) {
     event.preventDefault();
+    const canDropHere = isInsideDropZone(event);
+    resetDragState();
+    if (!canDropHere) return;
+
     imageError = "";
     const files = event.dataTransfer?.files;
-    if (files && files.length > 0) {
-      await processFile(files[0]);
+    const imageFile = files ? Array.from(files).find((file) => file.type.startsWith("image/")) : null;
+    if (imageFile) {
+      imageInputMode = "file";
+      await processFile(imageFile);
     }
   }
 
@@ -258,7 +378,7 @@
       };
       reader.readAsDataURL(blob);
     } catch (e) {
-      imageError = `Failed to fetch: ${e instanceof Error ? e.message : 'Unknown error'}. May be blocked by CORS.`;
+      imageError = `Failed to fetch: ${e instanceof Error ? e.message : "Unknown error"}. May be blocked by CORS.`;
       isLoading = false;
     }
   }
@@ -282,7 +402,9 @@
 
   // Base64 decode to image
   function decodeBase64ToImage() {
-    if (!base64DecodeInput) {
+    const rawInput = base64DecodeTextarea?.value ?? "";
+
+    if (!rawInput.trim()) {
       imageError = "Please enter a Base64 string";
       return;
     }
@@ -290,7 +412,7 @@
     imageError = "";
 
     try {
-      let base64 = base64DecodeInput.trim();
+      let base64 = rawInput.trim();
 
       // Handle data URI
       if (base64.startsWith("data:")) {
@@ -307,7 +429,7 @@
       }
 
       // Validate Base64
-      if (!/^[A-Za-z0-9+/]*={0,2}$/.test(base64.replace(/\s/g, ''))) {
+      if (!/^[A-Za-z0-9+/]*={0,2}$/.test(base64.replace(/\s/g, ""))) {
         throw new Error("Invalid Base64 string");
       }
 
@@ -326,7 +448,7 @@
       };
       img.src = imagePreview;
     } catch (e) {
-      imageError = `Failed to decode: ${e instanceof Error ? e.message : 'Invalid Base64'}`;
+      imageError = `Failed to decode: ${e instanceof Error ? e.message : "Invalid Base64"}`;
     }
   }
 
@@ -359,23 +481,29 @@
     imageWidth = 0;
     imageHeight = 0;
     imageUrl = "";
-    base64DecodeInput = "";
+    if (base64DecodeTextarea) {
+      base64DecodeTextarea.value = "";
+    }
     imageError = "";
   }
 
   // Global paste listener
   $effect(() => {
+    if (imageInputMode !== "file") return;
+
     document.addEventListener("paste", handlePaste);
     return () => document.removeEventListener("paste", handlePaste);
   });
 
   // Auto-convert on input change
   $effect(() => {
-    if (inputText) {
-      convert();
-    } else {
-      outputText = "";
-    }
+    inputText;
+    mode;
+    format;
+
+    scheduleTextConvert();
+
+    return () => clearTextConvertTimeout();
   });
 </script>
 
@@ -383,68 +511,95 @@
   <title>Base64 Encoder/Decoder - NetOps Solutions</title>
 </svelte:head>
 
-<div class="container mx-auto p-4 max-w-5xl pb-20" onpaste={handlePaste}>
+<svelte:window
+  ondragenter={handleDragEnter}
+  ondragover={handleDragOver}
+  ondragleave={handleDragLeave}
+  ondrop={handleFileDrop}
+/>
+
+<div class="container mx-auto p-4 max-w-5xl pb-20">
+  {#if isDropZoneActive}
+    <div class="fixed inset-0 z-50 pointer-events-none">
+      <div
+        class="absolute top-[50%] bottom-[10%] left-[10%] right-[10%] rounded-2xl border-2 border-dashed border-primary-500 bg-primary-500/10 flex items-center justify-center"
+      >
+        <span class="badge preset-filled-primary-500 animate-pulse text-sm">Drop image here</span>
+      </div>
+    </div>
+  {/if}
+
   <!-- Header -->
   <div class="mb-8">
     <h1 class="h1 font-bold flex items-center gap-3">
       <Binary class="size-8 text-primary-500" />
       Base64 Encoder/Decoder
-      <span class="badge variant-filled-error text-xs animate-pulse">NEW</span>
+      <span class="badge preset-filled-secondary-500 text-xs">V0.6 ~ V0.17</span>
+      {#if isVerified}
+        <span class="badge preset-tonal-success text-xs">Verified</span>
+      {/if}
     </h1>
-    <p class="text-surface-500 mt-2">
-      Convert between text and Base64, encode/decode images and files
-    </p>
+    <p class="text-surface-500 mt-2">Convert between text and Base64, encode/decode images and files</p>
   </div>
 
   <!-- Text Encoding Section -->
   <div class="card p-6 bg-surface-50 dark:bg-surface-900 space-y-4 mb-6">
     <h2 class="h2 font-bold">Text Encoding</h2>
-    
+
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <!-- Input -->
       <div class="space-y-4">
         <!-- Mode & Format -->
         <div class="flex flex-wrap gap-2">
           <button
-            class="btn {mode === 'encode' ? 'variant-filled-primary' : 'variant-soft-surface'}"
-            onclick={() => { mode = 'encode'; convert(); }}
+            class="btn {mode === 'encode' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
+            onclick={() => (mode = "encode")}
           >
             Encode
           </button>
           <button
-            class="btn {mode === 'decode' ? 'variant-filled-primary' : 'variant-soft-surface'}"
-            onclick={() => { mode = 'decode'; convert(); }}
+            class="btn {mode === 'decode' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
+            onclick={() => (mode = "decode")}
           >
             Decode
           </button>
         </div>
 
-        <div class="flex flex-wrap gap-2">
+        <div class="flex flex-wrap items-center gap-2">
           <button
-            class="btn btn-sm {format === 'standard' ? 'variant-filled-secondary' : 'variant-soft-surface'}"
-            onclick={() => { format = 'standard'; convert(); }}
+            class="btn btn-sm {format === 'standard' ? 'preset-filled-secondary-500' : 'preset-tonal-surface'}"
+            onclick={() => (format = "standard")}
           >
             Standard
           </button>
           <button
-            class="btn btn-sm {format === 'url' ? 'variant-filled-secondary' : 'variant-soft-surface'}"
-            onclick={() => { format = 'url'; convert(); }}
+            class="btn btn-sm {format === 'url' ? 'preset-filled-secondary-500' : 'preset-tonal-surface'}"
+            onclick={() => (format = "url")}
           >
             Base64URL
           </button>
           <button
-            class="btn btn-sm {format === 'urlEncoded' ? 'variant-filled-secondary' : 'variant-soft-surface'}"
-            onclick={() => { format = 'urlEncoded'; convert(); }}
+            class="btn btn-sm {format === 'urlEncoded' ? 'preset-filled-secondary-500' : 'preset-tonal-surface'}"
+            onclick={() => (format = "urlEncoded")}
           >
             URL Encoded
           </button>
+          {#if pendingTextConversion}
+            <button class="btn btn-sm preset-filled-primary-500" onclick={runPendingTextConvert}> Convert now </button>
+          {/if}
         </div>
+
+        {#if pendingTextConversion}
+          <p class="text-xs text-warning-600 dark:text-warning-400">
+            Large input detected ({inputText.length.toLocaleString()} chars). Auto-convert is paused to prevent lag.
+          </p>
+        {/if}
 
         <!-- Text Input -->
         <textarea
           class="textarea font-mono text-sm min-h-[150px]"
           bind:value={inputText}
-          placeholder={mode === 'encode' ? 'Enter text to encode...' : 'Enter Base64 to decode...'}
+          placeholder={mode === "encode" ? "Enter text to encode..." : "Enter Base64 to decode..."}
         ></textarea>
 
         {#if error}
@@ -455,13 +610,13 @@
       <!-- Output -->
       <div class="space-y-4">
         <div class="flex justify-between items-center">
-          <span class="font-medium">Output ({mode === 'encode' ? 'Base64' : 'Text'})</span>
+          <span class="font-medium">Output ({mode === "encode" ? "Base64" : "Text"})</span>
           <div class="flex gap-2">
-            <button class="btn btn-sm variant-soft-surface" onclick={swapInOut} title="Swap Input/Output">
+            <button class="btn btn-sm preset-tonal-surface" onclick={swapInOut} title="Swap Input/Output">
               <ArrowUpDown class="size-4" />
               Swap
             </button>
-            <button class="btn btn-sm variant-soft-surface" onclick={clearAll}>
+            <button class="btn btn-sm preset-tonal-surface" onclick={clearAll}>
               <RefreshCw class="size-4" />
               Clear
             </button>
@@ -475,11 +630,11 @@
             value={outputText}
             placeholder="Output will appear here..."
           ></textarea>
+          {#if isConverting}
+            <div class="absolute bottom-2 left-2 badge preset-tonal-secondary text-xs">Converting...</div>
+          {/if}
           {#if outputText}
-            <button
-              class="btn-icon btn-icon-sm absolute top-2 right-2"
-              onclick={copyOutput}
-            >
+            <button class="btn-icon btn-icon-sm absolute top-2 right-2" onclick={copyOutput}>
               {#if copied}
                 <Check class="size-4 text-success-500" />
               {:else}
@@ -508,22 +663,22 @@
     <!-- Input Mode Selection -->
     <div class="flex flex-wrap gap-2">
       <button
-        class="btn btn-sm {imageInputMode === 'file' ? 'variant-filled-primary' : 'variant-soft-surface'}"
-        onclick={() => (imageInputMode = 'file')}
+        class="btn btn-sm {imageInputMode === 'file' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
+        onclick={() => (imageInputMode = "file")}
       >
         <Upload class="size-4" />
         Upload File
       </button>
       <button
-        class="btn btn-sm {imageInputMode === 'url' ? 'variant-filled-primary' : 'variant-soft-surface'}"
-        onclick={() => (imageInputMode = 'url')}
+        class="btn btn-sm {imageInputMode === 'url' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
+        onclick={() => (imageInputMode = "url")}
       >
         <Link class="size-4" />
         From URL
       </button>
       <button
-        class="btn btn-sm {imageInputMode === 'base64' ? 'variant-filled-primary' : 'variant-soft-surface'}"
-        onclick={() => (imageInputMode = 'base64')}
+        class="btn btn-sm {imageInputMode === 'base64' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
+        onclick={() => (imageInputMode = "base64")}
       >
         <Code class="size-4" />
         Decode Base64
@@ -533,46 +688,48 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <!-- Input Side -->
       <div class="space-y-4">
-        {#if imageInputMode === 'file'}
+        {#if imageInputMode === "file"}
           <div
-            class="border-2 border-dashed border-surface-500/30 rounded-lg p-8 text-center transition-colors hover:border-primary-500/50 cursor-pointer"
+            class={`relative border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all duration-200 ${
+              isDropZoneActive
+                ? "border-primary-500 bg-primary-500/10 ring-2 ring-primary-500/40 scale-[1.01]"
+                : "border-surface-500/30 hover:border-primary-500/50"
+            }`}
             role="button"
             tabindex="0"
-            ondragover={(e) => e.preventDefault()}
-            ondrop={handleFileDrop}
           >
-            <input
-              type="file"
-              id="file-input-base64"
-              class="hidden"
-              accept="image/*"
-              onchange={handleFileSelect}
-            />
+            {#if isDropZoneActive}
+              <div
+                class="pointer-events-none absolute inset-0 rounded-lg flex items-center justify-center bg-primary-500/10"
+              >
+                <span class="badge preset-filled-primary-500 animate-pulse">Drop image to upload</span>
+              </div>
+            {/if}
+            <input type="file" id="file-input-base64" class="hidden" accept="image/*" onchange={handleFileSelect} />
             <label for="file-input-base64" class="cursor-pointer">
               <Upload class="size-12 mx-auto text-surface-400 mb-4" />
-              <p class="text-surface-500">
-                Drag & drop an image, or click to select
+              <p class={isDropZoneActive ? "text-primary-600 dark:text-primary-400 font-medium" : "text-surface-500"}>
+                {isDropZoneActive ? "Release to upload image" : "Drag & drop an image, or click to select"}
               </p>
-              <p class="text-xs text-surface-400 mt-2">
-                Supports: PNG, JPEG, GIF, WebP, SVG, BMP, ICO
-              </p>
+              <p class="text-xs text-surface-400 mt-2">Supports: PNG, JPEG, GIF, WebP, SVG, BMP, ICO</p>
             </label>
           </div>
           <p class="text-sm text-surface-500 flex items-center gap-2">
             <Clipboard class="size-4" />
             You can also paste an image directly (Ctrl+V)
           </p>
-        {:else if imageInputMode === 'url'}
+        {:else if imageInputMode === "url"}
           <div class="space-y-2">
-            <label class="label"><span>Image URL</span></label>
+            <label class="label" for="image-url-input"><span>Image URL</span></label>
             <div class="flex gap-2">
               <input
+                id="image-url-input"
                 type="url"
                 class="input flex-1"
                 bind:value={imageUrl}
                 placeholder="https://example.com/image.png"
               />
-              <button class="btn variant-filled-primary" onclick={fetchFromUrl} disabled={isLoading}>
+              <button class="btn preset-filled-primary-500" onclick={fetchFromUrl} disabled={isLoading}>
                 {#if isLoading}
                   <RefreshCw class="size-4 animate-spin" />
                 {:else}
@@ -580,19 +737,18 @@
                 {/if}
               </button>
             </div>
-            <p class="text-xs text-surface-500">
-              Note: Image server must allow CORS. Some may block this request.
-            </p>
+            <p class="text-xs text-surface-500">Note: Image server must allow CORS. Some may block this request.</p>
           </div>
-        {:else if imageInputMode === 'base64'}
+        {:else if imageInputMode === "base64"}
           <div class="space-y-2">
-            <label class="label"><span>Base64 String</span></label>
+            <label class="label" for="base64-decode-input"><span>Base64 String</span></label>
             <textarea
+              id="base64-decode-input"
               class="textarea font-mono text-sm min-h-[150px]"
-              bind:value={base64DecodeInput}
+              bind:this={base64DecodeTextarea}
               placeholder="Paste your Base64 string here...&#10;&#10;Can be raw Base64 or data URI format"
             ></textarea>
-            <button class="btn variant-filled-primary w-full" onclick={decodeBase64ToImage}>
+            <button class="btn preset-filled-primary-500 w-full" onclick={decodeBase64ToImage}>
               Decode & Preview
             </button>
           </div>
@@ -611,7 +767,7 @@
         {#if imagePreview}
           <div class="flex justify-between items-center">
             <span class="font-medium">Preview</span>
-            <button class="btn btn-sm variant-soft-surface" onclick={clearImageSection}>
+            <button class="btn btn-sm preset-tonal-surface" onclick={clearImageSection}>
               <X class="size-4" />
               Clear
             </button>
@@ -630,20 +786,18 @@
 
           <!-- Image Preview -->
           <div class="bg-surface-100 dark:bg-surface-800 rounded-lg p-4 flex items-center justify-center min-h-[150px]">
-            <img
-              src={imagePreview}
-              alt="Preview"
-              class="max-w-full max-h-[200px] rounded shadow"
-            />
+            <img src={imagePreview} alt="Preview" class="max-w-full max-h-[200px] rounded shadow" />
           </div>
 
           <!-- Download -->
-          <button class="btn variant-filled-secondary w-full" onclick={downloadImage}>
+          <button class="btn preset-filled-secondary-500 w-full" onclick={downloadImage}>
             <Download class="size-4" />
             Download Image
           </button>
         {:else}
-          <div class="border-2 border-dashed border-surface-500/20 rounded-lg p-8 text-center text-surface-400 min-h-[200px] flex items-center justify-center">
+          <div
+            class="border-2 border-dashed border-surface-500/20 rounded-lg p-8 text-center text-surface-400 min-h-[200px] flex items-center justify-center"
+          >
             <span>Image preview will appear here</span>
           </div>
         {/if}
@@ -656,7 +810,7 @@
         <div class="flex justify-between items-center">
           <span class="font-medium">Base64 Output</span>
           <div class="flex gap-2">
-            <button class="btn btn-sm variant-soft-surface" onclick={copyImageOutput}>
+            <button class="btn btn-sm preset-tonal-surface" onclick={copyImageOutput}>
               {#if imageCopied}
                 <Check class="size-4 text-success-500" />
               {:else}
@@ -670,43 +824,40 @@
         <!-- Output Format Selection -->
         <div class="flex flex-wrap gap-2">
           <button
-            class="btn btn-sm {imageOutputFormat === 'raw' ? 'variant-filled-secondary' : 'variant-soft-surface'}"
-            onclick={() => (imageOutputFormat = 'raw')}
+            class="btn btn-sm {imageOutputFormat === 'raw' ? 'preset-filled-secondary-500' : 'preset-tonal-surface'}"
+            onclick={() => (imageOutputFormat = "raw")}
           >
             Raw
           </button>
           <button
-            class="btn btn-sm {imageOutputFormat === 'datauri' ? 'variant-filled-secondary' : 'variant-soft-surface'}"
-            onclick={() => (imageOutputFormat = 'datauri')}
+            class="btn btn-sm {imageOutputFormat === 'datauri'
+              ? 'preset-filled-secondary-500'
+              : 'preset-tonal-surface'}"
+            onclick={() => (imageOutputFormat = "datauri")}
           >
             Data URI
           </button>
           <button
-            class="btn btn-sm {imageOutputFormat === 'html' ? 'variant-filled-secondary' : 'variant-soft-surface'}"
-            onclick={() => (imageOutputFormat = 'html')}
+            class="btn btn-sm {imageOutputFormat === 'html' ? 'preset-filled-secondary-500' : 'preset-tonal-surface'}"
+            onclick={() => (imageOutputFormat = "html")}
           >
             HTML
           </button>
           <button
-            class="btn btn-sm {imageOutputFormat === 'css' ? 'variant-filled-secondary' : 'variant-soft-surface'}"
-            onclick={() => (imageOutputFormat = 'css')}
+            class="btn btn-sm {imageOutputFormat === 'css' ? 'preset-filled-secondary-500' : 'preset-tonal-surface'}"
+            onclick={() => (imageOutputFormat = "css")}
           >
             CSS
           </button>
           <button
-            class="btn btn-sm {imageOutputFormat === 'json' ? 'variant-filled-secondary' : 'variant-soft-surface'}"
-            onclick={() => (imageOutputFormat = 'json')}
+            class="btn btn-sm {imageOutputFormat === 'json' ? 'preset-filled-secondary-500' : 'preset-tonal-surface'}"
+            onclick={() => (imageOutputFormat = "json")}
           >
             JSON
           </button>
         </div>
 
-        <textarea
-          class="textarea font-mono text-xs"
-          rows="4"
-          readonly
-          value={getImageFormattedOutput()}
-        ></textarea>
+        <textarea class="textarea font-mono text-xs" rows="4" readonly value={getImageFormattedOutput()}></textarea>
 
         <p class="text-xs text-surface-500">
           Base64 size: {formatFileSize(base64FromFile.length)} ({base64FromFile.length.toLocaleString()} chars)
@@ -722,9 +873,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div class="p-4 bg-surface-100 dark:bg-surface-800 rounded-lg">
         <h3 class="font-medium mb-2">HTML Embedding</h3>
-        <code class="text-xs block">
-          &lt;img src="data:image/png;base64,..." alt="Embedded Image" /&gt;
-        </code>
+        <code class="text-xs block"> &lt;img src="data:image/png;base64,..." alt="Embedded Image" /&gt; </code>
       </div>
 
       <div class="p-4 bg-surface-100 dark:bg-surface-800 rounded-lg">
@@ -743,9 +892,7 @@
 
       <div class="p-4 bg-surface-100 dark:bg-surface-800 rounded-lg">
         <h3 class="font-medium mb-2">JWT Tokens</h3>
-        <code class="text-xs block">
-          Use Base64URL format for JWT header/payload
-        </code>
+        <code class="text-xs block"> Use Base64URL format for JWT header/payload </code>
       </div>
     </div>
   </div>

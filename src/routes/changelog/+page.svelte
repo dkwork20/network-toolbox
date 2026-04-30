@@ -2,10 +2,10 @@
   import { changelog } from "$lib/data/changelog";
 
   const TYPE_COLORS = {
-    feat: "variant-filled-tertiary",
-    fix: "variant-filled-error",
-    chore: "variant-filled-surface",
-    docs: "variant-filled-secondary",
+    feat: "preset-filled-tertiary-500",
+    fix: "preset-filled-error-500",
+    chore: "preset-filled-surface-500",
+    docs: "preset-filled-secondary-500",
   };
 </script>
 
@@ -38,7 +38,7 @@
             class="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 mb-2"
           >
             <span class="text-2xl font-bold">{entry.version}</span>
-            <span class="badge variant-soft-surface">{entry.date}</span>
+            <span class="badge preset-tonal-surface">{entry.date}</span>
           </div>
 
           <h3

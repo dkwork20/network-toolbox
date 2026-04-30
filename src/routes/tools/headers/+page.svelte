@@ -197,6 +197,7 @@
     <h1 class="h1 font-bold flex items-center gap-3">
       <FileSearch class="size-8 text-primary-500" />
       HTTP Headers Analyzer
+      <span class="badge preset-filled-secondary-500 text-xs">V0.10 ~ V0.17</span>
     </h1>
     <p class="text-surface-500 mt-2">
       Analyze HTTP security headers and get recommendations for improvements
@@ -215,7 +216,7 @@
           placeholder="example.com or https://example.com"
           onkeydown={(e) => e.key === "Enter" && fetchHeaders()}
         />
-        <button class="btn variant-filled-primary" onclick={fetchHeaders} disabled={isLoading}>
+        <button class="btn preset-filled-primary-500" onclick={fetchHeaders} disabled={isLoading}>
           {#if isLoading}
             <RefreshCw class="size-4 animate-spin" />
           {:else}
@@ -223,7 +224,7 @@
           {/if}
           Analyze
         </button>
-        <button class="btn variant-soft-surface" onclick={clearAll}>
+        <button class="btn preset-tonal-surface" onclick={clearAll}>
           Clear
         </button>
       </div>
@@ -236,7 +237,7 @@
 
   <!-- Error -->
   {#if error}
-    <div class="alert variant-filled-error mb-6">
+    <div class="alert preset-filled-error-500 mb-6">
       <AlertCircle class="size-5" />
       <span>{error}</span>
     </div>
@@ -282,8 +283,8 @@
           >
             <div class="flex items-start gap-3">
               {#if getStatusIcon(header.status)}
-                <svelte:component
-                  this={getStatusIcon(header.status)}
+                {@const Icon = getStatusIcon(header.status)}
+                <Icon
                   class="size-5 mt-0.5 {getStatusColor(header.status)}"
                 />
               {/if}
@@ -291,11 +292,11 @@
                 <div class="flex items-center gap-2">
                   <span class="font-medium">{header.name}</span>
                   {#if header.status === 'good'}
-                    <span class="badge variant-filled-success text-xs">Present</span>
+                    <span class="badge preset-filled-success-500 text-xs">Present</span>
                   {:else if header.status === 'missing'}
-                    <span class="badge variant-filled-error text-xs">Missing</span>
+                    <span class="badge preset-filled-error-500 text-xs">Missing</span>
                   {:else if header.status === 'warning'}
-                    <span class="badge variant-filled-warning text-xs">Warning</span>
+                    <span class="badge preset-filled-warning-500 text-xs">Warning</span>
                   {/if}
                 </div>
 

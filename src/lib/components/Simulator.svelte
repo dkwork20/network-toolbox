@@ -52,7 +52,7 @@
       bind:value={testIp}
       placeholder="Enter IP (e.g. 8.8.8.8)"
     />
-    <button class="btn variant-filled-surface" onclick={checkRouting}
+    <button class="btn preset-filled-surface-500" onclick={checkRouting}
       >Test</button
     >
   </div>
@@ -60,8 +60,8 @@
   {#if result}
     <div
       class="alert {result.type === 'VPN'
-        ? 'variant-filled-error'
-        : 'variant-filled-success'}"
+        ? 'preset-filled-error-500'
+        : 'preset-filled-success-500'}"
     >
       {#if result.type === "VPN"}
         <span>🛡️ Routed via <strong>VPN</strong> (Matches {result.match})</span>

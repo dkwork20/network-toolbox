@@ -126,13 +126,13 @@
         >
         {#if !node.children && node.prefix < getMaxPrefix(node.version)}
           <button
-            class="btn btn-xs variant-filled-primary py-0"
+            class="btn btn-xs preset-filled-primary-500 py-0"
             onclick={() => split(node)}>Split</button
           >
         {/if}
         {#if node.children}
           <button
-            class="btn btn-xs variant-filled-secondary py-0"
+            class="btn btn-xs preset-filled-secondary-500 py-0"
             onclick={() => merge(node)}>Merge</button
           >
         {/if}
@@ -159,7 +159,10 @@
   class="container mx-auto p-4 max-w-6xl h-full flex flex-col overflow-y-auto pb-20"
 >
   <div class="flex justify-between items-center mb-6">
-    <h2 class="h2 font-bold">Visual Subnet Calculator (IPv4 & IPv6)</h2>
+    <div class="flex items-center gap-3">
+      <h2 class="h2 font-bold">Visual Subnet Calculator (IPv4 & IPv6)</h2>
+      <span class="badge preset-filled-secondary-500 text-xs">V0.2 ~ V0.17</span>
+    </div>
   </div>
 
   <div class="flex gap-4 mb-4 flex-wrap">
@@ -169,7 +172,7 @@
       bind:value={rootInput}
       placeholder="192.168.0.0/24 or 2001:db8::/32"
     />
-    <button class="btn variant-filled-primary" onclick={init}>Visualize</button>
+    <button class="btn preset-filled-primary-500" onclick={init}>Visualize</button>
   </div>
 
   <div class="mb-4 text-sm text-surface-500">

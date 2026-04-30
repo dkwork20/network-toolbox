@@ -133,7 +133,7 @@
     <h1 class="h1 font-bold flex items-center gap-3">
       <Hash class="size-8 text-primary-500" />
       Hash Calculator
-      <span class="badge variant-filled-error text-xs animate-pulse">NEW</span>
+      <span class="badge preset-filled-secondary-500 text-xs">V0.7 ~ V0.17</span>
     </h1>
     <p class="text-surface-500 mt-2">
       Calculate cryptographic hashes for text or files
@@ -145,14 +145,14 @@
     <!-- Mode Toggle -->
     <div class="flex gap-2">
       <button
-        class="btn {inputMode === 'text' ? 'variant-filled-primary' : 'variant-soft-surface'}"
+        class="btn {inputMode === 'text' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
         onclick={() => (inputMode = 'text')}
       >
         <FileText class="size-4" />
         Text Input
       </button>
       <button
-        class="btn {inputMode === 'file' ? 'variant-filled-primary' : 'variant-soft-surface'}"
+        class="btn {inputMode === 'file' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
         onclick={() => (inputMode = 'file')}
       >
         <Upload class="size-4" />
@@ -174,6 +174,8 @@
         class="border-2 border-dashed border-surface-500/30 rounded-lg p-8 text-center transition-colors hover:border-primary-500/50"
         ondragover={(e) => e.preventDefault()}
         ondrop={handleFileDrop}
+        role="region"
+        aria-label="File drop zone"
       >
         <input
           type="file"
@@ -199,11 +201,11 @@
 
     <!-- Algorithm Selection -->
     <div class="space-y-2">
-      <label class="label"><span>Select Algorithms</span></label>
+      <div class="label"><span>Select Algorithms</span></div>
       <div class="flex flex-wrap gap-2">
         {#each algorithms as algo}
           <button
-            class="btn btn-sm {selectedAlgorithms.includes(algo) ? 'variant-filled-primary' : 'variant-soft-surface'}"
+            class="btn btn-sm {selectedAlgorithms.includes(algo) ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
             onclick={() => toggleAlgorithm(algo)}
           >
             {algo}
@@ -227,8 +229,9 @@
       <!-- Compare Input -->
       {#if compareMode}
         <div class="space-y-2">
-          <label class="label"><span>Hash to Compare</span></label>
+          <label class="label" for="compare-hash-input"><span>Hash to Compare</span></label>
           <input
+            id="compare-hash-input"
             type="text"
             class="input font-mono"
             bind:value={compareHash}

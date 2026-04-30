@@ -155,6 +155,7 @@
     <h1 class="h1 font-bold flex items-center gap-3">
       <Search class="size-8 text-primary-500" />
       Whois Lookup
+      <span class="badge preset-filled-secondary-500 text-xs">V0.10</span>
     </h1>
     <p class="text-surface-500 mt-2">
       Look up domain registration info and IP geolocation
@@ -162,7 +163,7 @@
   </div>
 
   <!-- Warning -->
-  <div class="alert variant-soft-warning mb-6">
+  <div class="alert preset-tonal-warning mb-6">
     <AlertCircle class="size-5" />
     <div>
       <strong>Browser Limitation:</strong> Full WHOIS queries require system-level access.
@@ -182,7 +183,7 @@
           placeholder="example.com or 8.8.8.8"
           onkeydown={(e) => e.key === "Enter" && lookup()}
         />
-        <button class="btn variant-filled-primary" onclick={lookup} disabled={isLoading}>
+        <button class="btn preset-filled-primary-500" onclick={lookup} disabled={isLoading}>
           {#if isLoading}
             <RefreshCw class="size-4 animate-spin" />
           {:else}
@@ -190,7 +191,7 @@
           {/if}
           Lookup
         </button>
-        <button class="btn variant-soft-surface" onclick={clearAll}>
+        <button class="btn preset-tonal-surface" onclick={clearAll}>
           Clear
         </button>
       </div>
@@ -210,7 +211,7 @@
 
   <!-- Error -->
   {#if error}
-    <div class="alert variant-filled-error mb-6">
+    <div class="alert preset-filled-error-500 mb-6">
       <AlertCircle class="size-5" />
       <span>{error}</span>
     </div>
@@ -286,7 +287,7 @@
           <h3 class="font-medium mb-2">Name Servers</h3>
           <div class="flex flex-wrap gap-2">
             {#each whoisInfo.nameservers as ns}
-              <span class="badge variant-soft-surface font-mono text-xs">{ns}</span>
+              <span class="badge preset-tonal-surface font-mono text-xs">{ns}</span>
             {/each}
           </div>
         </div>
@@ -298,7 +299,7 @@
           <h3 class="font-medium mb-2">Status</h3>
           <div class="flex flex-wrap gap-2">
             {#each whoisInfo.status as status}
-              <span class="badge variant-soft-primary text-xs">{status}</span>
+              <span class="badge preset-tonal-primary text-xs">{status}</span>
             {/each}
           </div>
         </div>
@@ -314,7 +315,7 @@
         href="https://lookup.icann.org/en/lookup"
         target="_blank"
         rel="noreferrer"
-        class="btn btn-sm variant-soft-surface"
+        class="btn btn-sm preset-tonal-surface"
       >
         <ExternalLink class="size-4" />
         ICANN Lookup
@@ -323,7 +324,7 @@
         href="https://www.whois.com/whois/"
         target="_blank"
         rel="noreferrer"
-        class="btn btn-sm variant-soft-surface"
+        class="btn btn-sm preset-tonal-surface"
       >
         <ExternalLink class="size-4" />
         Whois.com
@@ -332,7 +333,7 @@
         href="https://ipinfo.io/"
         target="_blank"
         rel="noreferrer"
-        class="btn btn-sm variant-soft-surface"
+        class="btn btn-sm preset-tonal-surface"
       >
         <ExternalLink class="size-4" />
         IPInfo.io

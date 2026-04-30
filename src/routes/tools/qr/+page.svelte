@@ -199,7 +199,7 @@
     <h1 class="h1 font-bold flex items-center gap-3">
       <QrCode class="size-8 text-primary-500" />
       QR Code Generator
-      <span class="badge variant-filled-error text-xs animate-pulse">NEW</span>
+      <span class="badge preset-filled-secondary-500 text-xs">V0.7</span>
     </h1>
     <p class="text-surface-500 mt-2">
       Generate QR codes for URLs, WiFi, contacts, and more
@@ -213,41 +213,41 @@
       <div class="card p-4 bg-surface-50 dark:bg-surface-900">
         <div class="flex flex-wrap gap-2">
           <button
-            class="btn btn-sm {qrType === 'text' ? 'variant-filled-primary' : 'variant-soft-surface'}"
+            class="btn btn-sm {qrType === 'text' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
             onclick={() => (qrType = 'text')}
           >
             Text
           </button>
           <button
-            class="btn btn-sm {qrType === 'url' ? 'variant-filled-primary' : 'variant-soft-surface'}"
+            class="btn btn-sm {qrType === 'url' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
             onclick={() => (qrType = 'url')}
           >
             <Link class="size-4" />
             URL
           </button>
           <button
-            class="btn btn-sm {qrType === 'wifi' ? 'variant-filled-primary' : 'variant-soft-surface'}"
+            class="btn btn-sm {qrType === 'wifi' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
             onclick={() => (qrType = 'wifi')}
           >
             <Wifi class="size-4" />
             WiFi
           </button>
           <button
-            class="btn btn-sm {qrType === 'vcard' ? 'variant-filled-primary' : 'variant-soft-surface'}"
+            class="btn btn-sm {qrType === 'vcard' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
             onclick={() => (qrType = 'vcard')}
           >
             <User class="size-4" />
             vCard
           </button>
           <button
-            class="btn btn-sm {qrType === 'email' ? 'variant-filled-primary' : 'variant-soft-surface'}"
+            class="btn btn-sm {qrType === 'email' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
             onclick={() => (qrType = 'email')}
           >
             <Mail class="size-4" />
             Email
           </button>
           <button
-            class="btn btn-sm {qrType === 'phone' ? 'variant-filled-primary' : 'variant-soft-surface'}"
+            class="btn btn-sm {qrType === 'phone' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
             onclick={() => (qrType = 'phone')}
           >
             <Phone class="size-4" />
@@ -376,7 +376,7 @@
       <div class="card p-6 bg-surface-50 dark:bg-surface-900 space-y-4">
         <div class="flex justify-between items-center">
           <h2 class="font-medium">Generated QR Code</h2>
-          <button class="btn btn-sm variant-ghost-surface" onclick={clearAll}>
+          <button class="btn btn-sm bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface" onclick={clearAll}>
             <RefreshCw class="size-4" />
             Clear
           </button>
@@ -392,15 +392,15 @@
 
         {#if qrDataUrl}
           <div class="flex flex-wrap gap-2">
-            <button class="btn variant-filled-primary flex-1" onclick={downloadPNG}>
+            <button class="btn preset-filled-primary-500 flex-1" onclick={downloadPNG}>
               <Download class="size-4" />
               Download PNG
             </button>
-            <button class="btn variant-soft-surface flex-1" onclick={downloadSVG}>
+            <button class="btn preset-tonal-surface flex-1" onclick={downloadSVG}>
               <Download class="size-4" />
               Download SVG
             </button>
-            <button class="btn variant-soft-surface" onclick={copyToClipboard}>
+            <button class="btn preset-tonal-surface" onclick={copyToClipboard}>
               {#if copied}
                 <Check class="size-4 text-success-500" />
               {:else}

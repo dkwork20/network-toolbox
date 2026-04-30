@@ -10,6 +10,89 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        version: "0.17.0",
+        date: "2026-03-03",
+        title: "Accessibility & Stability Fixes",
+        changes: [
+            { type: 'feat', text: "Improved visual contrast for input fields and navigation menus app-wide" },
+            { type: 'feat', text: "Refactored Navbar to a data-driven structure, significantly reducing code duplication" },
+            { type: 'fix', text: "Resolved accessibility label warnings in Base64 and Hash tools" },
+            { type: 'fix', text: "Fixed non-interactive semantic structural warnings in Hash drag-and-drop zone" },
+            { type: 'chore', text: "Migrated legacy svelte:component dynamic components to Svelte 5 syntax in Headers and Password tools" },
+        ]
+    },
+    {
+        version: "0.16.0",
+        date: "2026-03-03",
+        title: "Log Sanitizer Enhancements & Privacy Features",
+        changes: [
+            { type: 'feat', text: "Added HTML tags and Regex-based Token masking controls to Log Sanitizer" },
+            { type: 'feat', text: "Added Parameter prefix masking with granular termination character controls" },
+            { type: 'feat', text: "Added live Line/Character metrics and visual size diffing to Log Sanitizer I/O" },
+            { type: 'feat', text: "Upgraded mapped replacement visibility with high-contrast highlights and copy-to-clipboard Modals" },
+            { type: 'fix', text: "Fixed Sanitizer height constraints via an Auto-Expand toggle and improved input/output flex containment" },
+        ]
+    },
+    {
+        version: "0.15.0",
+        date: "2026-02-27",
+        title: "Parsing Hardening, Route Stability, and Compose Round-Trip Reliability",
+        changes: [
+            { type: 'fix', text: "Hardened IPv4/CIDR parsing to reject malformed octets, prefixes with trailing characters, and invalid CIDR separators" },
+            { type: 'fix', text: "Fixed subnet netmask mode by enforcing contiguous-mask validation and corrected IPv6 subnet output formatting to canonical IPv6 notation" },
+            { type: 'fix', text: "Made Quick Links resilient against malformed URLs from input/localStorage and fixed DNS answer type labeling to use per-row record type codes" },
+            { type: 'fix', text: "Refactored Docker Compose import/export to preserve array/map variants for environment/depends_on/labels and retain structured unknown fields during round-trip" },
+            { type: 'docs', text: "Updated AGENTS.md with version-badge policy to keep original version and append current release version for updated/bugfix tools" },
+        ]
+    },
+    {
+        version: "0.14.0",
+        date: "2026-02-14",
+        title: "Verified Tool Highlighting and JSON Structure Editor UX",
+        changes: [
+            { type: 'feat', text: "Added centralized verified tool metadata with reusable isToolVerified/isToolHrefVerified helpers" },
+            { type: 'feat', text: "Added verified badges and highlighted states for verified tools on homepage cards and navbar dropdown/mobile menus" },
+            { type: 'feat', text: "Expanded JSON Formatter with full-structure human editor improvements, lock/unlock flow, and change-tracking apply prompts" },
+            { type: 'fix', text: "Fixed JSON sample-load freeze/looping issue and improved structure editor auto-navigation focus behavior" },
+            { type: 'fix', text: "Improved Base64 drag-and-drop visual feedback coverage and reduced lag during large paste conversion" },
+        ]
+    },
+    {
+        version: "0.13.0",
+        date: "2026-02-14",
+        title: "Diff Viewer Performance Hardening",
+        changes: [
+            { type: 'feat', text: "Moved diff computation to a dedicated Web Worker and added virtualized rendering for large outputs" },
+            { type: 'feat', text: "Added Large File Mode with context-line controls to collapse unchanged blocks around changes" },
+            { type: 'fix', text: "Fixed split diff row spacing inflation by removing unintended vertical grid gap between rows" },
+            { type: 'fix', text: "Fixed layout theme bootstrap script collision by isolating storedTheme variables in an IIFE" },
+            { type: 'chore', text: "Added Verified badge on Diff Viewer header for stabilization tracking" },
+        ]
+    },
+    {
+        version: "0.12.0",
+        date: "2026-02-14",
+        title: "Theme Consistency and Skeleton Preset Migration",
+        changes: [
+            { type: 'fix', text: "Fixed Markdown preview theme adaptation to follow app dark/light class toggles in real time" },
+            { type: 'fix', text: "Fixed theme bootstrap logic to prioritize saved user preference before system preference" },
+            { type: 'chore', text: "Migrated legacy variant utility classes to Skeleton v4 preset utility classes across tools and shared components" },
+            { type: 'chore', text: "Added reusable migration script and npm commands for dry-run and write-mode class migration" },
+        ]
+    },
+    {
+        version: "0.11.0",
+        date: "2026-02-13",
+        title: "Docker Tool Enhancement",
+        changes: [
+            { type: 'feat', text: "Added YAML file import with drag-and-drop support" },
+            { type: 'feat', text: "Added raw YAML editor with line numbers and error highlighting" },
+            { type: 'feat', text: "Added extra fields support for custom/unknown YAML properties" },
+            { type: 'feat', text: "Added command field as textarea for multi-line commands" },
+            { type: 'fix', text: "Fixed light mode display issues in Docker tool" },
+        ]
+    },
+    {
         version: "0.10.0",
         date: "2026-02-12",
         title: "Phase 5: Fixes & Additional Tools",

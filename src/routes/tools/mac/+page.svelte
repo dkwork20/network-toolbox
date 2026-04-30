@@ -195,7 +195,7 @@
     <h1 class="h1 font-bold flex items-center gap-3">
       <Network class="size-8 text-primary-500" />
       MAC Address Lookup
-      <span class="badge variant-filled-error text-xs animate-pulse">NEW</span>
+      <span class="badge preset-filled-secondary-500 text-xs">V0.9</span>
     </h1>
     <p class="text-surface-500 mt-2">
       Identify device vendors and convert MAC address formats
@@ -326,7 +326,7 @@
         <span>Locally Administered</span>
       </label>
 
-      <button class="btn variant-filled-primary" onclick={generateRandomMac}>
+      <button class="btn preset-filled-primary-500" onclick={generateRandomMac}>
         Generate
       </button>
     </div>
@@ -335,7 +335,7 @@
       <div class="flex justify-between items-center p-4 bg-surface-100 dark:bg-surface-800 rounded-lg">
         <code class="font-mono text-lg">{generatedMac}</code>
         <button
-          class="btn btn-sm variant-soft-surface"
+          class="btn btn-sm preset-tonal-surface"
           onclick={async () => {
             await navigator.clipboard.writeText(generatedMac);
             toaster.success({ title: 'Copied!', description: 'MAC copied' });

@@ -51,6 +51,7 @@
 >
   <div class="flex justify-between items-center mb-6">
     <h2 class="h2 font-bold">X.509 Certificate Decoder</h2>
+    <span class="badge preset-filled-secondary-500 text-xs">V0.5</span>
   </div>
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 h-full">
@@ -65,7 +66,7 @@
         placeholder="-----BEGIN CERTIFICATE-----&#10;MIIDlzCCAn+gAwIBAgIQCgAAAA...&#10;-----END CERTIFICATE-----"
       ></textarea>
       {#if error}
-        <div class="alert variant-filled-error p-2 text-sm">{error}</div>
+        <div class="alert preset-filled-error-500 p-2 text-sm">{error}</div>
       {/if}
     </div>
 
@@ -74,7 +75,7 @@
       <div class="flex justify-between items-center">
         <span class="font-bold text-lg">Decoded Details</span>
         <button
-          class="btn btn-xs variant-soft-secondary"
+          class="btn btn-xs preset-tonal-secondary"
           onclick={copyDetails}
           disabled={!certDetails}>Copy JSON</button
         >

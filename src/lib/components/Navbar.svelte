@@ -3,38 +3,119 @@
   import { onMount } from "svelte";
   import { Dialog, DropdownMenu } from "bits-ui";
   import { page } from "$app/stores";
+  import { isToolHrefVerified } from "$lib/data/verified-tools";
 
-  // Simple logic for dark mode toggling using tailwind 'dark' class on html
-  // SvelteKit usually runs on server, so we need to handle hydration.
-  // For MVP, we toggle class on documentElement.
+  type ThemePreference = "light" | "dark";
 
-  let isDark = $state(true); // Default to dark? Check app.html or user system.
+  const THEME_STORAGE_KEY = "theme";
+
+  let isDark = $state(true);
   let isMobileMenuOpen = $state(false);
+
+  interface NavTool {
+    label: string;
+    href: string;
+    isBeta?: boolean;
+  }
+
+  interface NavCategory {
+    title: string;
+    tools: NavTool[];
+  }
+
+  const navCategories: NavCategory[] = [
+    {
+      title: "Network",
+      tools: [
+        { label: "IP Calculator", href: "/tools/ip" },
+        { label: "Subnet Visualizer", href: "/tools/subnet" },
+        { label: "DNS Lookup", href: "/tools/dns" },
+        { label: "Diagnostics", href: "/tools/diagnostics" },
+        { label: "MAC Lookup", href: "/tools/mac", isBeta: true },
+        { label: "Port Scanner", href: "/tools/port", isBeta: true },
+        { label: "Ping Monitor", href: "/tools/ping", isBeta: true },
+        { label: "HTTP Headers", href: "/tools/headers", isBeta: true },
+        { label: "SSL Checker", href: "/tools/ssl", isBeta: true },
+        { label: "Whois Lookup", href: "/tools/whois", isBeta: true },
+        { label: "Speed Test", href: "/tools/speed", isBeta: true },
+      ],
+    },
+    {
+      title: "Encoding & Data",
+      tools: [
+        { label: "UUID Generator", href: "/tools/uuid", isBeta: true },
+        { label: "Hash Calculator", href: "/tools/hash", isBeta: true },
+        { label: "Base64 Encoder", href: "/tools/base64", isBeta: true },
+        { label: "URL Encoder", href: "/tools/url", isBeta: true },
+        { label: "JSON Formatter", href: "/tools/json", isBeta: true },
+        { label: "Color Picker", href: "/tools/color", isBeta: true },
+        { label: "QR Generator", href: "/tools/qr", isBeta: true },
+      ],
+    },
+    {
+      title: "Security",
+      tools: [
+        { label: "Password Generator", href: "/tools/password", isBeta: true },
+        { label: "Bcrypt Hash", href: "/tools/bcrypt", isBeta: true },
+        { label: "Log Sanitizer", href: "/tools/sanitizer" },
+      ],
+    },
+    {
+      title: "Developer",
+      tools: [
+        { label: "JWT Debugger", href: "/tools/jwt" },
+        { label: "Cert Decoder", href: "/tools/cert" },
+        { label: "Converter", href: "/tools/converter" },
+        { label: "Timestamp", href: "/tools/timestamp" },
+        { label: "Cron Generator", href: "/tools/cron" },
+        { label: "Regex Tester", href: "/tools/regex", isBeta: true },
+        { label: "Diff Viewer", href: "/tools/diff", isBeta: true },
+        { label: "Markdown Preview", href: "/tools/markdown", isBeta: true },
+        { label: "Docker Compose", href: "/tools/docker", isBeta: true },
+      ],
+    },
+  ];
+
+  function getStoredThemePreference(): ThemePreference | null {
+    const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    if (storedTheme === "light" || storedTheme === "dark") {
+      return storedTheme;
+    }
+    return null;
+  }
+
+  function getSystemPrefersDark(): boolean {
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+
+  function applyTheme(darkMode: boolean) {
+    document.documentElement.classList.toggle("dark", darkMode);
+  }
+
+  function resolveInitialTheme(): boolean {
+    const storedTheme = getStoredThemePreference();
+    if (storedTheme) {
+      return storedTheme === "dark";
+    }
+    return getSystemPrefersDark();
+  }
 
   function toggleTheme() {
     isDark = !isDark;
-    if (isDark) {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-    }
+    applyTheme(isDark);
+    localStorage.setItem(THEME_STORAGE_KEY, isDark ? "dark" : "light");
   }
 
-  // Sync with system or existing class on mount
-  onMount(() => {
-    if (document.documentElement.classList.contains("dark")) {
-      isDark = true;
-    } else {
-      // Check system preference if no class set
-      if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-        isDark = true;
-        document.documentElement.classList.add("dark");
-      } else {
-        isDark = false;
-      }
+  function navToolLinkClass(baseClass: string, href: string): string {
+    if (!isToolHrefVerified(href)) {
+      return baseClass;
     }
+    return `${baseClass} text-success-900 dark:text-success-300 font-semibold border border-success-500/35 rounded-md bg-success-700/20`;
+  }
+
+  onMount(() => {
+    isDark = resolveInitialTheme();
+    applyTheme(isDark);
   });
 
   // Close menu on navigation
@@ -63,362 +144,50 @@
       <div
         class="hidden lg:flex items-center gap-1 text-sm font-medium text-surface-600 dark:text-surface-300"
       >
-        <!-- Network Tools Dropdown -->
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger
-            class="btn-sm variant-ghost-surface hover:variant-soft-primary transition-colors rounded-md py-2 px-3 flex items-center gap-1 group"
-          >
-            Network
-            <ChevronDown
-              class="size-3 opacity-50 group-hover:opacity-100 transition-opacity"
-            />
-          </DropdownMenu.Trigger>
-          <DropdownMenu.Portal>
-            <DropdownMenu.Content
-              class="z-50 min-w-[200px] bg-surface-100 dark:bg-surface-900 rounded-lg shadow-xl border border-surface-500/10 p-2 outline-none animate-in fade-in zoom-in-95 duration-100"
+        {#each navCategories as category}
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger
+              class="btn-sm bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-primary transition-colors rounded-md py-2 px-3 flex items-center gap-1 group"
             >
-              <DropdownMenu.Item
-                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
+              {category.title.split(" ")[0]}
+              <ChevronDown
+                class="size-3 opacity-50 group-hover:opacity-100 transition-opacity"
+              />
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Portal>
+              <DropdownMenu.Content
+                class="z-50 min-w-[200px] bg-surface-50 dark:bg-surface-800 rounded-lg shadow-2xl border border-surface-900/30 dark:border-surface-100/30 p-2 outline-none animate-in fade-in zoom-in-95 duration-100"
               >
-                <a
-                  href="/tools/ip"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >IP Calculator</a
-                >
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
-              >
-                <a
-                  href="/tools/iprange"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >IP Range Calculator <span class="text-error-500 font-bold">**</span></a
-                >
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
-              >
-                <a
-                  href="/tools/subnet"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Subnet Visualizer</a
-                >
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
-              >
-                <a
-                  href="/tools/dns"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >DNS Lookup</a
-                >
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
-              >
-                <a
-                  href="/tools/diagnostics"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Diagnostics</a
-                >
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
-              >
-                <a
-                  href="/tools/mac"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >MAC Lookup <span class="text-error-500 font-bold">**</span></a
-                >
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
-              >
-                <a
-                  href="/tools/port"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Port Scanner <span class="text-error-500 font-bold">**</span></a
-                >
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
-              >
-                <a
-                  href="/tools/ping"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Ping Monitor <span class="text-error-500 font-bold">**</span></a
-                >
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
-              >
-                <a
-                  href="/tools/headers"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >HTTP Headers <span class="text-error-500 font-bold">**</span></a
-                >
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
-              >
-                <a
-                  href="/tools/ssl"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >SSL Checker <span class="text-error-500 font-bold">**</span></a
-                >
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
-              >
-                <a
-                  href="/tools/whois"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Whois Lookup <span class="text-error-500 font-bold">**</span></a
-                >
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
-              >
-                <a
-                  href="/tools/speed"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Speed Test <span class="text-error-500 font-bold">**</span></a
-                >
-              </DropdownMenu.Item>
-            </DropdownMenu.Content>
-          </DropdownMenu.Portal>
-        </DropdownMenu.Root>
-
-        <div class="h-4 w-px bg-surface-500/20 mx-1"></div>
-
-        <!-- Encoding & Data Dropdown -->
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger
-            class="btn-sm variant-ghost-surface hover:variant-soft-primary transition-colors rounded-md py-2 px-3 flex items-center gap-1 group"
-          >
-            Encoding
-            <ChevronDown
-              class="size-3 opacity-50 group-hover:opacity-100 transition-opacity"
-            />
-          </DropdownMenu.Trigger>
-          <DropdownMenu.Portal>
-            <DropdownMenu.Content
-              class="z-50 min-w-[200px] bg-surface-100 dark:bg-surface-900 rounded-lg shadow-xl border border-surface-500/10 p-2 outline-none animate-in fade-in zoom-in-95 duration-100"
-            >
-              <DropdownMenu.Item
-                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
-              >
-                <a
-                  href="/tools/uuid"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >UUID Generator <span class="text-error-500 font-bold">**</span></a
-                >
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
-              >
-                <a
-                  href="/tools/hash"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Hash Calculator <span class="text-error-500 font-bold">**</span></a
-                >
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
-              >
-                <a
-                  href="/tools/base64"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Base64 Encoder <span class="text-error-500 font-bold">**</span></a
-                >
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
-              >
-                <a
-                  href="/tools/url"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >URL Encoder <span class="text-error-500 font-bold">**</span></a
-                >
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
-              >
-                <a
-                  href="/tools/json"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >JSON Formatter <span class="text-error-500 font-bold">**</span></a
-                >
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
-              >
-                <a
-                  href="/tools/color"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Color Picker <span class="text-error-500 font-bold">**</span></a
-                >
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
-              >
-                <a
-                  href="/tools/qr"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >QR Generator <span class="text-error-500 font-bold">**</span></a
-                >
-              </DropdownMenu.Item>
-            </DropdownMenu.Content>
-          </DropdownMenu.Portal>
-        </DropdownMenu.Root>
-
-        <div class="h-4 w-px bg-surface-500/20 mx-1"></div>
-
-        <!-- Security Dropdown -->
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger
-            class="btn-sm variant-ghost-surface hover:variant-soft-primary transition-colors rounded-md py-2 px-3 flex items-center gap-1 group"
-          >
-            Security
-            <ChevronDown
-              class="size-3 opacity-50 group-hover:opacity-100 transition-opacity"
-            />
-          </DropdownMenu.Trigger>
-          <DropdownMenu.Portal>
-            <DropdownMenu.Content
-              class="z-50 min-w-[200px] bg-surface-100 dark:bg-surface-900 rounded-lg shadow-xl border border-surface-500/10 p-2 outline-none animate-in fade-in zoom-in-95 duration-100"
-            >
-              <DropdownMenu.Item
-                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
-              >
-                <a
-                  href="/tools/password"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Password Generator <span class="text-error-500 font-bold">**</span></a
-                >
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
-              >
-                <a
-                  href="/tools/bcrypt"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Bcrypt Hash <span class="text-error-500 font-bold">**</span></a
-                >
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
-              >
-                <a
-                  href="/tools/sanitizer"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Log Sanitizer</a
-                >
-              </DropdownMenu.Item>
-            </DropdownMenu.Content>
-          </DropdownMenu.Portal>
-        </DropdownMenu.Root>
-
-        <div class="h-4 w-px bg-surface-500/20 mx-1"></div>
-
-        <!-- Dev Tools Dropdown -->
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger
-            class="btn-sm variant-ghost-surface hover:variant-soft-primary transition-colors rounded-md py-2 px-3 flex items-center gap-1 group"
-          >
-            Developer
-            <ChevronDown
-              class="size-3 opacity-50 group-hover:opacity-100 transition-opacity"
-            />
-          </DropdownMenu.Trigger>
-          <DropdownMenu.Portal>
-            <DropdownMenu.Content
-              class="z-50 min-w-[200px] bg-surface-100 dark:bg-surface-900 rounded-lg shadow-xl border border-surface-500/10 p-2 outline-none animate-in fade-in zoom-in-95 duration-100"
-            >
-              <DropdownMenu.Item
-                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
-              >
-                <a
-                  href="/tools/jwt"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >JWT Debugger</a
-                >
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
-              >
-                <a
-                  href="/tools/cert"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Cert Decoder</a
-                >
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
-              >
-                <a
-                  href="/tools/converter"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Converter</a
-                >
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
-              >
-                <a
-                  href="/tools/timestamp"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Timestamp</a
-                >
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
-              >
-                <a
-                  href="/tools/cron"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Cron Generator</a
-                >
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
-              >
-                <a
-                  href="/tools/regex"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Regex Tester <span class="text-error-500 font-bold">**</span></a
-                >
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
-              >
-                <a
-                  href="/tools/diff"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Diff Viewer <span class="text-error-500 font-bold">**</span></a
-                >
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
-              >
-                <a
-                  href="/tools/markdown"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Markdown Preview <span class="text-error-500 font-bold">**</span></a
-                >
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                class="rounded-md hover:bg-surface-200 dark:hover:bg-surface-800 outline-none transition-colors"
-              >
-                <a
-                  href="/tools/docker"
-                  class="flex items-center px-3 py-2 w-full h-full text-sm"
-                  >Docker Compose <span class="text-error-500 font-bold">**</span></a
-                >
-              </DropdownMenu.Item>
-            </DropdownMenu.Content>
-          </DropdownMenu.Portal>
-        </DropdownMenu.Root>
+                {#each category.tools as tool}
+                  <DropdownMenu.Item
+                    class="rounded-md hover:bg-surface-100 dark:hover:bg-surface-600 outline-none transition-colors"
+                  >
+                    <a
+                      href={tool.href}
+                      class={navToolLinkClass(
+                        "flex items-center px-3 py-2 w-full h-full text-sm",
+                        tool.href,
+                      )}
+                    >
+                      {tool.label}
+                      {#if tool.isBeta}
+                        <span class="text-error-500 font-bold ml-1">**</span>
+                      {/if}
+                      {#if isToolHrefVerified(tool.href)}
+                        <span
+                          class="badge preset-tonal-success text-[10px] ml-2"
+                        >
+                          Verified
+                        </span>
+                      {/if}
+                    </a>
+                  </DropdownMenu.Item>
+                {/each}
+              </DropdownMenu.Content>
+            </DropdownMenu.Portal>
+          </DropdownMenu.Root>
+          <div class="h-4 w-px bg-surface-500/20 mx-1 last:hidden"></div>
+        {/each}
       </div>
     </div>
 
@@ -427,14 +196,14 @@
       <div class="hidden md:flex items-center gap-3">
         <a
           href="/changelog"
-          class="text-sm font-medium text-surface-500 hover:text-primary-500 transition-colors"
+          class="text-sm font-medium text-surface-400 hover:text-primary-500 transition-colors"
           >About</a
         >
         <a
           href="https://github.com/skeletonlabs/skeleton"
           target="_blank"
           rel="noreferrer"
-          class="text-sm font-medium text-surface-500 hover:text-primary-500 transition-colors"
+          class="text-sm font-medium text-surface-400 hover:text-primary-500 transition-colors"
         >
           GitHub
         </a>
@@ -442,7 +211,7 @@
       </div>
 
       <button
-        class="btn-icon btn-icon-sm variant-ringed-surface hover:variant-soft-primary transition-all"
+        class="btn-icon btn-icon-sm preset-outlined-surface-500 hover:preset-tonal-primary transition-all"
         onclick={toggleTheme}
         aria-label="Toggle Dark Mode"
       >
@@ -456,7 +225,9 @@
       <!-- Mobile Menu Trigger -->
       <div class="lg:hidden ml-2">
         <Dialog.Root bind:open={isMobileMenuOpen}>
-          <Dialog.Trigger class="btn-icon btn-icon-sm variant-filled-surface">
+          <Dialog.Trigger
+            class="btn-icon btn-icon-sm preset-filled-surface-500"
+          >
             <Menu class="size-5" />
           </Dialog.Trigger>
           <Dialog.Portal>
@@ -472,7 +243,7 @@
               >
                 <span class="font-bold text-lg tracking-tight">Menu</span>
                 <Dialog.Close
-                  class="btn-icon btn-icon-sm variant-ghost-surface"
+                  class="btn-icon btn-icon-sm bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface"
                 >
                   <X class="size-5" />
                 </Dialog.Close>
@@ -480,155 +251,50 @@
 
               <!-- Mobile Content -->
               <div class="flex-1 overflow-y-auto p-6 flex flex-col gap-6">
-                <div class="flex flex-col gap-1">
-                  <span
-                    class="text-xs font-bold uppercase text-surface-500 tracking-wider mb-2"
-                    >Network</span
-                  >
-                  <a
-                    href="/tools/ip"
-                    class="btn variant-ghost-surface justify-start"
-                    >IP Calculator</a
-                  >
-                  <a
-                    href="/tools/iprange"
-                    class="btn variant-ghost-surface justify-start"
-                    >IP Range Calculator <span class="text-error-500 font-bold">**</span></a
-                  >
-                  <a
-                    href="/tools/subnet"
-                    class="btn variant-ghost-surface justify-start"
-                    >Subnet Visualizer</a
-                  >
-                  <a
-                    href="/tools/dns"
-                    class="btn variant-ghost-surface justify-start"
-                    >DNS Lookup</a
-                  >
-                  <a
-                    href="/tools/diagnostics"
-                    class="btn variant-ghost-surface justify-start"
-                    >Diagnostics</a
-                  >
-                  <a
-                    href="/tools/mac"
-                    class="btn variant-ghost-surface justify-start"
-                    >MAC Lookup <span class="text-error-500 font-bold">**</span></a
-                  >
-                </div>
-
-                <div class="flex flex-col gap-1">
-                  <span
-                    class="text-xs font-bold uppercase text-surface-500 tracking-wider mb-2"
-                    >Encoding & Data</span
-                  >
-                  <a
-                    href="/tools/uuid"
-                    class="btn variant-ghost-surface justify-start"
-                    >UUID Generator <span class="text-error-500 font-bold">**</span></a
-                  >
-                  <a
-                    href="/tools/hash"
-                    class="btn variant-ghost-surface justify-start"
-                    >Hash Calculator <span class="text-error-500 font-bold">**</span></a
-                  >
-                  <a
-                    href="/tools/base64"
-                    class="btn variant-ghost-surface justify-start"
-                    >Base64 Encoder <span class="text-error-500 font-bold">**</span></a
-                  >
-                  <a
-                    href="/tools/url"
-                    class="btn variant-ghost-surface justify-start"
-                    >URL Encoder <span class="text-error-500 font-bold">**</span></a
-                  >
-                  <a
-                    href="/tools/json"
-                    class="btn variant-ghost-surface justify-start"
-                    >JSON Formatter <span class="text-error-500 font-bold">**</span></a
-                  >
-                  <a
-                    href="/tools/color"
-                    class="btn variant-ghost-surface justify-start"
-                    >Color Picker <span class="text-error-500 font-bold">**</span></a
-                  >
-                  <a
-                    href="/tools/qr"
-                    class="btn variant-ghost-surface justify-start"
-                    >QR Generator <span class="text-error-500 font-bold">**</span></a
-                  >
-                </div>
-
-                <div class="flex flex-col gap-1">
-                  <span
-                    class="text-xs font-bold uppercase text-surface-500 tracking-wider mb-2"
-                    >Security</span
-                  >
-                  <a
-                    href="/tools/password"
-                    class="btn variant-ghost-surface justify-start"
-                    >Password Generator <span class="text-error-500 font-bold">**</span></a
-                  >
-                  <a
-                    href="/tools/sanitizer"
-                    class="btn variant-ghost-surface justify-start"
-                    >Log Sanitizer</a
-                  >
-                </div>
-
-                <div class="flex flex-col gap-1">
-                  <span
-                    class="text-xs font-bold uppercase text-surface-500 tracking-wider mb-2"
-                    >Developer</span
-                  >
-                  <a
-                    href="/tools/jwt"
-                    class="btn variant-ghost-surface justify-start"
-                    >JWT Debugger</a
-                  >
-                  <a
-                    href="/tools/cert"
-                    class="btn variant-ghost-surface justify-start"
-                    >Cert Decoder</a
-                  >
-                  <a
-                    href="/tools/converter"
-                    class="btn variant-ghost-surface justify-start">Converter</a
-                  >
-                  <a
-                    href="/tools/timestamp"
-                    class="btn variant-ghost-surface justify-start">Timestamp</a
-                  >
-                  <a
-                    href="/tools/cron"
-                    class="btn variant-ghost-surface justify-start"
-                    >Cron Generator</a
-                  >
-                  <a
-                    href="/tools/regex"
-                    class="btn variant-ghost-surface justify-start"
-                    >Regex Tester <span class="text-error-500 font-bold">**</span></a
-                  >
-                  <a
-                    href="/tools/diff"
-                    class="btn variant-ghost-surface justify-start"
-                    >Diff Viewer <span class="text-error-500 font-bold">**</span></a
-                  >
-                </div>
+                {#each navCategories as category}
+                  <div class="flex flex-col gap-1">
+                    <span
+                      class="text-xs font-bold uppercase text-surface-500 tracking-wider mb-2"
+                    >
+                      {category.title}
+                    </span>
+                    {#each category.tools as tool}
+                      <a
+                        href={tool.href}
+                        class={navToolLinkClass(
+                          "btn bg-transparent text-surface-900 dark:text-surface-100 hover:preset-tonal-surface justify-start px-3 py-2 h-auto text-sm",
+                          tool.href,
+                        )}
+                      >
+                        {tool.label}
+                        {#if tool.isBeta}
+                          <span class="text-error-500 font-bold ml-1">**</span>
+                        {/if}
+                        {#if isToolHrefVerified(tool.href)}
+                          <span
+                            class="badge preset-tonal-success text-[10px] ml-2"
+                          >
+                            Verified
+                          </span>
+                        {/if}
+                      </a>
+                    {/each}
+                  </div>
+                {/each}
 
                 <hr class="border-surface-500/10" />
 
                 <div class="flex flex-col gap-2">
                   <a
                     href="/changelog"
-                    class="btn variant-ghost-surface justify-start text-surface-500"
+                    class="btn bg-transparent dark:text-surface-100 hover:preset-tonal-surface justify-start text-surface-500"
                     >Changelog</a
                   >
                   <a
                     href="https://github.com/skeletonlabs/skeleton"
                     target="_blank"
                     rel="noreferrer"
-                    class="btn variant-ghost-surface justify-start text-surface-500"
+                    class="btn bg-transparent dark:text-surface-100 hover:preset-tonal-surface justify-start text-surface-500"
                     >GitHub</a
                   >
                 </div>

@@ -87,6 +87,7 @@
 >
   <div class="flex justify-between items-center mb-6">
     <h2 class="h2 font-bold">JWT Debugger</h2>
+    <span class="badge preset-filled-secondary-500 text-xs">V0.5</span>
   </div>
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 h-full">
@@ -101,7 +102,7 @@
         placeholder="Paste JWT here (header.payload.signature)"
       ></textarea>
       {#if error}
-        <div class="alert variant-filled-error p-2 text-sm">{error}</div>
+        <div class="alert preset-filled-error-500 p-2 text-sm">{error}</div>
       {/if}
     </div>
 
@@ -129,7 +130,7 @@
         <div class="flex justify-between items-center mb-2">
           <h3 class="font-bold text-sm text-surface-500 uppercase">Payload</h3>
           <button
-            class="btn btn-xs variant-soft-secondary"
+            class="btn btn-xs preset-tonal-secondary"
             onclick={copyPayload}
             disabled={!payload || Object.keys(payload).length === 0}
             >Copy</button

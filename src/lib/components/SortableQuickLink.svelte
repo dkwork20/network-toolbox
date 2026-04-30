@@ -22,10 +22,27 @@
 
   /* eslint-disable svelte/state-referenced-locally */
   const { ref, handleRef, isDragging } = useSortable({
-    id,
+    id: () => id,
     index: () => index,
     disabled: () => disabled,
   });
+
+  function isSafeHttpUrl(url: string): boolean {
+    try {
+      const parsed = new URL(url);
+      return parsed.protocol === "http:" || parsed.protocol === "https:";
+    } catch {
+      return false;
+    }
+  }
+
+  function getHostnameLabel(url: string): string {
+    try {
+      return new URL(url).hostname;
+    } catch {
+      return "invalid-url";
+    }
+  }
 </script>
 
 <div class="relative select-none h-full" {@attach ref}>
@@ -37,7 +54,7 @@
   >
     {#if isEditing}
       <button
-        class="absolute top-2 right-2 btn-icon btn-icon-sm variant-filled-error z-10"
+        class="absolute top-2 right-2 btn-icon btn-icon-sm preset-filled-error-500 z-10"
         onclick={(e) => {
           e.stopPropagation();
           onDelete(id);
@@ -56,10 +73,11 @@
     {/if}
 
     <a
-      href={link.url}
+      href={isSafeHttpUrl(link.url) ? link.url : undefined}
       target="_blank"
-      rel="noreferrer"
-      class="block flex-1 {isEditing ? 'pointer-events-none opacity-60' : ''}"
+      rel="noopener noreferrer"
+      aria-disabled={!isSafeHttpUrl(link.url)}
+      class="block flex-1 {isEditing || !isSafeHttpUrl(link.url) ? 'pointer-events-none opacity-60' : ''}"
     >
       <div class="font-bold truncate pr-6 text-lg">{link.title}</div>
       <div class="text-sm text-surface-600 dark:text-surface-300 mt-1 truncate">
@@ -69,7 +87,7 @@
         class="text-xs text-primary-600 dark:text-primary-400 mt-2 truncate opacity-80 flex items-center gap-1"
       >
         <ExternalLink class="size-3" />
-        {new URL(link.url).hostname}
+        {getHostnameLabel(link.url)}
       </div>
     </a>
   </div>

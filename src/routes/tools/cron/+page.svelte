@@ -82,7 +82,10 @@
 
 <div class="container mx-auto p-4 max-w-4xl pb-20">
   <div class="mb-10 text-center">
-    <h2 class="h2 font-bold">Cron Schedule Generator</h2>
+    <div class="flex justify-center items-center gap-3">
+      <h2 class="h2 font-bold">Cron Schedule Generator</h2>
+      <span class="badge preset-filled-secondary-500 text-xs">V0.5</span>
+    </div>
     <p class="mt-2 text-surface-500">Interactive editor for cron expressions</p>
   </div>
 
@@ -93,7 +96,7 @@
       <div class="flex flex-col gap-2">
         {#each presets as preset}
           <button
-            class="btn variant-soft-surface justify-start text-sm hover:variant-filled-primary transition-all"
+            class="btn preset-tonal-surface justify-start text-sm hover:preset-filled-primary-500 transition-all"
             onclick={() => applyPreset(preset.cron)}
           >
             <span class="font-mono mr-2 opacity-70">[{preset.cron}]</span>
@@ -166,7 +169,7 @@
           <h3 class="h3 font-bold text-primary-500">
             {SEGMENTS[activeIndex].name}
           </h3>
-          <span class="badge variant-soft-surface">
+          <span class="badge preset-tonal-surface">
             Allowed: {SEGMENTS[activeIndex].desc}
           </span>
         </div>

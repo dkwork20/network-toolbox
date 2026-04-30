@@ -38,6 +38,7 @@
   import { fade } from "svelte/transition";
   import { DragDropProvider } from "@dnd-kit-svelte/svelte";
   import SortableQuickLink from "$lib/components/SortableQuickLink.svelte";
+  import { isToolVerified } from "$lib/data/verified-tools";
 
   function arrayMove(array: any[], from: number, to: number) {
     const newArray = array.slice();
@@ -49,25 +50,69 @@
     return newArray;
   }
 
+  interface QuickLink {
+    id: string;
+    title: string;
+    url: string;
+    desc: string;
+  }
+
+  function normalizeQuickLinkUrl(rawUrl: string): string | null {
+    const trimmed = rawUrl.trim();
+    if (!trimmed) return null;
+
+    const withProtocol = /^[a-z][a-z0-9+.-]*:\/\//i.test(trimmed)
+      ? trimmed
+      : `https://${trimmed}`;
+
+    try {
+      const parsed = new URL(withProtocol);
+      if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+        return null;
+      }
+      return parsed.toString();
+    } catch {
+      return null;
+    }
+  }
+
+  function sanitizeQuickLinks(raw: unknown): QuickLink[] {
+    if (!Array.isArray(raw)) return [];
+
+    return raw
+      .map((entry) => {
+        if (!entry || typeof entry !== "object") return null;
+        const item = entry as Partial<QuickLink>;
+        const title = typeof item.title === "string" ? item.title.trim() : "";
+        const desc = typeof item.desc === "string" ? item.desc.trim() : "";
+        const url =
+          typeof item.url === "string" ? normalizeQuickLinkUrl(item.url) : null;
+        if (!title || !url) return null;
+
+        return {
+          id:
+            typeof item.id === "string" && item.id.trim()
+              ? item.id
+              : crypto.randomUUID(),
+          title,
+          url,
+          desc,
+        } satisfies QuickLink;
+      })
+      .filter((item): item is QuickLink => item !== null);
+  }
+
   // --- Tool Data ---
   const tools = [
     // Network Tools
     {
       id: "ip",
       title: "IP Calculator",
-      desc: "CIDR calculation & exclusion",
+      desc: "CIDR calculation & subnet analysis",
       icon: Calculator,
       href: "/tools/ip",
       cat: "network",
-    },
-    {
-      id: "iprange",
-      title: "IP Range Calculator",
-      desc: "CIDR, range, netmask converter",
-      icon: Calculator,
-      href: "/tools/iprange",
-      cat: "network",
-      isNew: true,
+      version: "V0.4 ~ V0.15",
     },
     {
       id: "subnet",
@@ -76,6 +121,7 @@
       icon: Network,
       href: "/tools/subnet",
       cat: "network",
+      version: "V0.2",
     },
     {
       id: "dns",
@@ -84,6 +130,7 @@
       icon: Search,
       href: "/tools/dns",
       cat: "network",
+      version: "V0.4 ~ V0.15",
     },
     {
       id: "diag",
@@ -92,6 +139,7 @@
       icon: Activity,
       href: "/tools/diagnostics",
       cat: "network",
+      version: "V0.4",
     },
     {
       id: "mac",
@@ -100,6 +148,7 @@
       icon: Network,
       href: "/tools/mac",
       cat: "network",
+      version: "V0.9",
       isNew: true,
     },
     {
@@ -109,6 +158,7 @@
       icon: Scan,
       href: "/tools/port",
       cat: "network",
+      version: "V0.10",
       isNew: true,
     },
     {
@@ -118,6 +168,7 @@
       icon: Activity,
       href: "/tools/ping",
       cat: "network",
+      version: "V0.10",
       isNew: true,
     },
     {
@@ -127,7 +178,9 @@
       icon: FileSearch,
       href: "/tools/headers",
       cat: "network",
+      version: "V0.10 ~ V0.17",
       isNew: true,
+      isUpdated: true,
     },
     {
       id: "ssl",
@@ -136,6 +189,7 @@
       icon: Lock,
       href: "/tools/ssl",
       cat: "network",
+      version: "V0.10",
       isNew: true,
     },
     {
@@ -145,6 +199,7 @@
       icon: Search,
       href: "/tools/whois",
       cat: "network",
+      version: "V0.10",
       isNew: true,
     },
     {
@@ -154,6 +209,7 @@
       icon: Activity,
       href: "/tools/speed",
       cat: "network",
+      version: "V0.10",
       isNew: true,
     },
 
@@ -165,6 +221,7 @@
       icon: Fingerprint,
       href: "/tools/uuid",
       cat: "encoding",
+      version: "V0.6",
       isNew: true,
     },
     {
@@ -174,7 +231,9 @@
       icon: Hash,
       href: "/tools/hash",
       cat: "encoding",
+      version: "V0.7 ~ V0.17",
       isNew: true,
+      isUpdated: true,
     },
     {
       id: "base64",
@@ -183,7 +242,9 @@
       icon: Binary,
       href: "/tools/base64",
       cat: "encoding",
+      version: "V0.6 ~ V0.17",
       isNew: true,
+      isUpdated: true,
     },
     {
       id: "url",
@@ -192,6 +253,7 @@
       icon: Link,
       href: "/tools/url",
       cat: "encoding",
+      version: "V0.6",
       isNew: true,
     },
     {
@@ -201,6 +263,7 @@
       icon: FileJson,
       href: "/tools/json",
       cat: "encoding",
+      version: "V0.6",
       isNew: true,
     },
     {
@@ -210,6 +273,7 @@
       icon: Palette,
       href: "/tools/color",
       cat: "encoding",
+      version: "V0.6",
       isNew: true,
     },
     {
@@ -219,6 +283,7 @@
       icon: QrCode,
       href: "/tools/qr",
       cat: "encoding",
+      version: "V0.7",
       isNew: true,
     },
 
@@ -230,7 +295,9 @@
       icon: KeyRound,
       href: "/tools/password",
       cat: "security",
+      version: "V0.6 ~ V0.17",
       isNew: true,
+      isUpdated: true,
     },
     {
       id: "bcrypt",
@@ -239,6 +306,7 @@
       icon: Key,
       href: "/tools/bcrypt",
       cat: "security",
+      version: "V0.10",
       isNew: true,
     },
     {
@@ -248,6 +316,7 @@
       icon: ShieldCheck,
       href: "/tools/sanitizer",
       cat: "security",
+      version: "V0.3 ~ V0.16",
     },
 
     // Developer Tools
@@ -258,6 +327,7 @@
       icon: Key,
       href: "/tools/jwt",
       cat: "dev",
+      version: "V0.5",
     },
     {
       id: "cert",
@@ -266,6 +336,7 @@
       icon: FileCode,
       href: "/tools/cert",
       cat: "dev",
+      version: "V0.5",
     },
     {
       id: "convert",
@@ -274,6 +345,7 @@
       icon: FileJson,
       href: "/tools/converter",
       cat: "dev",
+      version: "V0.5",
     },
     {
       id: "time",
@@ -282,6 +354,7 @@
       icon: Clock,
       href: "/tools/timestamp",
       cat: "dev",
+      version: "V0.4",
     },
     {
       id: "cron",
@@ -290,6 +363,7 @@
       icon: CalendarClock,
       href: "/tools/cron",
       cat: "dev",
+      version: "V0.5",
     },
     {
       id: "regex",
@@ -298,6 +372,7 @@
       icon: Regex,
       href: "/tools/regex",
       cat: "dev",
+      version: "V0.7",
       isNew: true,
     },
     {
@@ -307,6 +382,7 @@
       icon: GitCompare,
       href: "/tools/diff",
       cat: "dev",
+      version: "V0.8",
       isNew: true,
     },
     {
@@ -316,6 +392,7 @@
       icon: FileText,
       href: "/tools/markdown",
       cat: "dev",
+      version: "V0.10",
       isNew: true,
     },
     {
@@ -325,6 +402,7 @@
       icon: Container,
       href: "/tools/docker",
       cat: "dev",
+      version: "V0.11 ~ V0.15",
       isNew: true,
     },
   ];
@@ -337,7 +415,7 @@
   ];
 
   // --- Quick Links (Draggable) ---
-  let quickLinks = $state([
+  let quickLinks = $state<QuickLink[]>([
     {
       id: "1",
       title: "Google",
@@ -362,7 +440,7 @@
     const saved = localStorage.getItem("quickLinks");
     if (saved) {
       try {
-        quickLinks = JSON.parse(saved);
+        quickLinks = sanitizeQuickLinks(JSON.parse(saved));
       } catch (e) {
         console.error("Failed to load quick links", e);
       }
@@ -371,9 +449,7 @@
 
   // Save to LS
   $effect(() => {
-    if (quickLinks.length > 0) {
-      localStorage.setItem("quickLinks", JSON.stringify(quickLinks));
-    }
+    localStorage.setItem("quickLinks", JSON.stringify(quickLinks));
   });
 
   function handleDragEnd(event: any) {
@@ -397,7 +473,25 @@
       });
       return;
     }
-    quickLinks = [...quickLinks, { id: crypto.randomUUID(), ...newLink }];
+
+    const normalizedUrl = normalizeQuickLinkUrl(newLink.url);
+    if (!normalizedUrl) {
+      toaster.error({
+        title: "Invalid URL",
+        description: "Please enter a valid http(s) URL",
+      });
+      return;
+    }
+
+    quickLinks = [
+      ...quickLinks,
+      {
+        id: crypto.randomUUID(),
+        title: newLink.title.trim(),
+        url: normalizedUrl,
+        desc: newLink.desc.trim(),
+      },
+    ];
     newLink = { title: "", url: "", desc: "" };
     showAddModal = false;
     toaster.success({ title: "Success", description: "Link added" });
@@ -429,7 +523,7 @@
       </h2>
       <div class="flex gap-2">
         <button
-          class="btn-icon btn-icon-sm variant-ringed-surface hover:variant-filled-surface transition-all"
+          class="btn-icon btn-icon-sm preset-outlined-surface-500 hover:preset-filled-surface-500 transition-all"
           onclick={() => {
             isLocked = !isLocked;
             if (isLocked) isEditing = false;
@@ -446,13 +540,13 @@
         {#if !isLocked}
           <div class="flex gap-2" in:fade>
             <button
-              class="btn-sm variant-soft-surface"
+              class="btn-sm preset-tonal-surface"
               onclick={() => (isEditing = !isEditing)}
             >
               {#if isEditing}Done{:else}<Edit3 class="size-4 mr-1" /> Remove{/if}
             </button>
             <button
-              class="btn-sm variant-filled-primary"
+              class="btn-sm preset-filled-primary-500"
               onclick={() => (showAddModal = true)}
             >
               <Plus class="size-4 mr-1" /> Add
@@ -496,7 +590,11 @@
         {#each tools.filter((t) => t.cat === cat.id) as tool}
           <a
             href={tool.href}
-            class="card p-6 bg-surface-50 dark:bg-surface-800 border border-surface-500/20 hover:border-primary-500/30 hover:shadow-lg transition-all group"
+            class={`card p-6 bg-surface-50 dark:bg-surface-800 border transition-all group ${
+              isToolVerified(tool.id)
+                ? "border-success-500/40 ring-1 ring-success-500/25 hover:border-success-500/60 hover:shadow-lg hover:shadow-success-500/10"
+                : "border-surface-500/20 hover:border-primary-500/30 hover:shadow-lg"
+            }`}
           >
             <div class="flex items-start gap-4">
               <div
@@ -505,15 +603,32 @@
                 <tool.icon class="size-8" />
               </div>
               <div class="flex-1">
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 flex-wrap">
                   <h3
                     class="h3 font-bold group-hover:text-primary-500 transition-colors"
                   >
                     {tool.title}
                   </h3>
                   {#if tool.isNew}
-                    <span class="badge variant-filled-error text-xs animate-pulse">NEW</span>
+                    <span
+                      class="badge preset-filled-error-500 text-xs animate-pulse"
+                      >NEW</span
+                    >
                   {/if}
+                  {#if tool.isUpdated}
+                    <span
+                      class="badge preset-filled-tertiary-500 text-xs animate-pulse"
+                      >UPDATED</span
+                    >
+                  {/if}
+                  {#if isToolVerified(tool.id)}
+                    <span class="badge preset-tonal-success text-xs"
+                      >Verified</span
+                    >
+                  {/if}
+                  <span class="badge preset-tonal-secondary text-xs"
+                    >{tool.version}</span
+                  >
                 </div>
                 <p class="text-sm text-surface-500 mt-1">{tool.desc}</p>
               </div>
@@ -568,10 +683,11 @@
         />
       </label>
       <div class="flex justify-end gap-2 mt-4">
-        <button class="btn variant-ghost" onclick={() => (showAddModal = false)}
-          >Cancel</button
+        <button
+          class="btn bg-transparent"
+          onclick={() => (showAddModal = false)}>Cancel</button
         >
-        <button class="btn variant-filled-primary" onclick={addLink}
+        <button class="btn preset-filled-primary-500" onclick={addLink}
           >Save</button
         >
       </div>

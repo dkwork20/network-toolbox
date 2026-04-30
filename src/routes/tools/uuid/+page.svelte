@@ -60,7 +60,7 @@
     <h1 class="h1 font-bold flex items-center gap-3">
       <Fingerprint class="size-8 text-primary-500" />
       UUID Generator
-      <span class="badge variant-filled-error text-xs animate-pulse">NEW</span>
+      <span class="badge preset-filled-secondary-500 text-xs">V0.6</span>
     </h1>
     <p class="text-surface-500 mt-2">
       Generate RFC 4122 compliant UUID v4 identifiers
@@ -91,18 +91,18 @@
         <span>No Hyphens</span>
       </label>
 
-      <button class="btn variant-filled-primary" onclick={generateUUIDs}>
+      <button class="btn preset-filled-primary-500" onclick={generateUUIDs}>
         <RefreshCw class="size-4" />
         Generate
       </button>
     </div>
 
     <div class="flex gap-2">
-      <button class="btn variant-soft-surface" onclick={copyAll}>
+      <button class="btn preset-tonal-surface" onclick={copyAll}>
         <Copy class="size-4" />
         Copy All
       </button>
-      <button class="btn variant-soft-surface" onclick={downloadAsFile}>
+      <button class="btn preset-tonal-surface" onclick={downloadAsFile}>
         <Download class="size-4" />
         Download
       </button>
